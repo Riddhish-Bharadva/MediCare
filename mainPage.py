@@ -1,9 +1,11 @@
 import webapp2
 import jinja2
 import os
+import hashlib
 from google.appengine.ext import ndb
 from UsersDB import UsersDB
 from EmailModule import SendEmail
+from ResetPassword import ResetPassword
 
 JINJA_ENVIRONMENT = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)),extensions=['jinja2.ext.autoescape'],autoescape=True)
 
@@ -84,7 +86,7 @@ Dear """+DBConnect.user_FirstName+""",
 This is an automated email sent to reset password of your MediCare account.
 
 Click on below link to reset your password:
-Reset link.
+http://localhost:8080/ResetPassword?userEmail="""+Email+"""&ResetStatus="""+hashlib.md5(DBConnect.user_Password.encode()).hexdigest()+"""&notification=""
 
 In case above link doesn't work, copy and paste the same in url bar of your browser.
 
@@ -107,4 +109,5 @@ MediCare Team.
 
 app = webapp2.WSGIApplication([
     ('/',mainPage),
+    ('/ResetPassword',ResetPassword),
 ], debug=True)

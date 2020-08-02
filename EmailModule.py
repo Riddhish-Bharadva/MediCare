@@ -1,5 +1,4 @@
 import smtplib
-import ssl
 
 def SendEmail(ReceiverId,EmailSubject,EmailBody):
     FromEmail = "riddhishbharadva@gmail.com"

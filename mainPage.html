@@ -1,8 +1,6 @@
 <html>
   <head>
     <title>MediCare</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -136,6 +134,10 @@
               <div style="background:green;color:white;padding:5px;border-radius:10px;font-size:12px;">Link to reset your account password is sent to the registered email Id.</div>
             {% elif notification == "UserSuccessfullyRegistered" %}
               <div style="background:green;color:white;padding:5px;border-radius:10px;font-size:12px;">User is successfully registered.</div>
+            {% elif notification == "PasswordResetSuccessful" %}
+              <div style="background:green;color:white;padding:5px;border-radius:10px;font-size:12px;">Password has been successfully changed.</div>
+            {% elif notification == "InvalidPasswordResetLink" %}
+              <div style="background:red;color:white;padding:5px;border-radius:10px;font-size:12px;">Password reset link is either expired or invalid.</div>
             {% endif %}
           </div>
         </div>
