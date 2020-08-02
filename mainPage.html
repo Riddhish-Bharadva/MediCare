@@ -1,0 +1,341 @@
+<html>
+  <head>
+    <title>MediCare</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+  </head>
+  <script>
+    function CheckNumber(value)
+    {
+      var size = document.getElementById("Contact").value;
+      var charCode = (value.which) ? value.which : value.keyCode;
+      if ((charCode > 47 && charCode < 58) && size.length != 9)
+        return true;
+      return false;
+    }
+    function CheckName(value)
+    {
+      var charCode = (value.which) ? value.which : value.keyCode;
+      if ((charCode > 64 && charCode < 91) || (charCode > 96 && charCode < 123))
+        return true;
+      return false;
+    }
+  </script>
+  <style>
+    .container
+    {
+       margin-top:7%;
+       background:rgba(255, 255, 255, 0.3);
+       border-radius:10px !important;
+       max-width:380px;
+       max-height:80%;
+       padding:20px;
+       margin-left:5%;
+    }
+    .ModalLinksStyle
+    {
+      font-size:14px;
+      color:white;
+      font-style:bold;
+      background:rgba(0,0,0,0);
+      border-radius:10px;
+      border:0px;
+    }
+    .ModalLinksStyle:hover
+    {
+      color:black;
+    }
+    .SkipButton
+    {
+      color:white;
+    }
+    .SkipButton:hover
+    {
+      color:black;
+    }
+    .SignUpText
+    {
+      font-size:13px;
+    }
+  </style>
+  <body style="background:url('https://www.longprairiepharmacy.com/wp-content/themes/longprairie/images/slider/9.jpg');background-repeat:no-repeat;">
+    <center>
+      <div class="container">
+        <form method="get" action="/">
+          <div class="row">
+            <div class="col-sm-12">
+              <h5 style="padding:20px;">Sign-in</h5>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-1"></div>
+            <div class="col-sm-10">
+              <input type="email" id="userEmail" name="userEmail" class="form-control" placeholder="Email Id" required autofocus>
+            </div>
+            <div class="col-sm-1"></div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-sm-1"></div>
+            <div class="col-sm-10">
+              <input type="password" id="userPassword" name="userPassword" class="form-control" placeholder="Password" required autofocus>
+            </div>
+            <div class="col-sm-1"></div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-sm-4">
+              Sign in as :
+            </div>
+            <div class="col-sm-8">
+              <div class="form-check-inline">
+                <input type="radio" id="SignInAs" name="SignInAs" class="form-check-input" value="Member" required autofocus /> Member
+              </div>
+              <div class="form-check-inline">
+                <input type="radio" id="SignInAs" name="SignInAs" class="form-check-input" value="Pharmacist" required autofocus /> Pharmacist
+              </div>
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-sm-3"></div>
+            <div class="col-sm-6">
+              <button type="submit" class="btn btn-primary btn-block" name="Button" value="SignInButton">Sign-In</button>
+            </div>
+            <div class="col-sm-3"></div>
+          </div>
+        </form>
+        <div class="row" style="padding-top:10px;padding-bottom:10px;">
+          <div class="col-sm-4">
+            <button class="btn ModalLinksStyle" data-toggle="modal" data-target="#SignUpModal"><b>Sign Up</b></button>
+          </div>
+          <div class="col-sm-2"></div>
+          <div class="col-sm-6">
+            <button class="btn ModalLinksStyle" data-toggle="modal" data-target="#ForgotPasswordModal"><b>Forgot Password?</b></button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-12">
+            or <a class="SkipButton" href="/UsersHomePage">click here</a> to skip signing in for now!
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-12">
+            {% if notification == "EmailAlreadyRegistered" %}
+              <div style="background:red;color:white;padding:5px;border-radius:10px;font-size:12px;">Email id is already registered.</div>
+            {% elif notification == "PasswordMissmatch" %}
+              <div style="background:red;color:white;padding:5px;border-radius:10px;font-size:12px;">Please enter valid password and try again.</div>
+            {% elif notification == "EmailIdNotRegistered" %}
+              <div style="background:red;color:white;padding:5px;border-radius:10px;font-size:12px;">Email Id entered is not registered.</div>
+            {% elif notification == "PasswordResetLinkSent" %}
+              <div style="background:green;color:white;padding:5px;border-radius:10px;font-size:12px;">Link to reset your account password is sent to the registered email Id.</div>
+            {% elif notification == "UserSuccessfullyRegistered" %}
+              <div style="background:green;color:white;padding:5px;border-radius:10px;font-size:12px;">User is successfully registered.</div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </center>
+
+    <!-- Below is SignUp Modal -->
+    <div class="modal fade" id="SignUpModal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <!-- Modal Header -->
+          <div class="modal-header">
+            <h5 class="modal-title">Sign Up</h5>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+          </div>
+          <!-- Modal body -->
+          <div class="modal-body">
+            <center>
+              <form method="get" action="/">
+                <div class="row">
+                  <div class="col-sm-1"></div>
+                  <div class="col-sm-3 form-check-inline SignUpText">
+                    First Name :
+                  </div>
+                  <div class="col-sm-7">
+                    <input type="text" id="FirstName" name="FirstName" class="form-control" placeholder="First Name" onkeypress="return CheckName(event)" required autofocus>
+                  </div>
+                  <div class="col-sm-1"></div>
+                </div>
+                <br>
+                <div class="row">
+                  <div class="col-sm-1"></div>
+                  <div class="col-sm-3 form-check-inline SignUpText">
+                    Last Name :
+                  </div>
+                  <div class="col-sm-7">
+                    <input type="text" id="LastName" name="LastName" class="form-control" placeholder="Last Name" onkeypress="return CheckName(event)" required autofocus>
+                  </div>
+                  <div class="col-sm-1"></div>
+                </div>
+                <br>
+                <div class="row">
+                  <div class="col-sm-1"></div>
+                  <div class="col-sm-3 form-check-inline SignUpText">
+                    Email Id :
+                  </div>
+                  <div class="col-sm-7">
+                    <input type="email" id="userEmail_SU" name="userEmail_SU" class="form-control" placeholder="john@gmail.com" required autofocus>
+                  </div>
+                  <div class="col-sm-1"></div>
+                </div>
+                <br>
+                <div class="row">
+                  <div class="col-sm-1"></div>
+                  <div class="col-sm-3 form-check-inline SignUpText">
+                    Password :
+                  </div>
+                  <div class="col-sm-7">
+                    <input type="password" id="userPassword_SU" name="userPassword_SU" class="form-control" required autofocus>
+                  </div>
+                  <div class="col-sm-1"></div>
+                </div>
+                <br>
+                <div class="row">
+                  <div class="col-sm-1"></div>
+                  <div class="col-sm-3 form-check-inline SignUpText">
+                    Contact Number :
+                  </div>
+                  <div class="col-sm-2" style="padding-right:0px;">
+                    <input type="text" id="ISD_Code" name="ISD_Code" class="form-control" value="+353" disabled>
+                  </div>
+                  <div class="col-sm-5">
+                    <input type="tel" id="Contact" name="Contact" class="form-control" placeholder="83XXXXXXX" onkeypress="return CheckNumber(event)" required autofocus>
+                  </div>
+                  <div class="col-sm-1"></div>
+                </div>
+                <br>
+                <div class="row">
+                  <div class="col-sm-1"></div>
+                  <div class="col-sm-3 form-check-inline SignUpText">
+                    Address :
+                  </div>
+                  <div class="col-sm-7">
+                    <textarea id="Address" name="Address" class="form-control" placeholder="Address" required autofocus></textarea>
+                  </div>
+                  <div class="col-sm-1"></div>
+                </div>
+                <br>
+                <div class="row">
+                  <div class="col-sm-1"></div>
+                  <div class="col-sm-3 form-check-inline SignUpText">
+                    Gender :
+                  </div>
+                  <div class="col-sm-7">
+                    <div class="form-check-inline">
+                      <input type="radio" id="Gender" name="Gender" class="form-check-input" value="Male" required autofocus /> Male
+                    </div>
+                    <div class="form-check-inline">
+                      <input type="radio" id="Gender" name="Gender" class="form-check-input" value="Female" required autofocus /> Female
+                    </div>
+                  </div>
+                  <div class="col-sm-1"></div>
+                </div>
+                <br>
+                <div class="row">
+                  <div class="col-sm-1"></div>
+                  <div class="col-sm-3 form-check-inline SignUpText">
+                    Date of Birth :
+                  </div>
+                  <div class="col-sm-7">
+                    <input type="date" id="DOB" name="DOB" class="form-control" placeholder="Select your date of birth" required autofocus>
+                  </div>
+                  <div class="col-sm-1"></div>
+                </div>
+                <br>
+                <div class="row">
+                  <div class="col-sm-1"></div>
+                  <div class="col-sm-10">
+                    <button class="btn btn-primary" id="SignUpButton" name="Button" value="SignUpButton">Sign Up</button>
+                    <input type="reset" class="btn btn-primary" value="Reset"/>
+                  </div>
+                  <div class="col-sm-1"></div>
+                </div>
+              </form>
+            </center>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Below is ForgotPassword Modal -->
+    <div class="modal fade" id="ForgotPasswordModal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <!-- Modal Header -->
+          <div class="modal-header">
+            <h5 class="modal-title">Forgot Password?</h5>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+          </div>
+          <!-- Modal body -->
+          <div class="modal-body">
+            <form action="/" method="get">
+              <div class="row">
+                <div class="col-sm-1"></div>
+                <div class="col-sm-10">
+                  <div class="row">
+                    <div class="col-sm-1"></div>
+                    <div class="col-sm-10 form-check-inline">
+                      <center>An email with password reset link will be sent on your registered email id.</center>
+                    </div>
+                    <div class="col-sm-1"></div>
+                  </div>
+                  <br>
+                  <div class="row">
+                    <div class="col-sm-1"></div>
+                    <div class="col-sm-3 form-check-inline">
+                      Email Id :
+                    </div>
+                    <div class="col-sm-7">
+                      <input type="email" id="userEmail_FP" name="userEmail_FP" class="form-control" placeholder="john@gmail.com" required autofocus>
+                    </div>
+                    <div class="col-sm-1"></div>
+                  </div>
+                  <br>
+                  <div class="row">
+                    <div class="col-sm-4">
+                      Registered as :
+                    </div>
+                    <div class="col-sm-8">
+                      <div class="form-check-inline">
+                        <input type="radio" id="RegisteredAs" name="RegisteredAs" class="form-check-input" value="Member" required autofocus /> Member
+                      </div>
+                      <div class="form-check-inline">
+                        <input type="radio" id="RegisteredAs" name="RegisteredAs" class="form-check-input" value="Pharmacist" required autofocus /> Pharmacist
+                      </div>
+                    </div>
+                  </div>
+                  <br>
+                  <div class="row">
+                    <div class="col-sm-1"></div>
+                    <div class="col-sm-10">
+                      <center>
+                        <button class="btn btn-primary" id="ForgotPasswordButton" name="Button" value="ForgotPasswordButton">Proceed</button>
+                        <input type="reset" class="btn btn-primary" value="Reset"/>
+                      </center>
+                    </div>
+                    <div class="col-sm-1"></div>
+                  </div>
+                </div>
+                <div class="col-sm-1"></div>
+              </div>
+            </form>
+          </div>
+          <!-- Modal footer -->
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </body>
+</html>
