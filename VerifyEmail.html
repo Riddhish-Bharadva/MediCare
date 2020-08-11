@@ -1,0 +1,46 @@
+<html>
+  <head>
+    <title>MediCare</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  </head>
+  <style>
+    .container
+    {
+       background:rgba(255, 255, 255, 0.7);
+       border-radius:10px !important;
+       max-width:80%;
+    }
+    .navbar
+    {
+      max-width:80%;
+      margin-top:10px;
+    }
+  </style>
+  <body style="background:url('https://www.longprairiepharmacy.com/wp-content/themes/longprairie/images/slider/9.jpg');background-repeat:no-repeat;">
+    <center>
+      <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <a class="navbar-brand" href="/">MediCare</a>
+          </div>
+        </div>
+      </nav>
+    </center>
+    <div class="container">
+      <hr>
+      Dear {{ RegisteredAs }},
+      <br>
+      <br>
+      {{ Message }} Please <a href="/">click here</a> to continue.
+      <br>
+      <br>
+      Thank you,
+      <br>
+      MediCare Team
+      <hr>
+    </div>
+  </body>
+</html>

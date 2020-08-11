@@ -1,8 +1,8 @@
 import smtplib
 
 def SendEmail(ReceiverId,EmailSubject,EmailBody):
-    FromEmail = "riddhishbharadva@gmail.com"
-    EmailPassword = "Rab24122011"
+    FromEmail = "medicareteam24x7@gmail.com"
+    EmailPassword = "MediCare@123"
     emailServer = smtplib.SMTP("smtp.gmail.com",587)
     emailServer.ehlo()
     emailServer.starttls()

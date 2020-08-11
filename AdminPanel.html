@@ -1,0 +1,159 @@
+<html>
+  <head>
+    <title>MediCare</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  </head>
+  <script>
+    function CheckNumber(value)
+    {
+      var ContactValue = document.getElementById("OfficialContact").value;
+      var charCode = (value.which) ? value.which : value.keyCode;
+      if ((ContactValue.length == 0 && charCode == 43) || (ContactValue.length==4 && charCode == 45) || (charCode > 47 && charCode < 58) && ContactValue.length != 14)
+        return true;
+      return false;
+    }
+  </script>
+  <style>
+    .container
+    {
+       background:rgba(255, 255, 255, 0.7);
+       border-radius:10px !important;
+       max-width:80%;
+    }
+    .navbar
+    {
+      max-width:80%;
+      margin-top:5px;
+    }
+    .ButtonBeforeLogin
+    {
+       max-width:500px;
+       margin-top:15%;
+       font-size:70px;
+       border-radius:15px;
+       color:white;
+       background:black;
+    }
+    .ButtonBeforeLogin:hover
+    {
+      color:black;
+      background:white !important;
+    }
+    .Text
+    {
+      font-size:15px;
+      line-height:35px;
+    }
+  </style>
+  <body style="background:url('https://www.longprairiepharmacy.com/wp-content/themes/longprairie/images/slider/9.jpg');background-repeat:no-repeat;">
+    <center>
+      {% if AdminLoggedIn %}
+        <nav class="navbar navbar-inverse">
+          <div class="container-fluid">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand" href="/AdminPanel">MediCare</a>
+            </div>
+            <div class="collapse navbar-collapse" id="myNavbar">
+              <ul class="nav navbar-nav">
+                <li><a href="/AdminPanel">Home</a></li>
+                <li><a href="">Vendors</a></li>
+                <li><a href="">Customers</a></li>
+              </ul>
+              <ul class="nav navbar-nav navbar-right">
+                <li><a href="{{ SigninLink }}"><span class="glyphicon glyphicon-log-out"></span>&nbsp;{{ SigninStatus }}</a></li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+        <div class="container">
+          <form action="/AdminPanel" method="post">
+            <hr>
+            <div class="row">
+              <div class="col-sm-12">
+                {% if notification == "" %}
+                  <div style="background:yellow;color:black;padding:10px;font-size:15px;border-radius:10px;">All the notifications will be displayed here.</div>
+                {% elif notification == "VendorRegistrationSuccessful" %}
+                  <div style="background:green;color:white;padding:10px;font-size:15px;border-radius:10px;">Vendor registration was successful.</div>
+                {% elif notification == "VendorAlreadyRegistererd" %}
+                  <div style="background:orange;color:white;padding:10px;font-size:15px;border-radius:10px;">The vendor you are trying to register already exists in database.</div>
+                {% endif %}
+              </div>
+            </div>
+            <hr>
+            <div style="font-size:20px;">Vendor Registration Form</div>
+            <hr>
+            <div class="row">
+              <div class="col-sm-2"></div>
+              <div class="col-sm-3 form-check-inline Text">
+                Pharmacy Name :
+              </div>
+              <div class="col-sm-5">
+                <input type="text" id="PharmacyName" name="PharmacyName" class="form-control" placeholder="Pharmacy Name" onkeypress="return CheckName(event)" required autofocus>
+              </div>
+              <div class="col-sm-2"></div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-2"></div>
+              <div class="col-sm-3 form-check-inline Text">
+                Official Email Id :
+              </div>
+              <div class="col-sm-5">
+                <input type="email" id="OfficialEmailId" name="OfficialEmailId" class="form-control" placeholder="Email Id" required autofocus>
+              </div>
+              <div class="col-sm-2"></div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-2"></div>
+              <div class="col-sm-3 form-check-inline Text">
+                Official Contact :
+              </div>
+              <div class="col-sm-5">
+                <input type="tel" id="OfficialContact" name="OfficialContact" class="form-control" placeholder="+353-83XXXXXXX" onkeypress="return CheckNumber(event)" required autofocus>
+              </div>
+              <div class="col-sm-2"></div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-2"></div>
+              <div class="col-sm-3 form-check-inline Text">
+                Physical Address :
+              </div>
+              <div class="col-sm-5">
+                <textarea id="PhysicalAddress" name="PhysicalAddress" class="form-control" placeholder="Physical Address" required autofocus></textarea>
+              </div>
+              <div class="col-sm-2"></div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-sm-2"></div>
+              <div class="col-sm-8">
+                <button class="btn btn-primary" id="RegisterVendorButton" name="Button" value="RegisterVendorButton">Register</button>
+                <input type="reset" class="btn btn-primary" value="Reset"/>
+              </div>
+              <div class="col-sm-2"></div>
+            </div>
+            <hr>
+          </form>
+        </div>
+      {% else %}
+        <ul class="nav">
+          <li>
+            <a href="{{ SigninLink }}" class="ButtonBeforeLogin">
+              <span class="glyphicon glyphicon-log-in"></span> {{ SigninStatus }}
+            </a>
+          </li>
+        </ul>
+      {% endif %}
+    </center>
+  </body>
+</html>
