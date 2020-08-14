@@ -1,0 +1,30 @@
+                try {
+                    System.out.println("Inside Try");
+                    URL API_URL = new URL(MainActivity.WebLink);
+                    System.out.println("URL " + API_URL);
+                    HttpURLConnection API_Connection = (HttpURLConnection) API_URL.openConnection();
+                    System.out.println("Connection " + API_Connection);
+                    API_Connection.setRequestMethod("POST");
+                    API_Connection.setRequestProperty("Content-Type", "application/json");
+                    API_Connection.setRequestProperty("Accept", "application/json");
+                    API_Connection.setDoOutput(true);
+                    API_Connection.setDoInput(true);
+                    String SendData = "{\"function\":\"ForgotPassword\",\"userEmail\":\"" + FPEmailId + "\"}";
+                    System.out.println("SendData " + SendData);
+                    OutputStream os = API_Connection.getOutputStream();
+                    System.out.println("OutputStream " + os);
+                    byte[] InputDataByte = SendData.getBytes("utf-8");
+                    os.write(InputDataByte, 0, InputDataByte.length);
+                    int code = API_Connection.getResponseCode();
+                    System.out.println("Response Code " + code);
+                    BufferedReader br = new BufferedReader(new InputStreamReader(API_Connection.getInputStream(), "utf-8"));
+                    StringBuilder response = new StringBuilder();
+                    String responseLine = null;
+                    while ((responseLine = br.readLine()) != null) {
+                        response.append(responseLine.trim());
+                        System.out.println("Response is " + response.toString());
+                    }
+                    API_Connection.disconnect();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }

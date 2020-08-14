@@ -12,8 +12,6 @@ class API_MediCare(webapp2.RequestHandler):
         Data = {}
         FunctionOption = Json_Data["function"]
         Email = Json_Data["userEmail"]
-        RegisteredAs = Json_Data["RegisteredAs"]
-        FromPage = "/UserSignIn"
         DBConnect = ndb.Key('UsersDB',Email).get()
         if(FunctionOption == "ForgotPassword"):
             if(DBConnect != None):
@@ -23,7 +21,7 @@ Dear """+DBConnect.user_FirstName+""",
 This is an automated email sent to reset password of your MediCare account.
 
 Click on below link to reset your password:
-http://localhost:8080/ResetPassword?userEmail="""+Email+"""&RegisteredAs="""+RegisteredAs+"""&FromPage="""+FromPage+"""&ResetStatus="""+hashlib.md5(DBConnect.user_Password.encode()).hexdigest()+"""
+http://localhost:8080/ResetPassword?RegisteredAs=User&userEmail="""+Email+"""&FromPage=/UserSignIn&ResetStatus="""+hashlib.md5(DBConnect.user_Password.encode()).hexdigest()+"""
 
 In case above link doesn't work, copy and paste the same in url bar of your browser.
 

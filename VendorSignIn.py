@@ -3,6 +3,7 @@ import jinja2
 import os
 import hashlib
 from google.appengine.ext import ndb
+from google.appengine.api import users
 from EmailModule import SendEmail
 from PharmacyDB import PharmacyDB
 from VendorsDB import VendorsDB
@@ -33,7 +34,7 @@ class VendorSignIn(webapp2.RequestHandler):
             DBConnect = ndb.Key('VendorsDB',vendorEmail).get()
             if(DBConnect != None):
                 if(DBConnect.Password == vendorPassword):
-                    self.redirect('/VendorHomePage')
+                    self.redirect('/VendorHomePage?vendorEmail='+vendorEmail)
                 else:
                     self.redirect('/VendorSignIn?notification=PasswordMissmatch')
             else:

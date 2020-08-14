@@ -11,6 +11,8 @@ from EmailModule import SendEmail
 from AdminPanel import AdminPanel
 from UserSignIn import UserSignIn
 from VendorSignIn import VendorSignIn
+from VendorHomePage import VendorHomePage
+from VendorProducts import VendorProducts
 from VerifyEmail import VerifyEmail
 from ResetPassword import ResetPassword
 
@@ -59,6 +61,8 @@ app = webapp2.WSGIApplication([
     ('/ResetPassword',ResetPassword),
     ('/UserSignIn',UserSignIn),
     ('/VendorSignIn',VendorSignIn),
+    ('/VendorHomePage',VendorHomePage),
+    ('/VendorProducts',VendorProducts),
     ('/VerifyEmail',VerifyEmail),
     ('/AdminPanel',AdminPanel),
     ('/API_MediCare',API_MediCare),

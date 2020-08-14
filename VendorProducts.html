@@ -1,0 +1,208 @@
+<html>
+  <head>
+    <title>MediCare</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src='https://kit.fontawesome.com/a076d05399.js'></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+  </head>
+  <style>
+    .container
+    {
+       background:rgba(255, 255, 255, 0.6);
+       border-radius:10px !important;
+    }
+    .navbar
+    {
+      margin-top:5px;
+      border-radius: 10px;
+    }
+  </style>
+  <body style="background:url('https://www.longprairiepharmacy.com/wp-content/themes/longprairie/images/slider/9.jpg');">
+    <center>
+      <div style="max-width:80%;">
+        <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+          <a class="navbar-brand" href="/VendorHomePage?vendorEmail={{ vendorEmail }}">MediCare</a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="collapsibleNavbar">
+            <ul class="navbar-nav">
+              <li class="nav-item">
+                <a class="nav-link" href="/VendorHomePage?vendorEmail={{ vendorEmail }}">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/VendorProducts?vendorEmail={{ vendorEmail }}">Add Products</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/VendorOrders?vendorEmail={{ vendorEmail }}">Orders</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/VendorProfile?vendorEmail={{ vendorEmail }}">Profile</a>
+              </li>
+            </ul>
+            <ul class="navbar-nav ml-auto">
+              <li class="nav-item">
+                <a class="nav-link float-right" href="/VendorSignIn"><span class="fas fa-sign-out-alt"></span>&nbsp;Sign Out</a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+        <div class="container">
+          <hr>
+          Either add product by filling in details as below :
+          <hr>
+          <form action="{{ ImageUploadURL }}" method="post" name="VendorProducts" enctype="multipart/form-data">
+            <div class="row">
+              <div class="col-sm-2"></div>
+              <div class="col-sm-3 form-check-inline">
+                Product Name :
+              </div>
+              <div class="col-sm-5">
+                <input type="text" id="ProductName" name="ProductName" class="form-control" placeholder="Product Name" required autofocus>
+                <input type="hidden" id="Option" name="Option" class="form-control" value="1">
+                <input type="hidden" id="vendorEmail" name="vendorEmail" class="form-control" value="{{ vendorEmail }}">
+              </div>
+              <div class="col-sm-2"></div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-2"></div>
+              <div class="col-sm-3 form-check-inline">
+                Description (if any) :
+              </div>
+              <div class="col-sm-5">
+                <textarea id="Description" name="Description" class="form-control" placeholder="Description of product like manufacturer, product used for, etc." autofocus></textarea>
+              </div>
+              <div class="col-sm-2"></div>
+            </div>
+            <br>
+            {% if CategoryCount == 0 %}
+            <div class="row">
+              <div class="col-sm-2"></div>
+              <div class="col-sm-3 form-check-inline">
+                Category :
+              </div>
+              <div class="col-sm-5">
+                <input type="text" id="Category" name="Category" class="form-control" placeholder="Category" autofocus>
+              </div>
+              <div class="col-sm-2"></div>
+            </div>
+            {% else %}
+            <div class="row">
+              <div class="col-sm-2"></div>
+              <div class="col-sm-3 form-check-inline">
+                Category :
+              </div>
+              <div class="col-sm-5">
+                <select class="form-control" id="Category" name="Category" autofocus>
+                  <option>Select Category</option>
+                  {% for i in Category %}
+                    <option value="{{ i }}">{{ i }}</option>
+                  {% endfor %}
+                </select>
+                OR <input type="text" id="Category" name="Category" class="form-control" placeholder="Form a new Category" autofocus>
+              </div>
+              <div class="col-sm-2"></div>
+            </div>
+            {% endif %}
+            {% if SubCategoryCount == 0 %}
+            <br>
+            <div class="row">
+              <div class="col-sm-2"></div>
+              <div class="col-sm-3 form-check-inline">
+                Sub Category :
+              </div>
+              <div class="col-sm-5">
+                <input type="text" id="SubCategory" name="SubCategory" class="form-control" placeholder="SubCategory" autofocus>
+              </div>
+              <div class="col-sm-2"></div>
+            </div>
+            {% else %}
+            <hr>
+            <div class="row">
+              <div class="col-sm-2"></div>
+              <div class="col-sm-3 form-check-inline">
+                Sub Category :
+              </div>
+              <div class="col-sm-5">
+                <select class="form-control" id="SubCategory" name="SubCategory" autofocus>
+                  <option>Select Sub Category</option>
+                  {% for i in SubCategory %}
+                    <option value="{{ i }}">{{ i }}</option>
+                  {% endfor %}
+                </select>
+                OR <input type="text" id="SubCategory" name="SubCategory" class="form-control" placeholder="Form a new Sub Category" autofocus>
+              </div>
+              <div class="col-sm-2"></div>
+            </div>
+            {% endif %}
+            <br>
+            <div class="row">
+              <div class="col-sm-2"></div>
+              <div class="col-sm-3 form-check-inline">
+                Quantity :
+              </div>
+              <div class="col-sm-5">
+                <input type="number" id="Quantity" name="Quantity" class="form-control" placeholder="Quantity" min="1" max="1000" required autofocus>
+              </div>
+              <div class="col-sm-2"></div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-2"></div>
+              <div class="col-sm-3 form-check-inline">
+                Price :
+              </div>
+              <div class="col-sm-5">
+                <input type="number" id="Price" name="Price" class="form-control" placeholder="Price" min="0.01" step="0.01" required autofocus>
+              </div>
+              <div class="col-sm-2"></div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-2"></div>
+              <div class="col-sm-3 form-check-inline">
+                Images :
+              </div>
+              <div class="col-sm-5">
+                <input type='file' name='Images' id='Images' class="form-control" style="padding:3px;" accept=".png, .jpg" multiple required autofocus>
+              </div>
+              <div class="col-sm-2"></div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-sm-1"></div>
+              <div class="col-sm-10">
+                <button class="btn btn-primary" id="AddProduct" name="Button" value="AddProduct">Add Product</button>
+                <input type="reset" class="btn btn-primary" value="Reset"/>
+              </div>
+              <div class="col-sm-1"></div>
+            </div>
+          </form>
+          <hr>
+          Or choose from below products to register with your quantity and price :
+          <hr>
+          <form action="/VendorProducts?{{ vendorEmail }}&Option=2" method="post">
+            {% if Products != "None" %}
+              <div class="row">
+                <div class="col-sm-12">
+                  <input type="hidden" id="Option" name="Option" class="form-control" value="2">
+                  <input type="hidden" id="vendorEmail" name="vendorEmail" class="form-control" value="{{ vendorEmail }}">
+                </div>
+              </div>
+              <br>
+              There are no products registered yet to display here. Please start registering a product by filling in the above form.
+            {% else %}
+              Products are not none.
+            {% endif %}
+          </form>
+          <hr>
+        </div>
+      </div>
+    </center>
+
+  </body>
+</html>
