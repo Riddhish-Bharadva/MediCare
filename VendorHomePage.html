@@ -8,39 +8,28 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
   </head>
+  <script>
+    function CheckNumber(value)
+    {
+      var size = document.getElementById("Contact_New").value;
+      var charCode = (value.which) ? value.which : value.keyCode;
+      if ((charCode > 47 && charCode < 58) && size.length != 9)
+        return true;
+      return false;
+    }
+    function CheckName(value)
+    {
+      var charCode = (value.which) ? value.which : value.keyCode;
+      if ((charCode > 64 && charCode < 91) || (charCode > 96 && charCode < 123))
+        return true;
+      return false;
+    }
+  </script>
   <style>
     .container
     {
-       margin-top:5%;
-       margin-left:5%;
-       max-width:350px;
-       background:rgba(255, 255, 255, 0.5);
+       background:rgba(255, 255, 255, 0.7);
        border-radius:10px !important;
-    }
-    .ModalLinksStyle
-    {
-      font-size:14px;
-      color:white;
-      font-style:bold;
-      background:rgba(0,0,0,0);
-      border-radius:10px;
-      border:0px;
-    }
-    .ModalLinksStyle:hover
-    {
-      color:black;
-    }
-    .SkipButton
-    {
-      color:white;
-    }
-    .SkipButton:hover
-    {
-      color:black;
-    }
-    .SignUpText
-    {
-      font-size:13px;
     }
     .navbar
     {
@@ -48,28 +37,34 @@
       border-radius: 10px;
     }
   </style>
-  <body style="background:url('https://www.longprairiepharmacy.com/wp-content/themes/longprairie/images/slider/9.jpg');background-repeat:no-repeat;">
+  <body style="background:url('https://www.longprairiepharmacy.com/wp-content/themes/longprairie/images/slider/9.jpg');">
     <center>
       <div style="max-width:80%;">
         <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
-          <a class="navbar-brand" href="/VendorHomePage?vendorEmail={{ vendorEmail }}">MediCare</a>
+          <a class="navbar-brand" href="/VendorHomePage?vendorEmail={{ VendorDetails.Email }}">MediCare</a>
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
             <span class="navbar-toggler-icon"></span>
           </button>
           <div class="collapse navbar-collapse" id="collapsibleNavbar">
             <ul class="navbar-nav">
               <li class="nav-item">
-                <a class="nav-link" href="/VendorHomePage?vendorEmail={{ vendorEmail }}">Home</a>
+                <a class="nav-link" href="/VendorHomePage?vendorEmail={{ VendorDetails.Email }}">Home</a>
               </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/VendorProducts?vendorEmail={{ vendorEmail }}">Add Products</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/VendorOrders?vendorEmail={{ vendorEmail }}">Orders</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/VendorProfile?vendorEmail={{ vendorEmail }}">Profile</a>
-              </li>
+              {% if VendorDetails.EmailVerified == 1 %}
+                <li class="nav-item">
+                  <a class="nav-link" href="/VendorOrders?vendorEmail={{ VendorDetails.Email }}">Orders</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="/AddProducts?vendorEmail={{ VendorDetails.Email }}">Add Products</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="/OfferedProducts?vendorEmail={{ VendorDetails.Email }}">Offered Products</a>
+                </li>
+              {% elif VendorDetails.EmailVerified == 0 %}
+                <li class="nav-item">
+                  <a class="nav-link" href="">Restricted use as email is not yet verified.</a>
+                </li>
+              {% endif %}
             </ul>
             <ul class="navbar-nav ml-auto">
               <li class="nav-item">
@@ -79,213 +74,258 @@
           </div>
         </nav>
         <div class="container">
-
+          <center>
+            <hr>
+            <marquee>Welcome to vendor's portal {{ VendorDetails.FirstName }}! Below are your details. You can change password, update and delete your profile by clicking on appropriate button.</marquee>
+            <hr>
+            <div class="row">
+              {% if notification == "ProfileUpdated" %}
+                <div class="col-sm-12" style="padding:10px;border-radius:10px;background:green;color:white;">
+                  Profile has been successfully updated.
+                </div>
+              {% elif notification == "InvalidProfile" %}
+                <div class="col-sm-12" style="padding:10px;border-radius:10px;background:red;color:white;">
+                  Invalid email address passed in URL.
+                </div>
+              {% elif notification == "ProductRegisteredSuccessfully" %}
+                <div class="col-sm-12" style="padding:10px;border-radius:10px;background:green;color:white;">
+                  Product has been successfully registered with appropriate details. You can view the product in "Offered Products" page.
+                </div>
+              {% else %}
+                <div class="col-sm-12" style="padding:10px;border-radius:10px;background:yellow;">
+                  All the notifications will be displayed here.
+                </div>
+              {% endif %}
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-sm-2"></div>
+              <div class="col-sm-8">
+                <div class="row">
+                  <div class="col-sm-4">
+                    <button class="btn btn-primary" data-toggle="modal" data-target="#DeleteProfileModal">Delete Profile</button>
+                  </div>
+                  <div class="col-sm-4">
+                    <form action="/VendorHomePage" method="post" style="margin:0px;">
+                      <input type="hidden" id="vendorEmail" name="vendorEmail" class="form-control" value="{{ VendorDetails.Email }}">
+                      <button class="btn btn-primary" id="ChangePassword" name="Button" value="ChangePassword">Change Password</button>
+                    </form>
+                  </div>
+                  <div class="col-sm-4">
+                    <form action="/VendorHomePage" method="post" style="margin:0px;">
+                      <input type="hidden" id="vendorEmail" name="vendorEmail" class="form-control" value="{{ VendorDetails.Email }}">
+                      <button class="btn btn-primary" id="EditProfile" name="Button" value="EditProfile">Edit Profile</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-2"></div>
+            </div>
+            <hr>
+            {% if EditMode == "On" %}
+              <form action="/VendorHomePage" method="post" style="margin:0px;">
+                <div class="row">
+                  <div class="col-sm-3"></div>
+                  <div class="col-sm-2 form-check-inline">Pharmacy ID :</div>
+                  <div class="col-sm-4">{{ VendorDetails.PharmacyID }}</div>
+                  <div class="col-sm-3"></div>
+                </div>
+                <br>
+                <div class="row">
+                  <div class="col-sm-3"></div>
+                  <div class="col-sm-2 form-check-inline">First Name :</div>
+                  <div class="col-sm-4"><input type="text" id="FirstName_New" name="FirstName_New" class="form-control" value="{{ VendorDetails.FirstName }}" placeholder="First Name" onkeypress="return CheckName(event)"></div>
+                  <div class="col-sm-3"></div>
+                </div>
+                <br>
+                <div class="row">
+                  <div class="col-sm-3"></div>
+                  <div class="col-sm-2 form-check-inline">Last Name :</div>
+                  <div class="col-sm-4"><input type="text" id="LastName_New" name="LastName_New" class="form-control" value="{{ VendorDetails.LastName }}" placeholder="Last Name" onkeypress="return CheckName(event)"></div>
+                  <div class="col-sm-3"></div>
+                </div>
+                <br>
+                <div class="row">
+                  <div class="col-sm-3"></div>
+                  <div class="col-sm-2 form-check-inline">Email :</div>
+                  <div class="col-sm-4">
+                    <input type="hidden" id="vendorEmail" name="vendorEmail" class="form-control" value="{{ VendorDetails.Email }}">
+                    {{ VendorDetails.Email }}
+                  </div>
+                  <div class="col-sm-3"></div>
+                </div>
+                <br>
+                <div class="row">
+                  <div class="col-sm-3"></div>
+                  <div class="col-sm-2 form-check-inline">
+                    Contact :
+                  </div>
+                  <div class="col-sm-1" style="padding-right:0px;">
+                    <input type="text" id="ISD_Code" name="ISD_Code" class="form-control" value="+353" disabled>
+                  </div>
+                  <div class="col-sm-3">
+                    <input type="tel" id="Contact_New" name="Contact_New" class="form-control" placeholder="83XXXXXXX" value="{{ VendorDetails.Contact }}" onkeypress="return CheckNumber(event)" required autofocus>
+                  </div>
+                  <div class="col-sm-3"></div>
+                </div>
+                <br>
+                <div class="row">
+                  <div class="col-sm-3"></div>
+                  <div class="col-sm-2 form-check-inline">Address :</div>
+                  <div class="col-sm-4"><textarea id="Address_New" name="Address_New" class="form-control" placeholder="Address" required autofocus>{{ VendorDetails.Address }}</textarea></div>
+                  <div class="col-sm-3"></div>
+                </div>
+                <br>
+                <div class="row">
+                  <div class="col-sm-3"></div>
+                  <div class="col-sm-2 form-check-inline">Gender :</div>
+                  <div class="col-sm-4">{{ VendorDetails.Gender }}</div>
+                  <div class="col-sm-3"></div>
+                </div>
+                <br>
+                <div class="row">
+                  <div class="col-sm-3"></div>
+                  <div class="col-sm-2 form-check-inline">Date of Birth :</div>
+                  <div class="col-sm-4">{{ VendorDetails.DOB }}</div>
+                  <div class="col-sm-3"></div>
+                </div>
+                <br>
+                <div class="row">
+                  <div class="col-sm-3"></div>
+                  <div class="col-sm-2 form-check-inline">Registered As :</div>
+                  <div class="col-sm-4">{{ VendorDetails.RegisteredAs }}</div>
+                  <div class="col-sm-3"></div>
+                </div>
+                <hr>
+                <div class="row">
+                  <div class="col-sm-3"></div>
+                  <div class="col-sm-6">
+                    <input type="submit" class="btn btn-primary" id="Update" name="Button" value="Update" />
+                    <input type="reset" class="btn btn-primary" value="Reset" />
+                  </div>
+                  <div class="col-sm-3"></div>
+                </div>
+              </form>
+              <hr>
+              <div class="row">
+                <div class="col-sm-12" style="padding:0px;">
+                  Contact administrator from contact us page in case you want to make any modifications in Gender, DOB and Registered As status.
+                  <br>
+                  <br>
+                  <div style="background:yellow;padding:5px;border-radius:10px;">
+                  Please Note: It is not possible to change Email and Pharmacy ID. You can delete your existing profile and re-register from Vendor SignUp form in case you need to change Pharmacy ID, Email or any one from both for your profile.
+                  </div>
+                </div>
+              </div>
+              <hr>
+              <br>
+            {% else %}
+              <div class="row">
+                <div class="col-sm-3"></div>
+                <div class="col-sm-2">Pharmacy ID :</div>
+                <div class="col-sm-4">{{ VendorDetails.PharmacyID }}</div>
+                <div class="col-sm-3"></div>
+              </div>
+              <br>
+              <div class="row">
+                <div class="col-sm-3"></div>
+                <div class="col-sm-2">First Name :</div>
+                <div class="col-sm-4">{{ VendorDetails.FirstName }}</div>
+                <div class="col-sm-3"></div>
+              </div>
+              <br>
+              <div class="row">
+                <div class="col-sm-3"></div>
+                <div class="col-sm-2">Last Name :</div>
+                <div class="col-sm-4">{{ VendorDetails.LastName }}</div>
+                <div class="col-sm-3"></div>
+              </div>
+              <br>
+              <div class="row">
+                <div class="col-sm-3"></div>
+                <div class="col-sm-2">Email :</div>
+                <div class="col-sm-4">{{ VendorDetails.Email }}</div>
+                <div class="col-sm-3"></div>
+              </div>
+              <br>
+              <div class="row">
+                <div class="col-sm-3"></div>
+                <div class="col-sm-2">
+                  Contact :
+                </div>
+                <div class="col-sm-4">+353-{{ VendorDetails.Contact }}</div>
+                <div class="col-sm-3"></div>
+              </div>
+              <br>
+              <div class="row">
+                <div class="col-sm-3"></div>
+                <div class="col-sm-2">Address :</div>
+                <div class="col-sm-4">{{ VendorDetails.Address }}</div>
+                <div class="col-sm-3"></div>
+              </div>
+              <br>
+              <div class="row">
+                <div class="col-sm-3"></div>
+                <div class="col-sm-2">Gender :</div>
+                <div class="col-sm-4">{{ VendorDetails.Gender }}</div>
+                <div class="col-sm-3"></div>
+              </div>
+              <br>
+              <div class="row">
+                <div class="col-sm-3"></div>
+                <div class="col-sm-2">Date of Birth :</div>
+                <div class="col-sm-4">{{ VendorDetails.DOB }}</div>
+                <div class="col-sm-3"></div>
+              </div>
+              <br>
+              <div class="row">
+                <div class="col-sm-3"></div>
+                <div class="col-sm-2">Registered As :</div>
+                <div class="col-sm-4">{{ VendorDetails.RegisteredAs }}</div>
+                <div class="col-sm-3"></div>
+              </div>
+              <hr>
+              <br>
+            {% endif %}
+            <hr>
+          </center>
         </div>
       </div>
     </center>
 
-    <!-- Below is SignUp Modal -->
-    <div class="modal fade" id="SignUpModal">
+<!-- Below is DeleteProfileModal Modal -->
+    <div class="modal fade" id="DeleteProfileModal">
       <div class="modal-dialog">
         <div class="modal-content">
           <!-- Modal Header -->
           <div class="modal-header">
-            <h5 class="modal-title">Sign Up</h5>
+            <h5 class="modal-title">Delete Profile</h5>
             <button type="button" class="close" data-dismiss="modal">&times;</button>
           </div>
           <!-- Modal body -->
           <div class="modal-body">
-            <center>
-              <form method="post" action="/VendorSignIn">
-                <div class="row">
-                  <div class="col-sm-1"></div>
-                  <div class="col-sm-3 form-check-inline SignUpText">
-                    Pharmacy Id :
-                  </div>
-                  <div class="col-sm-7">
-                    <input type="tel" id="PharmacyID" name="PharmacyID" class="form-control" placeholder="Pharmacy ID" data-toggle="tooltip" title="Mentioned in confirmation email sent on vendor's registered email id." onkeypress="return CheckPharmacyID(event)" required autofocus>
-                  </div>
-                  <div class="col-sm-1"></div>
+            <form method="post" action="/VendorHomePage">
+              <div class="row">
+                <div class="col-sm-12">
+                  <input type="hidden" id="vendorEmail" name="vendorEmail" class="form-control" value="{{ VendorDetails.Email }}">
+                  Are you sure you want to proceed deleting this profile?
+                  <br>
+                  <br>
+                  <div style="padding:10px;border-radius:10px;background:red;color:white">Note: Profile once deleted cannot be restored.</div>
                 </div>
-                <br>
-                <div class="row">
-                  <div class="col-sm-1"></div>
-                  <div class="col-sm-3 form-check-inline SignUpText">
-                    First Name :
-                  </div>
-                  <div class="col-sm-7">
-                    <input type="text" id="FirstName" name="FirstName" class="form-control" placeholder="First Name" onkeypress="return CheckName(event)" required autofocus>
-                  </div>
-                  <div class="col-sm-1"></div>
-                </div>
-                <br>
-                <div class="row">
-                  <div class="col-sm-1"></div>
-                  <div class="col-sm-3 form-check-inline SignUpText">
-                    Last Name :
-                  </div>
-                  <div class="col-sm-7">
-                    <input type="text" id="LastName" name="LastName" class="form-control" placeholder="Last Name" onkeypress="return CheckName(event)" required autofocus>
-                  </div>
-                  <div class="col-sm-1"></div>
-                </div>
-                <br>
-                <div class="row">
-                  <div class="col-sm-1"></div>
-                  <div class="col-sm-3 form-check-inline SignUpText">
-                    Email Id :
-                  </div>
-                  <div class="col-sm-7">
-                    <input type="email" id="vendorEmail_SU" name="vendorEmail_SU" class="form-control" placeholder="Email Id" required autofocus>
-                  </div>
-                  <div class="col-sm-1"></div>
-                </div>
-                <br>
-                <div class="row">
-                  <div class="col-sm-1"></div>
-                  <div class="col-sm-3 form-check-inline SignUpText">
-                    Password :
-                  </div>
-                  <div class="col-sm-7">
-                    <input type="password" id="vendorPassword_SU" name="vendorPassword_SU" class="form-control" placeholder="Password" required autofocus>
-                  </div>
-                  <div class="col-sm-1"></div>
-                </div>
-                <br>
-                <div class="row">
-                  <div class="col-sm-1"></div>
-                  <div class="col-sm-3 form-check-inline SignUpText">
-                    Contact Number :
-                  </div>
-                  <div class="col-sm-2" style="padding-right:0px;">
-                    <input type="text" id="ISD_Code" name="ISD_Code" class="form-control" value="+353" disabled>
-                  </div>
-                  <div class="col-sm-5">
-                    <input type="tel" id="Contact" name="Contact" class="form-control" placeholder="83XXXXXXX" onkeypress="return CheckNumber(event)" required autofocus>
-                  </div>
-                  <div class="col-sm-1"></div>
-                </div>
-                <br>
-                <div class="row">
-                  <div class="col-sm-1"></div>
-                  <div class="col-sm-3 form-check-inline SignUpText">
-                    Address :
-                  </div>
-                  <div class="col-sm-7">
-                    <textarea id="Address" name="Address" class="form-control" placeholder="Address" required autofocus></textarea>
-                  </div>
-                  <div class="col-sm-1"></div>
-                </div>
-                <br>
-                <div class="row">
-                  <div class="col-sm-1"></div>
-                  <div class="col-sm-3 form-check-inline SignUpText">
-                    Gender :
-                  </div>
-                  <div class="col-sm-7">
-                    <div class="form-check-inline">
-                      <input type="radio" id="Gender" name="Gender" class="form-check-input" value="Male" required autofocus /> Male
-                    </div>
-                    <div class="form-check-inline">
-                      <input type="radio" id="Gender" name="Gender" class="form-check-input" value="Female" required autofocus /> Female
-                    </div>
-                  </div>
-                  <div class="col-sm-1"></div>
-                </div>
-                <br>
-                <div class="row">
-                  <div class="col-sm-1"></div>
-                  <div class="col-sm-3 form-check-inline SignUpText">
-                    Date of Birth :
-                  </div>
-                  <div class="col-sm-7">
-                    <input type="date" id="DOB" name="DOB" class="form-control" placeholder="Select your date of birth" required autofocus>
-                  </div>
-                  <div class="col-sm-1"></div>
-                </div>
-                <br>
-                <div class="row">
-                  <div class="col-sm-1"></div>
-                  <div class="col-sm-3 form-check-inline SignUpText">
-                    Register As :
-                  </div>
-                  <div class="col-sm-7">
-                    <div class="form-check-inline">
-                      <input type="radio" id="RegisteredAs" name="RegisteredAs" class="form-check-input" value="Staff" required autofocus /> Staff
-                    </div>
-                    <div class="form-check-inline">
-                      <input type="radio" id="RegisteredAs" name="RegisteredAs" class="form-check-input" value="Pharmacist" required autofocus /> Pharmacist
-                    </div>
-                  </div>
-                  <div class="col-sm-1"></div>
-                </div>
-                <br>
-                <div class="row">
-                  <div class="col-sm-1"></div>
-                  <div class="col-sm-10">
-                    <button class="btn btn-primary" id="SignUpButton" name="Button" value="SignUpButton">Sign Up</button>
-                    <input type="reset" class="btn btn-primary" value="Reset"/>
-                  </div>
-                  <div class="col-sm-1"></div>
-                </div>
-              </form>
-            </center>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Below is ForgotPassword Modal -->
-    <div class="modal fade" id="ForgotPasswordModal">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <!-- Modal Header -->
-          <div class="modal-header">
-            <h5 class="modal-title">Forgot Password?</h5>
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
-          </div>
-          <!-- Modal body -->
-          <div class="modal-body">
-            <form method="post" action="/VendorSignIn">
+              </div>
+              <br>
               <div class="row">
                 <div class="col-sm-1"></div>
                 <div class="col-sm-10">
-                  <div class="row">
-                    <div class="col-sm-1"></div>
-                    <div class="col-sm-10 form-check-inline">
-                      <center>An email with password reset link will be sent on your registered email id.</center>
-                    </div>
-                    <div class="col-sm-1"></div>
-                  </div>
-                  <br>
-                  <div class="row">
-                    <div class="col-sm-3 form-check-inline">
-                      Email Id :
-                    </div>
-                    <div class="col-sm-8">
-                      <input type="email" id="vendorEmail_FP" name="vendorEmail_FP" class="form-control" placeholder="Email Id" required autofocus>
-                    </div>
-                    <div class="col-sm-1"></div>
-                  </div>
-                  <br>
-                  <div class="row">
-                    <div class="col-sm-1"></div>
-                    <div class="col-sm-10">
-                      <center>
-                        <button class="btn btn-primary" id="ForgotPasswordButton" name="Button" value="ForgotPasswordButton">Proceed</button>
-                        <input type="reset" class="btn btn-primary" value="Reset"/>
-                      </center>
-                    </div>
-                    <div class="col-sm-1"></div>
-                  </div>
+                  <center>
+                    <button class="btn btn-primary" id="DeleteProfile" name="Button" value="DeleteProfile">Yes</button>
+                    <button class="btn btn-primary" data-dismiss="modal">No</button>
+                  </center>
                 </div>
                 <div class="col-sm-1"></div>
               </div>
             </form>
-          </div>
-          <!-- Modal footer -->
-          <div class="modal-footer">
-            <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
           </div>
         </div>
       </div>

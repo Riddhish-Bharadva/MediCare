@@ -33,12 +33,14 @@ class VendorSignIn(webapp2.RequestHandler):
             vendorPassword = self.request.get('vendorPassword')
             DBConnect = ndb.Key('VendorsDB',vendorEmail).get()
             if(DBConnect != None):
-                if(DBConnect.Password == vendorPassword):
+                if(DBConnect.Password == vendorPassword and DBConnect.IsActive == 1):
                     self.redirect('/VendorHomePage?vendorEmail='+vendorEmail)
-                else:
+                elif(DBConnect.Password != vendorPassword and DBConnect.IsActive == 1):
                     self.redirect('/VendorSignIn?notification=PasswordMissmatch')
+                elif(DBConnect.Password == vendorPassword and DBConnect.IsActive == 0):
+                    self.redirect('/VendorSignIn?notification=VendorInActive')
             else:
-                self.redirect('/VendorSignIn?notification=EmailIdNotRegisteredOrInActive')
+                self.redirect('/VendorSignIn?notification=EmailIdNotRegistered')
 
         elif(ButtonName == "SignUpButton"):
             PharmacyID = self.request.get('PharmacyID')

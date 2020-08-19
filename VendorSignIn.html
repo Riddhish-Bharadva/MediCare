@@ -144,11 +144,13 @@
           <div class="row">
             <div class="col-sm-12">
               {% if notification == "EmailAlreadyRegistered" %}
-                <div style="background:red;color:white;padding:5px;border-radius:10px;font-size:12px;">Email id is already registered.</div>
+                <div style="background:red;color:white;padding:5px;border-radius:10px;font-size:12px;">Email Id is already registered.</div>
               {% elif notification == "PasswordMissmatch" %}
                 <div style="background:red;color:white;padding:5px;border-radius:10px;font-size:12px;">Please enter valid password and try again.</div>
-              {% elif notification == "EmailIdNotRegisteredOrInActive" %}
-                <div style="background:red;color:white;padding:5px;border-radius:10px;font-size:12px;">Email Id entered is either not registered or is marked InActive by administrator. Please contact administrator of MediCare from contact us page for further information.</div>
+              {% elif notification == "EmailIdNotRegistered" %}
+                <div style="background:red;color:white;padding:5px;border-radius:10px;font-size:12px;">Email Id entered is not registered yet.</div>
+              {% elif notification == "VendorInActive" %}
+                <div style="background:red;color:white;padding:5px;border-radius:10px;font-size:12px;">Email Id entered is not registered yet. Please contact administrator of MediCare from contact us page to reactivate your account.</div>
               {% elif notification == "PasswordResetLinkSent" %}
                 <div style="background:green;color:white;padding:5px;border-radius:10px;font-size:12px;">Link to reset your account password is sent to the registered email Id.</div>
               {% elif notification == "VendorSuccessfullyRegistered" %}
@@ -163,8 +165,8 @@
                 <div style="background:red;color:white;padding:5px;border-radius:10px;font-size:12px;">Vendor's email id is not yet verified.</div>
               {% elif notification == "InvalidPharmacyID" %}
                 <div style="background:red;color:white;padding:5px;border-radius:10px;font-size:12px;">Pharmacy Id entered is either not registered or is invalid.</div>
-              {% elif notification == "EmailRegisteredAsMissmatch" %}
-                <div style="background:red;color:white;padding:5px;border-radius:10px;font-size:12px;">Email Id entered is not registered for selected registered type.</div>
+              {% elif notification == "VendorProfileDeleted" %}
+                <div style="background:red;color:white;padding:5px;border-radius:10px;font-size:12px;">Vendor profile has been successfully deleted.</div>
               {% endif %}
             </div>
           </div>
