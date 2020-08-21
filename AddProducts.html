@@ -24,14 +24,14 @@
     <center>
       <div style="max-width:80%;">
         <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
-          <a class="navbar-brand" href="/VendorHomePage?vendorEmail={{ vendorEmail }}">MediCare</a>
+          <a class="navbar-brand" href="/VendorHomePage?vendorEmail={{ VendorDetails.Email }}">MediCare</a>
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
             <span class="navbar-toggler-icon"></span>
           </button>
           <div class="collapse navbar-collapse" id="collapsibleNavbar">
             <ul class="navbar-nav">
               <li class="nav-item">
-                <a class="nav-link" href="/VendorHomePage?vendorEmail={{ vendorEmail }}">Home</a>
+                <a class="nav-link" href="/VendorHomePage?vendorEmail={{ VendorDetails.Email }}">Home</a>
               </li>
               {% if VendorDetails.EmailVerified == 1 %}
                 <li class="nav-item">
@@ -59,13 +59,13 @@
         <div class="container">
           <hr>
           <div class="row">
-            {% if notification == "" %}
-              <div class="col-sm-12" style="padding:10px;background:yellow;">
-                Notifications will be displayed here.
-              </div>
-            {% elif notification == "ProductAlreadyRegistered" %}
+            {% if notification == "ProductAlreadyRegistered" %}
               <div class="col-sm-12" style="padding:10px;background:red;color:white;">
                 Oops! Seems like you are trying to register a product that is already registered in our database. You can select from listed products to add in your Pharmacy's quantity and price.
+              </div>
+            {% else %}
+              <div class="col-sm-12" style="padding:10px;background:yellow;">
+                Notifications will be displayed here.
               </div>
             {% endif %}
           </div>
@@ -85,7 +85,7 @@
               <div class="col-sm-5">
                 <input type="text" id="ProductName" name="ProductName" class="form-control" placeholder="Product Name" required autofocus>
                 <input type="hidden" id="Option" name="Option" class="form-control" value="1">
-                <input type="hidden" id="vendorEmail" name="vendorEmail" class="form-control" value="{{ vendorEmail }}">
+                <input type="hidden" id="vendorEmail" name="vendorEmail" class="form-control" value="{{ VendorDetails.Email }}">
               </div>
               <div class="col-sm-2"></div>
             </div>
@@ -169,10 +169,10 @@
             <div class="row">
               <div class="col-sm-2"></div>
               <div class="col-sm-3 form-check-inline">
-                Sub Category (Optional) :
+                Sub Category :
               </div>
               <div class="col-sm-5">
-                <input type="text" id="SubCategory" name="SubCategory" class="form-control" placeholder="SubCategory" autofocus>
+                <input type="text" id="SubCategory" name="SubCategory" class="form-control" placeholder="SubCategory" required autofocus>
               </div>
               <div class="col-sm-2"></div>
             </div>
@@ -203,7 +203,7 @@
                 Quantity :
               </div>
               <div class="col-sm-5">
-                <input type="number" id="Quantity" name="Quantity" class="form-control" placeholder="Quantity" min="1" max="1000" required autofocus>
+                <input type="number" id="Quantity" name="Quantity" class="form-control" placeholder="Quantity" min="1" required autofocus>
               </div>
               <div class="col-sm-2"></div>
             </div>
@@ -250,78 +250,71 @@
             <form action="/AddProducts" method="get">
               <div class="row">
                 <div class="col-sm-4">
-                  <input type="hidden" id="vendorEmail" name="vendorEmail" class="form-control" value="{{ vendorEmail }}">
+                  <input type="hidden" id="vendorEmail" name="vendorEmail" class="form-control" value="{{ VendorDetails.Email }}">
                   <input type="hidden" id="Query" name="Query" class="form-control" value="True">
                 </div>
                 <div class="col-sm-4">
-                  <input type='text' class='form-control' name='SearchBar' id='SearchBar' placeholder='Search by product name'>
+                  <input type='text' class='form-control' name='SearchBar' id='SearchBar' placeholder='Search for product here'>
                 </div>
                 <div class="col-sm-4">
                   <input type='submit' class="btn btn-primary" name='Button' id='SearchButton' value='Search' />
-                  <a class="btn btn-primary" href="/AddProducts?vendorEmail={{ vendorEmail }}" style="color:white;">Reset Search</a>
+                  <a class="btn btn-primary" href="/AddProducts?vendorEmail={{ VendorDetails.Email }}" style="color:white;">Reset Search</a>
                 </div>
               </div>
             </form>
             <div class="row" style="padding:10px;background:yellow;">
-              <div class="col-sm-4">
-                Product Name
-              </div>
-              <div class="col-sm-8">
-                Action
+              <div class="col-sm-12">
+                Click on product to register for your pharmacy.
               </div>
             </div>
             <br>
             {% if QueryProducts == [] %}
               {% for i in ProductsData %}
-                <form action="/AddProducts" method="post">
-                  <input type="hidden" id="Option" name="Option" class="form-control" value="2">
-                  <input type="hidden" id="vendorEmail" name="vendorEmail" class="form-control" value="{{ vendorEmail }}">
+                <form action="/VendorProductDetails" method="post">
+                  <input type="hidden" id="vendorEmail" name="vendorEmail" class="form-control" value="{{ VendorDetails.Email }}">
+                  <input type="hidden" id="Mode" name="Mode" class="form-control" value="Add">
                   <div class="row">
-                    <div class="col-sm-1"></div>
-                    <div class="col-sm-3" style="line-height:30px;">
-                      <input type="hidden" id="ProductID" name="ProductID" class="form-control" value="{{ i.ProductID }}">
-                      <a href="/ProductDetails?ProductID={{ i.ProductID }}&SignInAs=Vendor&vendorEmail={{ vendorEmail }}" style="color:black;">
-                        {{ i.ProductName }}
-                      </a>
+                    <div class="col-sm-3"></div>
+                    <div class="col-sm-6">
+                      <button class="btn">
+                        <input type="hidden" id="ProductID" name="ProductID" class="form-control" value="{{ i.ProductID }}">
+                        <div class="row">
+                          <div class="col-sm-4">
+                            <img src="{{ i.Images[0] }}" class="rounded" alt="Unable to display image." style="max-width:100px;" />
+                          </div>
+                          <div class="col-sm-8">
+                            <div style="padding:15px;">Product Name : {{ i.ProductName }}</div>
+                          </div>
+                        </div>
+                      </button>
+                      <hr>
                     </div>
-                    <div class="col-sm-2">
-                      <input type="number" id="Quantity" name="Quantity" class="form-control" placeholder="Quantity" min="1" max="1000" required autofocus>
-                    </div>
-                    <div class="col-sm-2">
-                      <input type="number" id="Price" name="Price" class="form-control" placeholder="Price" min="0.01" step="0.01" required autofocus>
-                    </div>
-                    <div class="col-sm-3">
-                      <button class="btn btn-primary" id="AddProduct" name="AddProduct" value="{{ i.ProductID }}">Add Product</button>
-                      <input type="reset" class="btn btn-primary" value="Reset"/>
-                    </div>
-                    <div class="col-sm-1"></div>
+                    <div class="col-sm-3"></div>
                   </div>
                 </form>
               {% endfor %}
             {% else %}
               {% for i in QueryProducts %}
-                <form action="/AddProducts" method="post">
-                  <input type="hidden" id="Option" name="Option" class="form-control" value="2">
-                  <input type="hidden" id="vendorEmail" name="vendorEmail" class="form-control" value="{{ vendorEmail }}">
+                <form action="/VendorProductDetails" method="post">
+                  <input type="hidden" id="vendorEmail" name="vendorEmail" class="form-control" value="{{ VendorDetails.Email }}">
+                  <input type="hidden" id="Mode" name="Mode" class="form-control" value="Add">
                   <div class="row">
-                    <div class="col-sm-1"></div>
-                    <div class="col-sm-3 form-check-inline">
-                      <input type="hidden" id="ProductID" name="ProductID" class="form-control" value="{{ i.ProductID }}">
-                      <a href="/ProductDetails?ProductID={{ i.ProductID }}&SignInAs=Vendor&vendorEmail={{ vendorEmail }}" style="color:black;">
-                        {{ i.ProductName }}
-                      </a>
+                    <div class="col-sm-3"></div>
+                    <div class="col-sm-6">
+                      <button class="btn" data-toggle="modal" data-target="#ProductModal">
+                        <input type="hidden" id="ProductID" name="ProductID" class="form-control" value="{{ i.ProductID }}">
+                        <div class="row">
+                          <div class="col-sm-4">
+                            <img src="{{ i.Images[0] }}" class="rounded" alt="Unable to display image." style="max-width:100px;" />
+                          </div>
+                          <div class="col-sm-8">
+                            <div style="padding:15px;">Product Name : {{ i.ProductName }}</div>
+                          </div>
+                        </div>
+                      </button>
+                      <hr>
                     </div>
-                    <div class="col-sm-2">
-                      <input type="number" id="Quantity" name="Quantity" class="form-control" placeholder="Quantity" min="1" max="1000" required autofocus>
-                    </div>
-                    <div class="col-sm-2">
-                      <input type="number" id="Price" name="Price" class="form-control" placeholder="Price" min="0.01" step="0.01" required autofocus>
-                    </div>
-                    <div class="col-sm-3">
-                      <button class="btn btn-primary" id="AddProduct" name="AddProduct" value="{{ i.ProductID }}">Add Product</button>
-                      <input type="reset" class="btn btn-primary" value="Reset"/>
-                    </div>
-                    <div class="col-sm-1"></div>
+                    <div class="col-sm-3"></div>
                   </div>
                 </form>
               {% endfor %}

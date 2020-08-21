@@ -87,9 +87,21 @@
                 <div class="col-sm-12" style="padding:10px;border-radius:10px;background:red;color:white;">
                   Invalid email address passed in URL.
                 </div>
+              {% elif notification == "ProductAlreadyRegistered" %}
+                <div class="col-sm-12" style="padding:10px;border-radius:10px;background:red;color:white;">
+                  Oops! Seems like you are trying to register a product that is already registered in our database. You can select from listed products to add in your Pharmacy's quantity and price.
+                </div>
               {% elif notification == "ProductRegisteredSuccessfully" %}
                 <div class="col-sm-12" style="padding:10px;border-radius:10px;background:green;color:white;">
                   Product has been successfully registered with appropriate details. You can view the product in "Offered Products" page.
+                </div>
+              {% elif notification == "ProductDeletedSuccessfully" %}
+                <div class="col-sm-12" style="padding:10px;border-radius:10px;background:green;color:white;">
+                  Product has been successfully deleted from your vendor's account. You can still view the product in "Add Products" page if it is still registerd and in stock with some other vendor.
+                </div>
+              {% elif notification == "ProductUpdatedSuccessfully" %}
+                <div class="col-sm-12" style="padding:10px;border-radius:10px;background:green;color:white;">
+                  Product has been successfully updated for your vendor's account.
                 </div>
               {% else %}
                 <div class="col-sm-12" style="padding:10px;border-radius:10px;background:yellow;">
@@ -114,6 +126,7 @@
                   <div class="col-sm-4">
                     <form action="/VendorHomePage" method="post" style="margin:0px;">
                       <input type="hidden" id="vendorEmail" name="vendorEmail" class="form-control" value="{{ VendorDetails.Email }}">
+                      <input type="hidden" id="EditMode" name="EditMode" class="form-control" value="{{ EditMode }}">
                       <button class="btn btn-primary" id="EditProfile" name="Button" value="EditProfile">Edit Profile</button>
                     </form>
                   </div>
@@ -217,8 +230,6 @@
                   </div>
                 </div>
               </div>
-              <hr>
-              <br>
             {% else %}
               <div class="row">
                 <div class="col-sm-3"></div>
@@ -285,7 +296,6 @@
                 <div class="col-sm-3"></div>
               </div>
               <hr>
-              <br>
             {% endif %}
             <hr>
           </center>

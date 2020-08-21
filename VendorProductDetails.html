@@ -1,0 +1,273 @@
+<html>
+  <head>
+    <title>MediCare</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src='https://kit.fontawesome.com/a076d05399.js'></script>
+  </head>
+  <style>
+    .container
+    {
+       background:rgba(255, 255, 255, 0.7);
+       border-radius:10px !important;
+    }
+    .navbar
+    {
+      margin-top:5px;
+      border-radius: 10px;
+    }
+    .carousel-inner img
+    {
+      width: 50%;
+      height: 60%;
+      border-radius:10px;
+    }
+  </style>
+  <body style="background:url('https://www.longprairiepharmacy.com/wp-content/themes/longprairie/images/slider/9.jpg');">
+    <center>
+      <div style="max-width:80%;">
+        <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+          <a class="navbar-brand" href="/VendorHomePage?vendorEmail={{ VendorDetails.Email }}">MediCare</a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="collapsibleNavbar">
+            <ul class="navbar-nav">
+              <li class="nav-item">
+                <a class="nav-link" href="/VendorHomePage?vendorEmail={{ VendorDetails.Email }}">Home</a>
+              </li>
+              {% if VendorDetails.EmailVerified == 1 %}
+                <li class="nav-item">
+                  <a class="nav-link" href="/VendorOrders?vendorEmail={{ VendorDetails.Email }}">Orders</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="/AddProducts?vendorEmail={{ VendorDetails.Email }}">Add Products</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="/OfferedProducts?vendorEmail={{ VendorDetails.Email }}">Offered Products</a>
+                </li>
+              {% elif VendorDetails.EmailVerified == 0 %}
+                <li class="nav-item">
+                  <a class="nav-link" href="">Restricted use as email is not yet verified.</a>
+                </li>
+              {% endif %}
+            </ul>
+            <ul class="navbar-nav ml-auto">
+              <li class="nav-item">
+                <a class="nav-link float-right" href="/VendorSignIn"><span class="fas fa-sign-out-alt"></span>&nbsp;Sign Out</a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+        <div class="container">
+          <hr>
+          <div class="row btn-primary" style="padding:10px;">
+            <div class="col-sm-12">
+              {% if Mode == "Add" %}
+                Add a new product by filling in vendor stock quantity and vendor price.
+              {% elif Mode == "Edit" %}
+                Edit existing product by changing details below.
+              {% else %}
+                Showing selected product in more detail.
+              {% endif %}
+            </div>
+          </div>
+          <hr>
+          {% if ProductDetails != [] %}
+          <div id="ImageSlider" class="carousel slide" data-ride="carousel">
+            <!-- The slideshow -->
+            <div class="carousel-inner">
+              <div class="carousel-item active">
+                <img src="{{ ProductDetails.Images[0] }}" alt="Unable to display Image" />
+              </div>
+              {% for i in range(1,ImageCount) %}
+                <div class="carousel-item">
+                  <img src="{{ ProductDetails.Images[i] }}" alt="Unable to display Image" />
+                </div>
+              {% endfor %}
+            </div>
+            <!-- Left and right controls -->
+            <a class="carousel-control-prev" href="#ImageSlider" data-slide="prev">
+              <span class="carousel-control-prev-icon"></span>
+            </a>
+            <a class="carousel-control-next" href="#ImageSlider" data-slide="next">
+              <span class="carousel-control-next-icon"></span>
+            </a>
+          </div>
+          {% endif %}
+          <hr>
+          <br>
+          <form action="{{ ModeURL }}" method="post">
+            {% if Mode == "Add" %}
+              <input type="hidden" id="Option" name="Option" class="form-control" value="{{ Option }}">
+            {% endif %}
+            <input type="hidden" id="vendorEmail" name="vendorEmail" class="form-control" value="{{ VendorDetails.Email }}">
+            <input type="hidden" id="ProductID" name="ProductID" class="form-control" value="{{ ProductDetails.ProductID }}">
+            <div class="row">
+              <div class="col-sm-2"></div>
+              <div class="col-sm-3 form-check-inline">
+                Product Name :
+              </div>
+              <div class="col-sm-5">
+                {% if Mode == "Edit" %}
+                  <input type="text" id="ProductName" name="ProductName" class="form-control" placeholder="Product Name" value="{{ ProductDetails.ProductName }}" required>
+                {% else %}
+                  {{ ProductDetails.ProductName }}
+                {% endif %}
+              </div>
+              <div class="col-sm-2"></div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-2"></div>
+              <div class="col-sm-3 form-check-inline">
+                Description :
+              </div>
+              <div class="col-sm-5">
+                {% if Mode == "Edit" %}
+                  <textarea id="Description" name="Description" class="form-control" placeholder="Enter description of product." required>{{ ProductDetails.Description }}</textarea>
+                {% else %}
+                  {{ ProductDetails.Description }}
+                {% endif %}
+              </div>
+              <div class="col-sm-2"></div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-2"></div>
+              <div class="col-sm-3 form-check-inline">
+                Ingredients (Optional) :
+              </div>
+              <div class="col-sm-5">
+                {% if Mode == "Edit" %}
+                  <textarea id="Ingredients" name="Ingredients" class="form-control" placeholder="Enter ingredients of product.">{{ ProductDetails.Ingredients }}</textarea>
+                {% else %}
+                  {{ ProductDetails.Ingredients }}
+                {% endif %}
+              </div>
+              <div class="col-sm-2"></div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-2"></div>
+              <div class="col-sm-3 form-check-inline">
+                Dosage (Optional) :
+              </div>
+              <div class="col-sm-5">
+                {% if Mode == "Edit" %}
+                  <input type="text" id="Dosage" name="Dosage" class="form-control" placeholder="Enter product dose" value="{{ ProductDetails.Dosage }}">
+                {% else %}
+                  {{ ProductDetails.Dosage }}
+                {% endif %}
+              </div>
+              <div class="col-sm-2"></div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-2"></div>
+              <div class="col-sm-3 form-check-inline">
+                Product Life (If applicable) :
+              </div>
+              <div class="col-sm-5">
+                {% if Mode == "Edit" %}
+                  <input type="text" id="ProductLife" name="ProductLife" class="form-control" placeholder="Enter product life" value="{{ ProductDetails.ProductLife }}">
+                {% else %}
+                  {{ ProductDetails.ProductLife }}
+                {% endif %}
+              </div>
+              <div class="col-sm-2"></div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-2"></div>
+              <div class="col-sm-3 form-check-inline">
+                Category :
+              </div>
+              <div class="col-sm-5">
+                {% if Mode == "Edit" %}
+                  <input type="text" id="Category" name="Category" class="form-control" placeholder="Category" value="{{ ProductDetails.Category }}" required>
+                {% else %}
+                  {{ ProductDetails.Category }}
+                {% endif %}
+              </div>
+              <div class="col-sm-2"></div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-2"></div>
+              <div class="col-sm-3 form-check-inline">
+                Sub Category (Optional) :
+              </div>
+              <div class="col-sm-5">
+                {% if Mode == "Edit" %}
+                  <input type="text" id="SubCategory" name="SubCategory" class="form-control" placeholder="SubCategory" value="{{ ProductDetails.SubCategory }}" required>
+                {% else %}
+                  {{ ProductDetails.SubCategory }}
+                {% endif %}
+              </div>
+              <div class="col-sm-2"></div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-2"></div>
+              <div class="col-sm-3 form-check-inline">
+                Quantity :
+              </div>
+              <div class="col-sm-5">
+                {% if Mode == "Edit" %}
+                  <input type="number" id="Quantity" name="Quantity" class="form-control" placeholder="Quantity" min="1" value="{{ VendorProductDetails.Quantity }}" required>
+                {% elif Mode == "Add" %}
+                  <input type="number" id="Quantity" name="Quantity" class="form-control" placeholder="Quantity" min="1" required>
+                {% else %}
+                  {{ VendorProductDetails.Quantity }}
+                {% endif %}
+              </div>
+              <div class="col-sm-2"></div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-2"></div>
+              <div class="col-sm-3 form-check-inline">
+                Price :
+              </div>
+              <div class="col-sm-5">
+                {% if Mode == "Edit" %}
+                  <input type="number" id="Price" name="Price" class="form-control" placeholder="Price" min="0.01" step="0.01" value="{{ VendorProductDetails.Price }}" required>
+                {% elif Mode == "Add" %}
+                  <input type="number" id="Price" name="Price" class="form-control" placeholder="Price" min="0.01" step="0.01" required>
+                {% else %}
+                  {{ VendorProductDetails.Price }} Euro
+                {% endif %}
+              </div>
+              <div class="col-sm-2"></div>
+            </div>
+            {% if Mode == "Edit" or Mode == "Add" %}
+            <hr>
+            {% endif %}
+            <div class="row">
+              <div class="col-sm-1"></div>
+              <div class="col-sm-10">
+                {% if Mode == "Add" %}
+                  <button class="btn btn-primary" id="AddProduct" name="Button" value="AddProduct">Add Product</button>
+                  <input type="reset" class="btn btn-primary" value="Reset"/>
+                {% elif Mode == "Edit" %}
+                  <button class="btn btn-primary" id="UpdateProduct" name="Button" value="UpdateProduct">Update Product</button>
+                  <input type="reset" class="btn btn-primary" value="Reset"/>
+                {% endif %}
+              </div>
+              <div class="col-sm-1"></div>
+            </div>
+            <hr>
+          </form>
+          <hr>
+        </div>
+      </div>
+    </center>
+
+  </body>
+</html>

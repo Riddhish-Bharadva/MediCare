@@ -12,3 +12,4 @@ class ProductsDB(ndb.Model):
     Quantity = ndb.IntegerProperty()
     Price = ndb.FloatProperty()
     Images = ndb.StringProperty(repeated = True)
+    StockedIn = ndb.StringProperty(repeated = True)

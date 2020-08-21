@@ -18,45 +18,52 @@ class AddProducts(blobstore_handlers.BlobstoreUploadHandler):
 
         vendorEmail = self.request.get('vendorEmail')
         Query = self.request.get('Query')
+        notification = self.request.get('notification')
         Category = []
         CategoryCount = 0
         SubCategory = []
         SubCategoryCount = 0
         ImageUploadURL = "/AddProducts?vendorEmail="+vendorEmail
-        notification = ""
         QueryProducts = []
         ProductsData = None
 
-        VendorDetails = ndb.Key("VendorsDB",vendorEmail).get()
-        if(VendorDetails == None):
-            self.redirect('/VendorSignIn')
+        if(vendorEmail != None):
+            VendorDetails = ndb.Key("VendorsDB",vendorEmail).get()
+            if(VendorDetails == None):
+                self.redirect('/VendorSignIn')
+            else:
+                if(Query == "True"):
+                    QueryProductName = self.request.get('SearchBar')
+                    AllProducts = ProductsDB.query().fetch()
+                    if(AllProducts != None):
+                        for i in range(0,len(AllProducts)):
+                            ProdName = AllProducts[i].ProductName.lower()
+                            ProdDescription = AllProducts[i].Description.lower()
+                            ProdIngredients = AllProducts[i].Ingredients.lower()
+                            if(ProdName.find(QueryProductName.lower()) != -1):
+                                QueryProducts.append(AllProducts[i])
+                            elif(ProdDescription.find(QueryProductName.lower()) != -1):
+                                QueryProducts.append(AllProducts[i])
+                            elif(ProdIngredients.find(QueryProductName.lower()) != -1):
+                                QueryProducts.append(AllProducts[i])
+                else:
+                    ImageUploadURL = blobstore.create_upload_url("/AddProducts")
+
+                ProductsData = ProductsDB.query().fetch()
+                if(ProductsData == []):
+                    ProductsData = None
+                else:
+                    for i in range(0,len(ProductsData)):
+                        if(ProductsData[i].Category not in Category):
+                            Category.append(ProductsData[i].Category)
+                            CategoryCount = CategoryCount + 1
+                        if(ProductsData[i].SubCategory not in SubCategory):
+                            SubCategory.append(ProductsData[i].SubCategory)
+                            SubCategoryCount = SubCategoryCount + 1
         else:
-            if(Query == "True"):
-                QueryProductName = self.request.get('SearchBar')
-                AllProducts = ProductsDB.query().fetch()
-                if(AllProducts != None):
-                    for i in range(0,len(AllProducts)):
-                        if(AllProducts[i].ProductName.find(QueryProductName) != -1):
-                            QueryProducts.append(AllProducts[i])
-            else:
-                ImageUploadURL = blobstore.create_upload_url("/AddProducts")
-
-            ProductsData = ProductsDB.query().fetch()
-            if(ProductsData == []):
-                ProductsData = None
-            else:
-                for i in range(0,len(ProductsData)):
-                    if(ProductsData[i].Category not in Category):
-                        Category.append(ProductsData[i].Category)
-                        CategoryCount = CategoryCount + 1
-                    if(ProductsData[i].SubCategory not in SubCategory):
-                        SubCategory.append(ProductsData[i].SubCategory)
-                        SubCategoryCount = SubCategoryCount + 1
-
-        notification = self.request.get('notification')
+            self.redirect('/VendorSignIn')
 
         template_values = {
-            'vendorEmail' : vendorEmail,
             'VendorDetails' : VendorDetails,
             'Category' : Category,
             'CategoryCount' : CategoryCount,
@@ -119,9 +126,11 @@ class AddProducts(blobstore_handlers.BlobstoreUploadHandler):
                     ProductsDBConnect.Price = float(Price)
                     for i in Images:
                         ProductsDBConnect.Images.append(get_serving_url(i.key()))
+                    ProductsDBConnect.StockedIn.append(VendorDetails.PharmacyID)
+
                     VendorProductsDBConnect = VendorProductsDB(id=VendorDetails.PharmacyID+ProductID)
                     VendorProductsDBConnect.PharmacyID = VendorDetails.PharmacyID
-                    VendorProductsDBConnect.ProductName = ProductName
+                    VendorProductsDBConnect.ProductID = ProductID
                     VendorProductsDBConnect.Quantity = int(Quantity)
                     VendorProductsDBConnect.Price = float(Price)
                     VendorProductsDBConnect.AddedOn = AddedOn
@@ -141,19 +150,20 @@ class AddProducts(blobstore_handlers.BlobstoreUploadHandler):
                 LastModifiedOn = datetime.now().strftime("%d/%m/%Y at %H:%M:%S")
 
                 ProductsDBConnect = ndb.Key("ProductsDB",ProductID).get()
-                VendorCount = VendorProductsDB.query(VendorProductsDB.ProductName == ProductsDBConnect.ProductName).fetch()
                 ProductsDBConnect.Quantity = ProductsDBConnect.Quantity + int(Quantity)
-                if(len(VendorCount) == 1 and VendorDetails.PharmacyID == VendorCount[0].PharmacyID):
+                if(len(ProductsDBConnect.StockedIn) == 1 and VendorDetails.PharmacyID == ProductsDBConnect.StockedIn[0]):
                     ProductsDBConnect.Price = float(Price)
                 else:
                     if(ProductsDBConnect.Price > float(Price)):
                         ProductsDBConnect.Price = float(Price)
+                if(VendorDetails.PharmacyID not in ProductsDBConnect.StockedIn):
+                    ProductsDBConnect.StockedIn.append(VendorDetails.PharmacyID)
 
                 VendorProductsDBConnect = ndb.Key("VendorProductsDB",VendorDetails.PharmacyID+ProductID).get()
                 if(VendorProductsDBConnect == None):
                     VendorProductsDBConnect = VendorProductsDB(id=VendorDetails.PharmacyID+ProductID)
                     VendorProductsDBConnect.PharmacyID = VendorDetails.PharmacyID
-                    VendorProductsDBConnect.ProductName = ProductsDBConnect.ProductName
+                    VendorProductsDBConnect.ProductID = ProductID
                     VendorProductsDBConnect.Quantity = int(Quantity)
                     VendorProductsDBConnect.Price = float(Price)
                     VendorProductsDBConnect.AddedOn = LastModifiedOn

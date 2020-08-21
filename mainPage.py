@@ -13,6 +13,8 @@ from UserSignIn import UserSignIn
 from VendorSignIn import VendorSignIn
 from VendorHomePage import VendorHomePage
 from AddProducts import AddProducts
+from VendorProductDetails import VendorProductDetails
+from OfferedProducts import OfferedProducts
 from VerifyEmail import VerifyEmail
 from ResetPassword import ResetPassword
 
@@ -63,6 +65,8 @@ app = webapp2.WSGIApplication([
     ('/VendorSignIn',VendorSignIn),
     ('/VendorHomePage',VendorHomePage),
     ('/AddProducts',AddProducts),
+    ('/VendorProductDetails',VendorProductDetails),
+    ('/OfferedProducts',OfferedProducts),
     ('/VerifyEmail',VerifyEmail),
     ('/AdminPanel',AdminPanel),
     ('/API_MediCare',API_MediCare),

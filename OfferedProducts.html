@@ -1,0 +1,185 @@
+<html>
+  <head>
+    <title>MediCare</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src='https://kit.fontawesome.com/a076d05399.js'></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+  </head>
+  <style>
+    .container
+    {
+       background:rgba(255, 255, 255, 1.0);
+       border-radius:10px !important;
+    }
+    .navbar
+    {
+      margin-top:5px;
+      border-radius: 10px;
+    }
+  </style>
+  <body style="background:url('https://www.longprairiepharmacy.com/wp-content/themes/longprairie/images/slider/9.jpg');">
+    <center>
+      <div style="max-width:80%;">
+        <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+          <a class="navbar-brand" href="/VendorHomePage?vendorEmail={{ VendorDetails.Email }}">MediCare</a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="collapsibleNavbar">
+            <ul class="navbar-nav">
+              <li class="nav-item">
+                <a class="nav-link" href="/VendorHomePage?vendorEmail={{ VendorDetails.Email }}">Home</a>
+              </li>
+              {% if VendorDetails.EmailVerified == 1 %}
+                <li class="nav-item">
+                  <a class="nav-link" href="/VendorOrders?vendorEmail={{ VendorDetails.Email }}">Orders</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="/AddProducts?vendorEmail={{ VendorDetails.Email }}">Add Products</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="/OfferedProducts?vendorEmail={{ VendorDetails.Email }}">Offered Products</a>
+                </li>
+              {% elif VendorDetails.EmailVerified == 0 %}
+                <li class="nav-item">
+                  <a class="nav-link" href="">Restricted use as email is not yet verified.</a>
+                </li>
+              {% endif %}
+            </ul>
+            <ul class="navbar-nav ml-auto">
+              <li class="nav-item">
+                <a class="nav-link float-right" href="/VendorSignIn"><span class="fas fa-sign-out-alt"></span>&nbsp;Sign Out</a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+        <div class="container">
+          <hr>
+          <form action="/OfferedProducts" method="post">
+            <div class="row" style="padding:0px;margin:0px;">
+              <div class="col-sm-5" style="padding:0px;margin:0px;">
+                <input type="hidden" id="vendorEmail" name="vendorEmail" class="form-control" value="{{ VendorDetails.Email }}">
+              </div>
+              <div class="col-sm-3" style="padding:0px;margin:0px;">
+                <input type='text' class='form-control' name='SearchBar' id='SearchBar' placeholder='Search for product here' required>
+              </div>
+              <div class="col-sm-3" style="padding:0px;margin:0px;">
+                <input type='submit' class="btn btn-primary" name='Button' id='SearchButton' value='Search' />
+                <a class="btn btn-primary" href="/OfferedProducts?vendorEmail={{ VendorDetails.Email }}" style="color:white;">Reset Search</a>
+              </div>
+              <div class="col-sm-3" style="padding:0px;margin:0px;"></div>
+            </div>
+          </form>
+          <hr>
+          {% if VendorProducts != [] %}
+            <div class="row">
+              <div class="col-sm-12 btn-primary" style="padding:10px;border-radius:10px;">
+                Click on product names to view details of the same.
+              </div>
+            </div>
+            <hr>
+            {% for i in VendorProducts %}
+              <div class="row">
+                <div class="col-sm-1"></div>
+                <div class="col-sm-4">
+                  {% for j in ProductDetails %}
+                    {% if j.ProductID == i.ProductID %}
+                      <img src="{{ j.Images[0] }}" class="rounded" alt="Unable to display image." style="max-width:300px;">
+                    {% endif %}
+                  {% endfor %}
+                </div>
+                <div class="col-sm-6">
+                  <div class="row">
+                    <div class="col-sm-12">
+                      <form action="/VendorProductDetails" method="post" style="padding:0px;margin:0px;">
+                        <input type="hidden" id="vendorEmail" name="vendorEmail" class="form-control" value="{{ VendorDetails.Email }}">
+                        <input type="hidden" id="ProductID" name="ProductID" class="form-control" value="{{ i.ProductID }}">
+                        <input type="hidden" id="Mode" name="Mode" class="form-control" value="View">
+                        {% for j in ProductDetails %}
+                          {% if j.ProductID == i.ProductID %}
+                            <input type="submit" class="btn" name="Button" id="ProductName" value="{{ j.ProductName }}" style="font-size:20px;font-style:bold;">
+                          {% endif %}
+                        {% endfor %}
+                      </form>
+                    </div>
+                  </div>
+                  <hr>
+                  <div class="row">
+                    <div class="col-sm-12">
+                      Product ID : {{ i.ProductID }}
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-12">
+                      Available Quantity : {{ i.Quantity }}
+                    </div>
+                  </div>
+                  <div class="row">
+                  <div class="col-sm-12">
+                      Price : {{ i.Price }} Euro
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-12">
+                      Added By : {{ i.AddedBy }}
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-12">
+                      Added On : {{ i.AddedOn }}
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-12">
+                      Last Modified By : {{ i.LastModifiedBy }}
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-12">
+                      Last Modified On : {{ i.LastModifiedOn }}
+                    </div>
+                  </div>
+                  <br>
+                  <div class="row">
+                    <div class="col-sm-4"></div>
+                    <div class="col-sm-2">
+                      <form action="/VendorProductDetails" method="post">
+                        <input type="hidden" id="vendorEmail" name="vendorEmail" class="form-control" value="{{ VendorDetails.Email }}">
+                        <input type="hidden" id="ProductID" name="ProductID" class="form-control" value="{{ i.ProductID }}">
+                        <input type="hidden" id="Mode" name="Mode" class="form-control" value="Edit">
+                        <input type="submit" name="Button" id="EditButton" class="btn btn-primary" value="Edit">
+                      </form>
+                    </div>
+                    <div class="col-sm-2">
+                      <form action="/VendorProductDetails" method="post">
+                        <input type="hidden" id="vendorEmail" name="vendorEmail" class="form-control" value="{{ VendorDetails.Email }}">
+                        <input type="hidden" id="ProductID" name="ProductID" class="form-control" value="{{ i.ProductID }}">
+                        <input type="hidden" id="Mode" name="Mode" class="form-control" value="Delete">
+                        <button class="btn btn-primary" name="Button" id="DeleteButton" value="DeleteProduct">Delete</button>
+                      </form>
+                    </div>
+                    <div class="col-sm-4"></div>
+                  </div>
+                </div>
+                <div class="col-sm-1"></div>
+              </div>
+              <hr>
+            {% endfor %}
+          {% else %}
+            <div class="row">
+              <div class="col-sm-12 btn-primary" style="padding:10px;border-radius:10px;">
+                There are no products registered to display.
+              </div>
+            </div>
+            <hr>
+          {% endif %}
+          <hr>
+        </div>
+      </div>
+    </center>
+
+  </body>
+</html>
