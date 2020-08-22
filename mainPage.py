@@ -21,6 +21,7 @@ from ProductDetails import ProductDetails
 from BrowseByCategory import BrowseByCategory
 from OfferedProducts import OfferedProducts
 from ContactUs import ContactUs
+from TermsOfUse import TermsOfUse
 from VerifyEmail import VerifyEmail
 from ResetPassword import ResetPassword
 
@@ -114,6 +115,7 @@ app = webapp2.WSGIApplication([
     ('/ProductDetails',ProductDetails),
     ('/BrowseByCategory',BrowseByCategory),
     ('/ContactUs',ContactUs),
+    ('/TermsOfUse',TermsOfUse),
     ('/OfferedProducts',OfferedProducts),
     ('/VerifyEmail',VerifyEmail),
     ('/AdminPanel',AdminPanel),

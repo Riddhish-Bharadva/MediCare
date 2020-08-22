@@ -1,0 +1,179 @@
+<html>
+  <head>
+    <title>MediCare</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src='https://kit.fontawesome.com/a076d05399.js'></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+  </head>
+  <script>
+    function CheckNumber(value)
+    {
+      var size = document.getElementById("Contact").value;
+      var charCode = (value.which) ? value.which : value.keyCode;
+      if ((charCode > 47 && charCode < 58) && size.length != 9)
+        return true;
+      return false;
+    }
+    function CheckName(value)
+    {
+      var charCode = (value.which) ? value.which : value.keyCode;
+      if ((charCode > 64 && charCode < 91) || (charCode > 96 && charCode < 123))
+        return true;
+      return false;
+    }
+  </script>
+  <style>
+    .container
+    {
+       background:rgba(255, 255, 255, 1);
+       border-radius:10px !important;
+    }
+    .navbar
+    {
+      margin-top:5px;
+      border-radius: 10px;
+    }
+  </style>
+  <body style="background:url('https://www.longprairiepharmacy.com/wp-content/themes/longprairie/images/slider/9.jpg');">
+    <center>
+      <div style="max-width:80%;">
+        <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+          <a class="navbar-brand" href="/">MediCare</a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="collapsibleNavbar">
+            <ul class="navbar-nav">
+              <li class="nav-item">
+                <a class="nav-link" href="/">Home</a>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">Browse By Category</a>
+                <div class="dropdown-menu" style="background:#444444;">
+                  {% if Category != [] %}
+                    {% for i in Category %}
+                      <a class="dropdown-item" href="/BrowseByCategory?Category={{ i }}" style="color:white;background:#444444;">{{ i }}</a>
+                    {% endfor %}
+                  {% endif %}
+                </div>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/TermsOfUse">Terms Of Use</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/ContactUs">Contact Us</a>
+              </li>
+              <form action="/" method="get" style="margin:0px;padding:0px;">
+                <li class="nav-item">
+                  <div class="row" style="margin:0px;padding:0px;">
+                    <div class="col-sm-10" style="margin:0px;padding:0px;">
+                      <input type='text' class='form-control' name='SearchBarText' id='SearchBarText' placeholder='Search'>
+                    </div>
+                    <div class="col-sm-2" style="margin:0px;padding:0px;">
+                      <button class="btn btn-primary" name='Button' id='SearchButton' value='Search' style="padding:10px;">
+                        <span class="fas fa-search"></span>
+                      </button>
+                    </div>
+                </li>
+              </form>
+            </ul>
+            <ul class="navbar-nav ml-auto">
+              <li class="nav-item">
+                <a class="nav-link" href="/UserSignIn"><span class="fas fa-sign-in-alt"></span>&nbsp;SignIn</a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+        <div class="container">
+          <hr>
+          <hr>
+          <marquee style="background:red;padding:10px;border-radius:10px;color:white;"><b>Please Note : This web application is developed for educational purpose and to demonstrate project idea. There are no realtime services provided via this web application.</b></marquee>
+          <hr>
+          <div class="row">
+            <div class="col-sm-1"></div>
+            <div class="col-sm-2">
+              <h5>Customers</h5>
+            </div>
+            <div class="col-sm-9"></div>
+          </div>
+          <hr>
+          <div class="row">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-8">
+              <ul>
+                <li style="text-align:justify;">
+                  Access to and use of the services provided via this website are permitted on temporary basis and we reserve the right to withdraw or amend the services without notice.
+                </li>
+                <li style="text-align:justify;">
+                  We will be storing your personel information like Name, Email, Contact Number, Address, etc. to provide services offered via this website.
+                </li>
+                <li style="text-align:justify;">
+                  MediCare will not be responsible for any type of side effects/illness caused by products purchased as MediCare is a platform to bind vendors and customers online. We request you to please read product description, dosage and ingredients carefully before purchase of the same.
+                </li>
+                <li style="text-align:justify;">
+                  Customer is solely responsible for any medicine purchased via MediCare without prescription.
+                </li>
+                <li style="text-align:justify;">
+                  MediCare team assures customers to deliver their products within 72 hours post successful payment of ordered products.
+                </li>
+              </ul>
+            </div>
+            <div class="col-sm-2"></div>
+          </div>
+          <hr>
+          <div class="row">
+            <div class="col-sm-1"></div>
+            <div class="col-sm-2">
+              <h5>Vendors</h5>
+            </div>
+            <div class="col-sm-9"></div>
+          </div>
+          <hr>
+          <div class="row" style="padding:0px;margin:0px;">
+            <div class="col-sm-3"></div>
+            <div class="col-sm-5">
+              <h6>Please <a href="/VendorSignIn">click here</a> to sign in as a vendor.</h6>
+            </div>
+            <div class="col-sm-4"></div>
+          </div>
+          <div class="row">
+            <div class="col-sm-3"></div>
+            <div class="col-sm-6">
+              <hr>
+            </div>
+            <div class="col-sm-3"></div>
+          </div>
+          <div class="row">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-8">
+              <ul>
+                <li style="text-align:justify;">
+                  Vendor will be responsible for all the products sold via MediCare.
+                </li>
+                <li style="text-align:justify;">
+                  Vendor is also responsible to check, maintain products as per expirations.
+                </li>
+                <li style="text-align:justify;">
+                  MediCare reserves rights to lock a vendor in case inproper product / expired product is being sold to any consumer via platform of MediCare.
+                </li>
+                <li style="text-align:justify;">
+                  It is vendor's responsibility to deliver the products to the consumer within 72 hours of successful payment for any order made via MediCare.
+                </li>
+                <li style="text-align:justify;">
+                  In case vendor fails to deliver the products on time, he/she may loose delivery charge and service charges for that perticular order.
+                </li>
+              </ul>
+            </div>
+            <div class="col-sm-2"></div>
+          </div>
+          <hr>
+          <hr>
+        </div>
+      </div>
+    </center>
+
+  </body>
+</html>
