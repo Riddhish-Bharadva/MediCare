@@ -9,6 +9,7 @@ from PharmacyDB import PharmacyDB
 from VendorsDB import VendorsDB
 from ProductsDB import ProductsDB
 from CartDB import CartDB
+from ContactUsDB import ContactUsDB
 from EmailModule import SendEmail
 from AdminPanel import AdminPanel
 from UserSignIn import UserSignIn
@@ -19,6 +20,7 @@ from VendorProductDetails import VendorProductDetails
 from ProductDetails import ProductDetails
 from BrowseByCategory import BrowseByCategory
 from OfferedProducts import OfferedProducts
+from ContactUs import ContactUs
 from VerifyEmail import VerifyEmail
 from ResetPassword import ResetPassword
 
@@ -111,6 +113,7 @@ app = webapp2.WSGIApplication([
     ('/VendorProductDetails',VendorProductDetails),
     ('/ProductDetails',ProductDetails),
     ('/BrowseByCategory',BrowseByCategory),
+    ('/ContactUs',ContactUs),
     ('/OfferedProducts',OfferedProducts),
     ('/VerifyEmail',VerifyEmail),
     ('/AdminPanel',AdminPanel),
