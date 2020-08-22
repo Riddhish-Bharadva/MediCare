@@ -57,13 +57,15 @@
                 <li class="nav-item dropdown">
                   <a class="nav-link dropdown-toggle" href="#" id="BrowseByCategory" data-toggle="dropdown">Browse By Category</a>
                   <div class="dropdown-menu" style="background:#444444;">
-                    {% for i in Category %}
-                      {% if UserDetails != None %}
-                        <a class="dropdown-item" href="/BrowseByCategory?userEmail={{ UserDetails.user_Email }}&Category={{ i }}" style="color:white;background:#444444;">{{ i }}</a>
-                      {% else %}
-                        <a class="dropdown-item" href="/BrowseByCategory?Category={{ i }}" style="color:white;background:#444444;">{{ i }}</a>
-                      {% endif %}
-                    {% endfor %}
+                    {% if Category != [] %}
+                      {% for i in Category %}
+                        {% if UserDetails != None %}
+                          <a class="dropdown-item" href="/BrowseByCategory?userEmail={{ UserDetails.user_Email }}&Category={{ i }}" style="color:white;background:#444444;">{{ i }}</a>
+                        {% else %}
+                          <a class="dropdown-item" href="/BrowseByCategory?Category={{ i }}" style="color:white;background:#444444;">{{ i }}</a>
+                        {% endif %}
+                      {% endfor %}
+                    {% endif %}
                   </div>
                 </li>
                 {% if UserDetails == None %}

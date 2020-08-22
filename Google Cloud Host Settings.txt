@@ -1,5 +1,0 @@
-Host MediCare
- HostName source.developers.google.com
- Port 2022
- User riddhishbharadva002@gmail.com
- IdentityFile MyKey
