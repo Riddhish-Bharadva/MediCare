@@ -63,7 +63,7 @@ class UserSignIn(webapp2.RequestHandler):
             DOB = self.request.get('DOB')
             DBConnect = ndb.Key('UsersDB',Email).get()
             if(DBConnect == None):
-                API_Key = "AIzaSyBIOG7HUcs1WLZ-l_oXCZ7I44PwQNbVQPM"
+                API_Key = "AIzaSyDvLc7SvzpX6KP6HCfn033xNKaM8UH3e2w"
                 params = {"address":Address,"key":API_Key}
                 GoogleAPI = "https://maps.googleapis.com/maps/api/geocode/json"
                 url_params = urlencode(params)

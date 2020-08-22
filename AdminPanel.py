@@ -63,7 +63,7 @@ class AdminPanel(webapp2.RequestHandler):
             OfficialEmailId = self.request.get('OfficialEmailId')
             OfficialContact = self.request.get('OfficialContact')
             PhysicalAddress = self.request.get('PhysicalAddress')
-            API_Key = "AIzaSyBIOG7HUcs1WLZ-l_oXCZ7I44PwQNbVQPM"
+            API_Key = "AIzaSyDvLc7SvzpX6KP6HCfn033xNKaM8UH3e2w"
             params = {"address":PhysicalAddress,"key":API_Key}
             GoogleAPI = "https://maps.googleapis.com/maps/api/geocode/json"
             url_params = urlencode(params)
