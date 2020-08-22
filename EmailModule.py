@@ -2,12 +2,12 @@ import smtplib
 
 def SendEmail(ReceiverId,EmailSubject,EmailBody):
     FromEmail = "medicareteam24x7@gmail.com"
-    EmailPassword = "MediCare@123"
-    emailServer = smtplib.SMTP("smtp.gmail.com",587)
-    emailServer.ehlo()
-    emailServer.starttls()
-    emailServer.ehlo()
-    emailServer.login(FromEmail,EmailPassword)
+    FromEmailPassword = "MediCare@123"
+    ServerConnection = smtplib.SMTP("smtp.gmail.com",587)
+    ServerConnection.ehlo()
+    ServerConnection.starttls()
+    ServerConnection.ehlo()
+    ServerConnection.login(FromEmail,FromEmailPassword)
     EmailMessage = 'Subject: {}\n\n{}'.format(EmailSubject,EmailBody)
-    emailServer.sendmail(FromEmail,ReceiverId,EmailMessage)
-    emailServer.quit()
+    ServerConnection.sendmail(FromEmail,ReceiverId,EmailMessage)
+    ServerConnection.quit()

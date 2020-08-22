@@ -7,6 +7,8 @@ from AdminDB import AdminDB
 from UsersDB import UsersDB
 from PharmacyDB import PharmacyDB
 from VendorsDB import VendorsDB
+from ProductsDB import ProductsDB
+from CartDB import CartDB
 from EmailModule import SendEmail
 from AdminPanel import AdminPanel
 from UserSignIn import UserSignIn
@@ -14,6 +16,8 @@ from VendorSignIn import VendorSignIn
 from VendorHomePage import VendorHomePage
 from AddProducts import AddProducts
 from VendorProductDetails import VendorProductDetails
+from ProductDetails import ProductDetails
+from BrowseByCategory import BrowseByCategory
 from OfferedProducts import OfferedProducts
 from VerifyEmail import VerifyEmail
 from ResetPassword import ResetPassword
@@ -25,38 +29,77 @@ class mainPage(webapp2.RequestHandler):
         self.response.headers['content-type'] = 'text/html'
 
         notification = ""
-        ButtonName = self.request.get('Button')
+        userEmail = self.request.get('userEmail')
+        SearchBarText = self.request.get('SearchBarText')
+        Button = self.request.get('Button')
+        UserDetails = None
+        ProductDetails = []
+        Category = []
 
-        if(ButtonName == "SignInButton"):
-            userEmail = self.request.get('userEmail')
-            userPassword = self.request.get('userPassword')
-            SignInAs = self.request.get('SignInAs')
-            SignIn(userEmail,userPassword,SignInAs,self)
+        if(userEmail != ""):
+            UserDetails = ndb.Key('UsersDB',userEmail).get()
+            if(UserDetails != None and UserDetails.IsActive == 0):
+                self.redirect('/UserSignIn?notification=EmailIdNotRegisteredOrInActive')
+            elif(UserDetails == None):
+                self.redirect('/UserSignIn?notification=EmailIdNotRegisteredOrInActive')
+            SignInStatus = "SignOut"
+        else:
+            SignInStatus = "SignIn"
 
-        elif(ButtonName == "SignUpButton"):
-            FirstName = self.request.get('FirstName')
-            LastName = self.request.get('LastName')
-            Email = self.request.get('userEmail_SU')
-            Password = self.request.get('userPassword_SU')
-            Contact = self.request.get('Contact')
-            Address = self.request.get('Address')
-            Gender = self.request.get('Gender')
-            DOB = self.request.get('DOB')
-            SignUp(FirstName,LastName,Email,Password,Contact,Address,Gender,DOB,self)
+        ProductsData = ProductsDB.query().fetch()
+        if(ProductsData == []):
+            ProductsData = None
+        else:
+            for i in range(0,len(ProductsData)):
+                if(ProductsData[i].Category not in Category):
+                    Category.append(ProductsData[i].Category)
+        Category.sort()
 
-        elif(ButtonName == "ForgotPasswordButton"):
-            Email = self.request.get('userEmail_FP')
-            RegisteredAs = self.request.get('RegisteredAs')
-            ForgotPassword(Email,RegisteredAs,self)
-
-        notification = self.request.get('notification')
+        if(Button == "Search"):
+            if(SearchBarText != ""):
+                AllProducts = ProductsDB.query().fetch()
+                if(AllProducts != None):
+                    for i in range(0,len(AllProducts)):
+                        ProdName = AllProducts[i].ProductName.lower()
+                        ProdDescription = AllProducts[i].Description.lower()
+                        ProdIngredients = AllProducts[i].Ingredients.lower()
+                        if(ProdName.find(SearchBarText.lower()) != -1):
+                            ProductDetails.append(AllProducts[i])
+                        elif(ProdDescription.find(SearchBarText.lower()) != -1):
+                            ProductDetails.append(AllProducts[i])
+                        elif(ProdIngredients.find(SearchBarText.lower()) != -1):
+                            ProductDetails.append(AllProducts[i])
+        else:
+            ProductDetails = ProductsDB.query().fetch()
 
         template_values = {
-            'notification' : notification,
+            'SignInStatus' : SignInStatus,
+            'UserDetails' : UserDetails,
+            'ProductDetails' : ProductDetails,
+            'Category' : Category,
         }
 
         template = JINJA_ENVIRONMENT.get_template('mainPage.html')
         self.response.write(template.render(template_values))
+
+    def post(self):
+        self.response.headers['content-type'] = 'text/html'
+        Button = self.request.get('Button')
+        userEmail = self.request.get('userEmail')
+        if(Button == "Add To Cart"):
+            ProductID = self.request.get('ProductID')
+            CartDBStatus = ndb.Key("CartDB",userEmail).get()
+            if(CartDBStatus != None):
+                if(ProductID not in CartDBStatus.ProductID):
+                    CartDBStatus.ProductID.append(ProductID)
+            else:
+                CartDBStatus = CartDB(id=userEmail)
+                CartDBStatus.userEmail = userEmail
+                CartDBStatus.ProductID.append(ProductID)
+            CartDBStatus.put()
+            self.redirect('/?userEmail='+userEmail)
+        else:
+            self.redirect('/?userEmail='+userEmail)
 
 app = webapp2.WSGIApplication([
     ('/',mainPage),
@@ -66,6 +109,8 @@ app = webapp2.WSGIApplication([
     ('/VendorHomePage',VendorHomePage),
     ('/AddProducts',AddProducts),
     ('/VendorProductDetails',VendorProductDetails),
+    ('/ProductDetails',ProductDetails),
+    ('/BrowseByCategory',BrowseByCategory),
     ('/OfferedProducts',OfferedProducts),
     ('/VerifyEmail',VerifyEmail),
     ('/AdminPanel',AdminPanel),

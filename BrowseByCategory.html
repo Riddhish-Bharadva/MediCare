@@ -114,15 +114,9 @@
         <div class="container">
           <hr>
           <hr>
-          <marquee><b>Please Note : This web application is developed for educational purpose and to demonstrate project idea. There are no realtime services provided via this web application.</b></marquee>
-          <hr>
-          <div class="row">
+          <div class="row" style="border-radius:10px;padding:10px;background:Orange;">
             <div class="col-sm-12">
-              {% if notification == "UserSignInSuccessfull" %}
-                <div style="background:yellow;border-radius:10px;padding:10px;"></div>
-              {% else %}
-                <div style="background:yellow;border-radius:10px;padding:10px;">Below are the products available in MediCare. Click on product to view more details about the same.</div>
-              {% endif %}
+              <h4>Category : {{ BrowseByCategory }}</h4>
             </div>
           </div>
           <hr>

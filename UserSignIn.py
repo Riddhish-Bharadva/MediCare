@@ -9,6 +9,7 @@ from google.appengine.api import urlfetch
 from urllib import urlencode
 from EmailModule import SendEmail
 from UsersDB import UsersDB
+from ProductsDB import ProductsDB
 
 JINJA_ENVIRONMENT = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)),extensions=['jinja2.ext.autoescape'],autoescape=True)
 
@@ -17,10 +18,20 @@ class UserSignIn(webapp2.RequestHandler):
         self.response.headers['content-type'] = 'text/html'
 
         notification = ""
+        Category = []
         notification = self.request.get('notification')
+        ProductsData = ProductsDB.query().fetch()
+        if(ProductsData == []):
+            ProductsData = None
+        else:
+            for i in range(0,len(ProductsData)):
+                if(ProductsData[i].Category not in Category):
+                    Category.append(ProductsData[i].Category)
+        Category.sort()
 
         template_values = {
             'notification' : notification,
+            'Category' : Category,
         }
 
         template = JINJA_ENVIRONMENT.get_template('UserSignIn.html')
@@ -35,7 +46,7 @@ class UserSignIn(webapp2.RequestHandler):
             DBConnect = ndb.Key('UsersDB',userEmail).get()
             if(DBConnect != None and DBConnect.IsActive == 1):
                 if(DBConnect.user_Password == userPassword):
-                    self.redirect('/UsersHomePage')
+                    self.redirect('/?userEmail='+userEmail)
                 else:
                     self.redirect('/UserSignIn?notification=PasswordMissmatch')
             else:
