@@ -67,6 +67,26 @@ Our team will get back to you regarding the same as soon as possible.
 Thanks & regards,
 MediCare Team.
         """)
+
+        SendEmail("medicareteam24x7@gmail.com","Someone have contacted by filling form on contact us page","""
+Hi Team,
+
+This is an automated email sent as someone have contacted you using form on contact us page.
+
+User details are:
+First Name : """+FirstName+"""
+Last Name : """+LastName+"""
+Email : """+userEmail+"""
+Contact : +353-"""+Contact+"""
+
+User query :
+"""+Query+"""
+
+
+Please respond to user as soon as possible or within 48 hours for better customer experience.
+
+Thank you.
+        """)
         self.redirect("/ContactUs?notification=FormSubmittedSuccessfully")
 
 app = webapp2.WSGIApplication([

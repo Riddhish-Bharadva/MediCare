@@ -22,6 +22,7 @@ from BrowseByCategory import BrowseByCategory
 from OfferedProducts import OfferedProducts
 from ContactUs import ContactUs
 from TermsOfUse import TermsOfUse
+from Profile import Profile
 from VerifyEmail import VerifyEmail
 from ResetPassword import ResetPassword
 
@@ -31,7 +32,6 @@ class mainPage(webapp2.RequestHandler):
     def get(self):
         self.response.headers['content-type'] = 'text/html'
 
-        notification = ""
         userEmail = self.request.get('userEmail')
         SearchBarText = self.request.get('SearchBarText')
         Button = self.request.get('Button')
@@ -116,6 +116,7 @@ app = webapp2.WSGIApplication([
     ('/BrowseByCategory',BrowseByCategory),
     ('/ContactUs',ContactUs),
     ('/TermsOfUse',TermsOfUse),
+    ('/Profile',Profile),
     ('/OfferedProducts',OfferedProducts),
     ('/VerifyEmail',VerifyEmail),
     ('/AdminPanel',AdminPanel),
