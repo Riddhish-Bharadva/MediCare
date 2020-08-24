@@ -27,6 +27,7 @@ class VendorSignIn(webapp2.RequestHandler):
     def post(self):
         self.response.headers['content-type'] = 'text/html'
 
+        WebPageLink = "https://medicare-287205.nw.r.appspot.com/"
         ButtonName = self.request.get('Button')
         if(ButtonName == "SignInButton"):
             vendorEmail = self.request.get('vendorEmail')
@@ -82,7 +83,7 @@ This is an automated email confirmation sent to you in regards of your MediCare 
 Your MediCare account has been registered as : '"""+RegisteredAs+"""' for vendor : """+DBConnect_Pharmacy.PharmacyName+"""
 
 Please click on below link to verify your Email Id:
-http://localhost:8080/VerifyEmail?RegisteredAs="""+RegisteredAs+"""&vendorEmail="""+Email+"""&VerifyStatus="""+hashlib.md5(Password.encode()).hexdigest()+"""
+"""+WebPageLink+"""VerifyEmail?RegisteredAs="""+RegisteredAs+"""&vendorEmail="""+Email+"""&VerifyStatus="""+hashlib.md5(Password.encode()).hexdigest()+"""
 
 Thanks & regards,
 MediCare Team.
@@ -108,7 +109,7 @@ This is an automated email sent to reset password of your MediCare account.
 
 Click on below link to reset your password:
 
-http://localhost:8080/ResetPassword?RegisteredAs="""+DBConnect.RegisteredAs+"""&vendorEmail="""+Email+"""&FromPage=/VendorSignIn&ResetStatus="""+hashlib.md5(DBConnect.Password.encode()).hexdigest()+"""
+"""+WebPageLink+"""ResetPassword?RegisteredAs="""+DBConnect.RegisteredAs+"""&vendorEmail="""+Email+"""&FromPage=/VendorSignIn&ResetStatus="""+hashlib.md5(DBConnect.Password.encode()).hexdigest()+"""
 
 In case above link doesn't work, copy and paste the same in url bar of your browser.
 

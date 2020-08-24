@@ -38,6 +38,9 @@ class UserSignIn(webapp2.RequestHandler):
         self.response.write(template.render(template_values))
 
     def post(self):
+        self.response.headers['content-type'] = 'text/html'
+
+        WebPageLink = "https://medicare-287205.nw.r.appspot.com/"
         ButtonName = self.request.get('Button')
 
         if(ButtonName == "SignInButton"):
@@ -92,7 +95,7 @@ Dear """+DBConnect.user_FirstName+""",
 This is an automated email confirmation sent to you in regards of your MediCare account.
 
 Please click on below link to verify your Email Id:
-http://localhost:8080/VerifyEmail?RegisteredAs=User&userEmail="""+Email+"""&VerifyStatus="""+hashlib.md5(DBConnect.user_Password.encode()).hexdigest()+"""
+"""+WebPageLink+"""VerifyEmail?RegisteredAs=User&userEmail="""+Email+"""&VerifyStatus="""+hashlib.md5(DBConnect.user_Password.encode()).hexdigest()+"""
 
 Thanks & regards,
 MediCare Team.
@@ -112,7 +115,7 @@ This is an automated email sent to reset password of your MediCare account.
 
 Click on below link to reset your password:
 
-http://localhost:8080/ResetPassword?RegisteredAs=User&userEmail="""+Email+"""&FromPage=/UserSignIn&ResetStatus="""+hashlib.md5(DBConnect.user_Password.encode()).hexdigest()+"""
+"""+WebPageLink+"""ResetPassword?RegisteredAs=User&userEmail="""+Email+"""&FromPage=/UserSignIn&ResetStatus="""+hashlib.md5(DBConnect.user_Password.encode()).hexdigest()+"""
 
 In case above link doesn't work, copy and paste the same in url bar of your browser.
 

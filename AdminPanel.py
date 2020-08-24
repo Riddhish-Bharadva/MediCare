@@ -51,6 +51,7 @@ class AdminPanel(webapp2.RequestHandler):
     def post(self):
         self.response.headers['content-type'] = 'text/html'
 
+        WebPageLink = "https://medicare-287205.nw.r.appspot.com/"
         Button = self.request.get('Button')
         AdminLoggedIn = users.get_current_user()
         AdminEmail = AdminLoggedIn.email()
@@ -95,7 +96,7 @@ You have been registered as : """+PharmacyName+"""
 Your Pharmacy Id is """+PharmacyID+"""
 
 Please click on below link to confirm your email id:
-http://localhost:8080/VerifyEmail?RegisteredAs=Vendor&PharmacyID="""+PharmacyID+"""&VerifyStatus="""+hashlib.md5(PhysicalAddress.encode()).hexdigest()+"""
+"""+WebPageLink+"""/VerifyEmail?RegisteredAs=Vendor&PharmacyID="""+PharmacyID+"""&VerifyStatus="""+hashlib.md5(PhysicalAddress.encode()).hexdigest()+"""
 
 In case above link doesn't work, copy and paste the same in url bar of your browser.
 
