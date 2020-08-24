@@ -1,0 +1,247 @@
+<html>
+  <head>
+    <title>MediCare</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src='https://kit.fontawesome.com/a076d05399.js'></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+  </head>
+  <script>
+  function Check()
+  {
+    Value1 = document.getElementById("ProductQuantity").value;
+    Value2 = document.getElementById("PharmacyName").value;
+    if(Value1 != "None" && Value2 != "None")
+    {
+      return true;
+    }
+    alert("Please select appropriate Quantity and Pharmacy Name for all items.");
+    return false;
+  }
+  </script>
+  <style>
+    .container
+    {
+       background:rgba(255, 255, 255, 1.0);
+       border-radius:10px !important;
+    }
+    .navbar
+    {
+      margin-top:5px;
+      border-radius: 10px;
+    }
+  </style>
+  <body style="background:url('https://www.longprairiepharmacy.com/wp-content/themes/longprairie/images/slider/9.jpg');">
+    <center>
+      <div style="max-width:80%;">
+        <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+          <a class="navbar-brand" href="/?userEmail={{ UserDetails.user_Email }}">MediCare</a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#NavigationBar">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="NavigationBar">
+            <ul class="navbar-nav">
+              {% if UserDetails.EmailVerified == 0 %}
+                <li class="nav-item">
+                  <a class="nav-link" href="/?userEmail={{ UserDetails.user_Email }}">Restricted access as email is not verified</a>
+                </li>
+              {% else %}
+                <li class="nav-item">
+                  <a class="nav-link" href="/?userEmail={{ UserDetails.user_Email }}">Home</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="/Profile?userEmail={{ UserDetails.user_Email }}">Profile</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="/MyOrders?userEmail={{ UserDetails.user_Email }}">My Orders</a>
+                </li>
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" id="BrowseByCategory" data-toggle="dropdown">Browse By Category</a>
+                  <div class="dropdown-menu" style="background:#444444;">
+                    {% if Category != [] %}
+                      {% for i in Category %}
+                        <a class="dropdown-item" href="/BrowseByCategory?userEmail={{ UserDetails.user_Email }}&Category={{ i }}" style="color:white;background:#444444;">{{ i }}</a>
+                      {% endfor %}
+                    {% endif %}
+                  </div>
+                </li>
+                <form action="/" method="get" style="margin:0px;padding:0px;">
+                  <li class="nav-item">
+                    <div class="row" style="margin:0px;padding:0px;">
+                      <div class="col-sm-10" style="margin:0px;padding:0px;">
+                        <input type='hidden' class='form-control' name='userEmail' id='userEmail' value="{{ UserDetails.user_Email }}">
+                        <input type='text' class='form-control' name='SearchBarText' id='SearchBarText' placeholder='Search' required>
+                      </div>
+                      <div class="col-sm-2" style="margin:0px;padding:0px;">
+                        <button class="btn btn-primary" name='Button' id='SearchButton' value='Search' style="padding:10px;">
+                          <span class="fas fa-search"></span>
+                        </button>
+                      </div>
+                    </div>
+                  </li>
+                </form>
+              {% endif %}
+            </ul>
+            <ul class="navbar-nav ml-auto">
+              {% if UserDetails.EmailVerified != 0 %}
+                <li class="nav-item">
+                  <a class="nav-link" href="/ShoppingCart?userEmail={{ UserDetails.user_Email }}"><span class="fas fa-shopping-cart"></span>&nbsp;Shopping Cart</a>
+                </li>
+              {% endif %}
+              <li class="nav-item">
+                <a class="nav-link" href="/"><span class="fas fa-sign-out-alt"></span>&nbsp;{{ SignInStatus }}</a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+        <div class="container">
+          <hr>
+          <hr>
+          <div class="row">
+            <div class="col-sm-12">
+              {% if notification == "ProductRemoved" %}
+                <div style="background:green;color:white;padding:10px;border-radius:10px;font-size:15px;">Product was successfully removed from your shopping cart.</div>
+              {% elif notification == "InvalidQuantityOrPharmacyName" %}
+                <div style="background:red;color:white;padding:10px;border-radius:10px;font-size:15px;">Please select appropriate Quantity and Pharmacy Name for all products in your shopping cart.</div>
+              {% else %}
+                <div style="background:yellow;color:black;padding:10px;border-radius:10px;font-size:15px;">Please select quantity and vendor for each product to proceed for payment. Less the distance of vendor from your delivery location, less will be your delivery charge and the products will be delivered faster.</div>
+              {% endif %}
+            </div>
+          </div>
+          <hr>
+          {% if ProductDetails != [] %}
+          <form action="/ShoppingCart" method="post">
+            <input type="hidden" id="userEmail" name="userEmail" class="form-control" value="{{ UserDetails.user_Email }}">
+            {% for i in range(0,ProductDetailsLength) %}
+              <div class="row">
+                <div class="col-sm-1"></div>
+                <div class="col-sm-4">
+                  <img src="{{ ProductDetails[i].Images[0] }}" class="rounded" alt="Unable to display image." style="max-width:225px;">
+                </div>
+                <div class="col-sm-5">
+                  <br>
+                  <div class="row">
+                    <div class="col-sm-12" style="font-size:20px;font-style:bold;border:1px solid black;border-radius:10px;padding:5px;">
+                      {{ ProductDetails[i].ProductName }}
+                    </div>
+                  </div>
+                  <hr>
+                  <div class="row">
+                    <div class="col-sm-6" style="font-size:20px;">
+                      Price : &#8364; {{ ProductDetails[i].Price }}
+                    </div>
+                    <div class="col-sm-6">
+                      <a href="/ShoppingCart?userEmail={{ UserDetails.user_Email }}&Button=RemoveFromCart&ProductID={{ ProductDetails[i].ProductID }}" class="btn btn-primary">Remove From Cart</a>
+                    </div>
+                  </div>
+                  <br>
+                  <div class="row">
+                    <div class="col-sm-5" style="padding-left:0px;">
+                      {% if CartData.Quantity[i] == 0 %}
+                        <select class="form-control" id="ProductQuantity" name="Quantity{{ ProductDetails[i].ProductID }}">
+                          <option value="None">Select Quantity</option>
+                          {% if ProductDetails[i].Quantity > 5 %}
+                            {% for j in range(1,6) %}
+                              <option value="{{ j }}">{{ j }}</option>
+                            {% endfor %}
+                          {% else %}
+                            {% for j in range(1,ProductDetails[i].Quantity+1) %}
+                              <option value="{{ j }}">{{ j }}</option>
+                            {% endfor %}
+                          {% endif %}
+                        </select>
+                      {% else %}
+                        <select class="form-control" id="ProductQuantity" name="Quantity{{ ProductDetails[i].ProductID }}">
+                          <option value="None">Select Quantity</option>
+                          {% if ProductDetails[i].Quantity > 5 %}
+                            {% for j in range(1,6) %}
+                              {% if CartData.Quantity[i] == j %}
+                                <option value="{{ j }}" selected>{{ j }}</option>
+                              {% else %}
+                                <option value="{{ j }}">{{ j }}</option>
+                              {% endif %}
+                            {% endfor %}
+                          {% else %}
+                            {% for j in range(1,ProductDetails[i].Quantity+1) %}
+                              {% if CartData.Quantity[i] == j %}
+                                <option value="{{ j }}" selected>{{ j }}</option>
+                              {% else %}
+                                <option value="{{ j }}">{{ j }}</option>
+                              {% endif %}
+                            {% endfor %}
+                          {% endif %}
+                        </select>
+                      {% endif %}
+                    </div>
+                    <div class="col-sm-7" style="padding:0px;">
+                      {% if CartData.PharmacyID[i] == "None" %}
+                        <select class="form-control" id="PharmacyName" name="PharmacyName{{ ProductDetails[i].ProductID }}">
+                          <option value="None">Select Pharmacy</option>
+                          {% for j in Distance %}
+                            <option value="{{ j[0] }}">
+                              {% for k in PharmacyDetails %}
+                                {% if j[0] == k.PharmacyID %}
+                                  {{ k.PharmacyName }} || Distance : {{ j[1] }} KMs
+                                {% endif %}
+                              {% endfor %}
+                            </option>
+                          {% endfor %}
+                        </select>
+                      {% else %}
+                        <select class="form-control" id="ProductName" name="PharmacyName{{ ProductDetails[i].ProductID }}">
+                          <option value="None">Select Pharmacy</option>
+                            {% for j in Distance %}
+                              {% if CartData.PharmacyID[i] == j[0] %}
+                              here
+                                <option value="{{ j[0] }}" selected>
+                                  {% for k in PharmacyDetails %}
+                                    {% if j[0] == k.PharmacyID %}
+                                      {{ k.PharmacyName }} || Distance : {{ j[1] }} KMs
+                                    {% endif %}
+                                  {% endfor %}
+                                </option>
+                              {% else %}
+                              here
+                                <option value="{{ j[0] }}">
+                                  {% for k in PharmacyDetails %}
+                                    {% if j[0] == k.PharmacyID %}
+                                      {{ k.PharmacyName }} || Distance : {{ j[1] }} KMs
+                                    {% endif %}
+                                  {% endfor %}
+                                </option>
+                              {% endif %}
+                            {% endfor %}
+                        </select>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-2"></div>
+              </div>
+              <hr>
+            {% endfor %}
+            <div class="row">
+              <div class="col-sm-3"></div>
+              <div class="col-sm-6">
+                <button class="btn btn-primary" id="ProceedToCheckOut" name="Button" value="ProceedToCheckOut" onclick="return Check();">Proceed To Check Out</button>
+                <input type="reset" class="btn btn-primary" value="Reset" />
+              </div>
+              <div class="col-sm-3"></div>
+            </div>
+          </form>
+          {% else %}
+            <div class="row">
+              <div class="col-sm-12">
+                There are no products to display in your shopping cart.
+              </div>
+            </div>
+            <hr>
+          {% endif %}
+          <hr>
+        </div>
+      </div>
+    </center>
+  </body>
+</html>

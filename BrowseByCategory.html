@@ -144,7 +144,7 @@
                         <input type="hidden" id="ProductID" name="ProductID" class="form-control" value="{{ i.ProductID }}">
                         {% for j in ProductDetails %}
                           {% if j.ProductID == i.ProductID %}
-                            <input type="submit" class="btn" name="Button" id="ProductName" value="{{ j.ProductName }}" style="font-size:20px;font-style:bold;">
+                            <input type="submit" class="btn" name="Button" id="ProductName" value="{{ j.ProductName }}" style="font-size:20px;font-style:bold;border:1px solid black;">
                           {% endif %}
                         {% endfor %}
                       </form>

@@ -23,6 +23,7 @@ from OfferedProducts import OfferedProducts
 from ContactUs import ContactUs
 from TermsOfUse import TermsOfUse
 from Profile import Profile
+from ShoppingCart import ShoppingCart
 from VerifyEmail import VerifyEmail
 from ResetPassword import ResetPassword
 
@@ -95,10 +96,14 @@ class mainPage(webapp2.RequestHandler):
             if(CartDBStatus != None):
                 if(ProductID not in CartDBStatus.ProductID):
                     CartDBStatus.ProductID.append(ProductID)
+                    CartDBStatus.Quantity.append(0)
+                    CartDBStatus.PharmacyID.append("None")
             else:
                 CartDBStatus = CartDB(id=userEmail)
                 CartDBStatus.userEmail = userEmail
                 CartDBStatus.ProductID.append(ProductID)
+                CartDBStatus.Quantity.append(0)
+                CartDBStatus.PharmacyID.append("None")
             CartDBStatus.put()
             self.redirect('/?userEmail='+userEmail)
         else:
@@ -117,6 +122,7 @@ app = webapp2.WSGIApplication([
     ('/ContactUs',ContactUs),
     ('/TermsOfUse',TermsOfUse),
     ('/Profile',Profile),
+    ('/ShoppingCart',ShoppingCart),
     ('/OfferedProducts',OfferedProducts),
     ('/VerifyEmail',VerifyEmail),
     ('/AdminPanel',AdminPanel),

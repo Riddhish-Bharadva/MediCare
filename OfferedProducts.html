@@ -100,7 +100,7 @@
                         <input type="hidden" id="Mode" name="Mode" class="form-control" value="View">
                         {% for j in ProductDetails %}
                           {% if j.ProductID == i.ProductID %}
-                            <input type="submit" class="btn" name="Button" id="ProductName" value="{{ j.ProductName }}" style="font-size:20px;font-style:bold;">
+                            <input type="submit" class="btn" name="Button" id="ProductName" value="{{ j.ProductName }}" style="font-size:20px;font-style:bold;border:1px solid black;">
                           {% endif %}
                         {% endfor %}
                       </form>
@@ -119,7 +119,7 @@
                   </div>
                   <div class="row">
                   <div class="col-sm-12">
-                      Price : {{ i.Price }} Euro
+                      Price : &#8364; {{ i.Price }}
                     </div>
                   </div>
                   <div class="row">

@@ -30,7 +30,7 @@ class Profile(webapp2.RequestHandler):
                 self.redirect('/UserSignIn?notification=EmailIdNotRegisteredOrInActive')
             SignInStatus = "SignOut"
         else:
-            SignInStatus = "SignIn"
+            self.redirect('/UserSignIn')
 
         ProductsData = ProductsDB.query().fetch()
         if(ProductsData == []):

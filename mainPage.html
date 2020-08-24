@@ -129,11 +129,7 @@
               <div class="row">
                 <div class="col-sm-1"></div>
                 <div class="col-sm-4">
-                  {% for j in ProductDetails %}
-                    {% if j.ProductID == i.ProductID %}
-                      <img src="{{ j.Images[0] }}" class="rounded" alt="Unable to display image." style="max-width:225px;">
-                    {% endif %}
-                  {% endfor %}
+                  <img src="{{ i.Images[0] }}" class="rounded" alt="Unable to display image." style="max-width:225px;">
                 </div>
                 <div class="col-sm-5">
                   <br>
@@ -144,11 +140,7 @@
                           <input type="hidden" id="userEmail" name="userEmail" class="form-control" value="{{ UserDetails.user_Email }}">
                         {% endif %}
                         <input type="hidden" id="ProductID" name="ProductID" class="form-control" value="{{ i.ProductID }}">
-                        {% for j in ProductDetails %}
-                          {% if j.ProductID == i.ProductID %}
-                            <input type="submit" class="btn" name="Button" id="ProductName" value="{{ j.ProductName }}" style="font-size:20px;font-style:bold;">
-                          {% endif %}
-                        {% endfor %}
+                        <input type="submit" class="btn" name="Button" id="ProductName" value="{{ i.ProductName }}" style="font-size:20px;font-style:bold;border:1px solid black;">
                       </form>
                     </div>
                   </div>
