@@ -89,7 +89,7 @@
           <div class="row">
             <div class="col-sm-12">
               {% if notification == "OrderConfirmed" %}
-                <div style="background:green;color:white;padding:10px;border-radius:10px;font-size:15px;">Your order has been confirmed. You can check status in "My Orders".</div>
+                <div style="background:green;color:white;padding:10px;border-radius:10px;font-size:15px;">Your order has been confirmed. You can check status in "My Orders" to track on your order status.</div>
               {% else %}
                 <div style="background:yellow;color:black;padding:10px;border-radius:10px;font-size:15px;">
                   Please check the quantity of each product carefully before making payment.
@@ -144,11 +144,14 @@
                     </div>
                     <hr>
                   </div>
-                  <div class="col-sm-6">
-                    <div style="border:1px solid black;border-radius:10px;text-align:left;padding:10px;">
+                  <div class="col-sm-6" style="border:1px solid black;border-radius:10px;text-align:left;padding:10px;">
+                    <div>
                       <div class="row">
-                        <div class="col-sm-10">
+                        <div class="col-sm-8">
                           <b>Order Details</b>
+                        </div>
+                        <div class="col-sm-2" style="padding-left:0px;">
+                          <b>Quantity</b>
                         </div>
                         <div class="col-sm-2" style="padding-left:0px;">
                           <b>Amount</b>
@@ -157,8 +160,11 @@
                       <hr>
                       {% for i in ProductDetails %}
                         <div class="row">
-                          <div class="col-sm-10">
-                            {{ i.ProductName }} :
+                          <div class="col-sm-8">
+                            {{ i.ProductName }}
+                          </div>
+                          <div class="col-sm-2">
+                            {{ i.Quantity }}
                           </div>
                           <div class="col-sm-2">
                             <b>&#8364;{{ i.Price }}</b>
@@ -168,17 +174,17 @@
                       {% endfor %}
                       <div class="row">
                         <div class="col-sm-10">
-                          Service Charge :
+                          Service Charge
                         </div>
                         <div class="col-sm-2">
                           <b>&#8364;1.0</b>
                         </div>
                       </div>
-                      <br>
                       {% if CartData.OrderType == "Delivery" %}
+                        <br>
                         <div class="row">
                           <div class="col-sm-10">
-                            Delivery Charge :
+                            Delivery Charge
                           </div>
                           <div class="col-sm-2">
                             <b>&#8364;{{ DeliveryCharge }}</b>
@@ -188,7 +194,7 @@
                       <hr>
                       <div class="row">
                         <div class="col-sm-10">
-                          Total :
+                          Order Total
                         </div>
                         <div class="col-sm-2">
                           <b>&#8364;{{ OrderTotal }}</b>

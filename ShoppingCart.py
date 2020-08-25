@@ -89,6 +89,7 @@ class ShoppingCart(webapp2.RequestHandler):
             'PharmacyDetails' : PharmacyDetails,
             'VendorProductsDetails' : VendorProductsDetails,
             'CartData' : CartData,
+            'Category' : Category,
             'Distance' : Distance,
             'notification' : notification,
         }

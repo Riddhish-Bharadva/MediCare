@@ -45,6 +45,7 @@ class ConfirmOrder(webapp2.RequestHandler):
                         ProductData = ndb.Key("ProductsDB",CartData.ProductID[i]).get()
                         VendorProductsData = ndb.Key("VendorProductsDB",CartData.PharmacyID[i]+""+CartData.ProductID[i]).get()
                         ProductData.Price = CartData.Quantity[i]*VendorProductsData.Price
+                        ProductData.Quantity = CartData.Quantity[i]
                         Price.append(ProductData.Price)
                         ProductDetails.append(ProductData)
                     CartData.ServiceCharge = 1.0
@@ -86,7 +87,10 @@ class ConfirmOrder(webapp2.RequestHandler):
                         DeliveryCharge = DeliveryCharge + 3.0
                     elif(round(Result,3) > 4.5 and round(Result,3) <= 6.0):
                         DeliveryCharge = DeliveryCharge + 3.0
-            CartData.DeliveryCharge = DeliveryCharge
+            if(CartData.OrderType == "Delivery"):
+                CartData.DeliveryCharge = DeliveryCharge
+            else:
+                CartData.DeliveryCharge = 0.0
             CartData.CartTotal = OrderTotal
             CartData.put()
 
@@ -97,6 +101,7 @@ class ConfirmOrder(webapp2.RequestHandler):
             'ProductDetails' : ProductDetails,
             'OrderTotal' : OrderTotal,
             'DeliveryCharge' : DeliveryCharge,
+            'Category' : Category,
             'notification' : notification,
         }
 
