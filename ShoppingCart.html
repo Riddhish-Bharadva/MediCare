@@ -8,19 +8,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
   </head>
-  <script>
-  function Check()
-  {
-    Value1 = document.getElementById("ProductQuantity").value;
-    Value2 = document.getElementById("PharmacyName").value;
-    if(Value1 != "None" && Value2 != "None")
-    {
-      return true;
-    }
-    alert("Please select appropriate Quantity and Pharmacy Name for all items.");
-    return false;
-  }
-  </script>
   <style>
     .container
     {
@@ -105,8 +92,18 @@
                 <div style="background:green;color:white;padding:10px;border-radius:10px;font-size:15px;">Product was successfully removed from your shopping cart.</div>
               {% elif notification == "InvalidQuantityOrPharmacyName" %}
                 <div style="background:red;color:white;padding:10px;border-radius:10px;font-size:15px;">Please select appropriate Quantity and Pharmacy Name for all products in your shopping cart.</div>
+              {% elif notification == "InvalidOrderType" %}
+                <div style="background:red;color:white;padding:10px;border-radius:10px;font-size:15px;">Please select appropriate Order Type from the list.</div>
               {% else %}
-                <div style="background:yellow;color:black;padding:10px;border-radius:10px;font-size:15px;">Please select quantity and vendor for each product to proceed for payment. Less the distance of vendor from your delivery location, less will be your delivery charge and the products will be delivered faster.</div>
+                <div style="background:yellow;color:black;padding:10px;border-radius:10px;font-size:15px;">
+                  Please select quantity and vendor for each product to proceed for payment.
+                  <br>
+                  Less the distance of vendor from your delivery location, less will be your delivery charge and the products will be delivered faster.
+                  <br>
+                  Price of product may vary from Pharmacy to Pharmacy. Final price will be displayed before proceeding to payment.
+                  <br>
+                  All the products purchased from MediCare are non-refundable and non-exchangable. Order once placed, cannot be changed or cancelled.
+                </div>
               {% endif %}
             </div>
           </div>
@@ -140,8 +137,8 @@
                   <div class="row">
                     <div class="col-sm-5" style="padding-left:0px;">
                       {% if CartData.Quantity[i] == 0 %}
-                        <select class="form-control" id="ProductQuantity" name="Quantity{{ ProductDetails[i].ProductID }}">
-                          <option value="None">Select Quantity</option>
+                        <select class="form-control" id="ProductQuantity" name="Quantity{{ ProductDetails[i].ProductID }}" required>
+                          <option value="">Select Quantity</option>
                           {% if ProductDetails[i].Quantity > 5 %}
                             {% for j in range(1,6) %}
                               <option value="{{ j }}">{{ j }}</option>
@@ -153,8 +150,8 @@
                           {% endif %}
                         </select>
                       {% else %}
-                        <select class="form-control" id="ProductQuantity" name="Quantity{{ ProductDetails[i].ProductID }}">
-                          <option value="None">Select Quantity</option>
+                        <select class="form-control" id="ProductQuantity" name="Quantity{{ ProductDetails[i].ProductID }}" required>
+                          <option value="">Select Quantity</option>
                           {% if ProductDetails[i].Quantity > 5 %}
                             {% for j in range(1,6) %}
                               {% if CartData.Quantity[i] == j %}
@@ -177,42 +174,42 @@
                     </div>
                     <div class="col-sm-7" style="padding:0px;">
                       {% if CartData.PharmacyID[i] == "None" %}
-                        <select class="form-control" id="PharmacyName" name="PharmacyName{{ ProductDetails[i].ProductID }}">
-                          <option value="None">Select Pharmacy</option>
-                          {% for j in Distance %}
-                            <option value="{{ j[0] }}">
-                              {% for k in PharmacyDetails %}
-                                {% if j[0] == k.PharmacyID %}
-                                  {{ k.PharmacyName }} || Distance : {{ j[1] }} KMs
+                        <select class="form-control" id="PharmacyName" name="PharmacyName{{ ProductDetails[i].ProductID }}" required>
+                          <option value="">Select Pharmacy</option>
+                          {% for j in VendorProductsDetails %}
+                            {% if CartData.ProductID[i] == j.ProductID %}
+                              {% for k in Distance %}
+                                {% if j.PharmacyID == k[0] %}
+                                  {% for l in PharmacyDetails %}
+                                    {% if l.PharmacyID == j.PharmacyID %}
+                                      <option value="{{ k[0] }}">{{ k[1] }} KMs || {{ l.PharmacyName }}</option>
+                                    {% endif %}
+                                  {% endfor %}
                                 {% endif %}
                               {% endfor %}
-                            </option>
+                            {% endif %}
                           {% endfor %}
                         </select>
                       {% else %}
-                        <select class="form-control" id="ProductName" name="PharmacyName{{ ProductDetails[i].ProductID }}">
-                          <option value="None">Select Pharmacy</option>
-                            {% for j in Distance %}
-                              {% if CartData.PharmacyID[i] == j[0] %}
-                              here
-                                <option value="{{ j[0] }}" selected>
-                                  {% for k in PharmacyDetails %}
-                                    {% if j[0] == k.PharmacyID %}
-                                      {{ k.PharmacyName }} || Distance : {{ j[1] }} KMs
+                        <select class="form-control" id="PharmacyName" name="PharmacyName{{ ProductDetails[i].ProductID }}" required>
+                          <option value="">Select Pharmacy</option>
+                          {% for j in VendorProductsDetails %}
+                            {% if CartData.ProductID[i] == j.ProductID %}
+                              {% for k in Distance %}
+                                {% if j.PharmacyID == k[0] %}
+                                  {% for l in PharmacyDetails %}
+                                    {% if l.PharmacyID == j.PharmacyID %}
+                                      {% if CartData.PharmacyID[i] == k[0] %}
+                                        <option value="{{ k[0] }}" selected>{{ k[1] }} KMs || {{ l.PharmacyName }}</option>
+                                      {% else %}
+                                        <option value="{{ k[0] }}">{{ k[1] }} KMs || {{ l.PharmacyName }}</option>
+                                      {% endif %}
                                     {% endif %}
                                   {% endfor %}
-                                </option>
-                              {% else %}
-                              here
-                                <option value="{{ j[0] }}">
-                                  {% for k in PharmacyDetails %}
-                                    {% if j[0] == k.PharmacyID %}
-                                      {{ k.PharmacyName }} || Distance : {{ j[1] }} KMs
-                                    {% endif %}
-                                  {% endfor %}
-                                </option>
-                              {% endif %}
-                            {% endfor %}
+                                {% endif %}
+                              {% endfor %}
+                            {% endif %}
+                          {% endfor %}
                         </select>
                       {% endif %}
                     </div>
@@ -225,11 +222,38 @@
             <div class="row">
               <div class="col-sm-3"></div>
               <div class="col-sm-6">
-                <button class="btn btn-primary" id="ProceedToCheckOut" name="Button" value="ProceedToCheckOut" onclick="return Check();">Proceed To Check Out</button>
+                {% if CartData.OrderType == "Delivery" %}
+                  <select class="form-control" id="OrderType" name="OrderType" required>
+                    <option value="">Select Order Type</option>
+                    <option value="Collection">I would like to collect products from selected pharmacies</option>
+                    <option value="Delivery" selected>I would like products to be delivered home</option>
+                  </select>
+                {% elif CartData.OrderType == "Collection" %}
+                  <select class="form-control" id="OrderType" name="OrderType" required>
+                    <option value="">Select Order Type</option>
+                    <option value="Collection" selected>I would like to collect products from selected pharmacies</option>
+                    <option value="Delivery">I would like products to be delivered home</option>
+                  </select>
+                {% else %}
+                  <select class="form-control" id="OrderType" name="OrderType" required>
+                    <option value="">Select Order Type</option>
+                    <option value="Collection">I would like to collect products from selected pharmacies</option>
+                    <option value="Delivery">I would like products to be delivered home</option>
+                  </select>
+                {% endif %}
+              </div>
+              <div class="col-sm-3"></div>
+            </div>
+            <br>
+            <div class="row">
+              <div class="col-sm-3"></div>
+              <div class="col-sm-6">
+                <button class="btn btn-primary" id="ProceedToCheckOut" name="Button" value="ProceedToCheckOut">Proceed To Check Out</button>
                 <input type="reset" class="btn btn-primary" value="Reset" />
               </div>
               <div class="col-sm-3"></div>
             </div>
+            <hr>
           </form>
           {% else %}
             <div class="row">

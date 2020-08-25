@@ -1,0 +1,218 @@
+<html>
+  <head>
+    <title>MediCare</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src='https://kit.fontawesome.com/a076d05399.js'></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+  </head>
+  <style>
+    .container
+    {
+       background:rgba(255, 255, 255, 1.0);
+       border-radius:10px !important;
+    }
+    .navbar
+    {
+      margin-top:5px;
+      border-radius: 10px;
+    }
+  </style>
+  <body style="background:url('https://www.longprairiepharmacy.com/wp-content/themes/longprairie/images/slider/9.jpg');">
+    <center>
+      <div style="max-width:80%;">
+        <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+          <a class="navbar-brand" href="/?userEmail={{ UserDetails.user_Email }}">MediCare</a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#NavigationBar">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="NavigationBar">
+            <ul class="navbar-nav">
+              {% if UserDetails.EmailVerified == 0 %}
+                <li class="nav-item">
+                  <a class="nav-link" href="/?userEmail={{ UserDetails.user_Email }}">Restricted access as email is not verified</a>
+                </li>
+              {% else %}
+                <li class="nav-item">
+                  <a class="nav-link" href="/?userEmail={{ UserDetails.user_Email }}">Home</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="/Profile?userEmail={{ UserDetails.user_Email }}">Profile</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="/MyOrders?userEmail={{ UserDetails.user_Email }}">My Orders</a>
+                </li>
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" id="BrowseByCategory" data-toggle="dropdown">Browse By Category</a>
+                  <div class="dropdown-menu" style="background:#444444;">
+                    {% if Category != [] %}
+                      {% for i in Category %}
+                        <a class="dropdown-item" href="/BrowseByCategory?userEmail={{ UserDetails.user_Email }}&Category={{ i }}" style="color:white;background:#444444;">{{ i }}</a>
+                      {% endfor %}
+                    {% endif %}
+                  </div>
+                </li>
+                <form action="/" method="get" style="margin:0px;padding:0px;">
+                  <li class="nav-item">
+                    <div class="row" style="margin:0px;padding:0px;">
+                      <div class="col-sm-10" style="margin:0px;padding:0px;">
+                        <input type='hidden' class='form-control' name='userEmail' id='userEmail' value="{{ UserDetails.user_Email }}">
+                        <input type='text' class='form-control' name='SearchBarText' id='SearchBarText' placeholder='Search' required>
+                      </div>
+                      <div class="col-sm-2" style="margin:0px;padding:0px;">
+                        <button class="btn btn-primary" name='Button' id='SearchButton' value='Search' style="padding:10px;">
+                          <span class="fas fa-search"></span>
+                        </button>
+                      </div>
+                    </div>
+                  </li>
+                </form>
+              {% endif %}
+            </ul>
+            <ul class="navbar-nav ml-auto">
+              {% if UserDetails.EmailVerified != 0 %}
+                <li class="nav-item">
+                  <a class="nav-link" href="/ShoppingCart?userEmail={{ UserDetails.user_Email }}"><span class="fas fa-shopping-cart"></span>&nbsp;Shopping Cart</a>
+                </li>
+              {% endif %}
+              <li class="nav-item">
+                <a class="nav-link" href="/"><span class="fas fa-sign-out-alt"></span>&nbsp;{{ SignInStatus }}</a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+        <div class="container">
+          <hr>
+          <hr>
+          <div class="row">
+            <div class="col-sm-12">
+              {% if notification == "OrderConfirmed" %}
+                <div style="background:green;color:white;padding:10px;border-radius:10px;font-size:15px;">Your order has been confirmed. You can check status in "My Orders".</div>
+              {% else %}
+                <div style="background:yellow;color:black;padding:10px;border-radius:10px;font-size:15px;">
+                  Please check the quantity of each product carefully before making payment.
+                  <br>
+                  All the products purchased from MediCare are non-refundable and non-exchangable. Order once placed, cannot be changed or cancelled.
+                </div>
+              {% endif %}
+            </div>
+          </div>
+          <hr>
+          {% if ProductDetails != [] %}
+          <form action="/ConfirmOrder" method="post">
+            <input type="hidden" id="userEmail" name="userEmail" class="form-control" value="{{ UserDetails.user_Email }}">
+            <div class="row">
+              <div class="col-sm-1"></div>
+              <div class="col-sm-10">
+                <div class="row">
+                  <div class="col-sm-6">
+                    <div class="row">
+                      <div class="col-sm-12">
+                        <div style="border:1px solid black;border-radius:10px;text-align:left;padding:10px;">
+                          Customer Details :
+                          <hr>
+                          <div class="row">
+                            <div class="col-sm-12">
+                              Name : {{ UserDetails.user_FirstName }} {{ UserDetails.user_LastName }}
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-sm-12">
+                              Email : {{ UserDetails.user_Email }}
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-sm-12">
+                              Contact Number : +353-{{ UserDetails.user_Contact }}
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-sm-12">
+                              Delivery Address : {{ UserDetails.user_Address }}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                      <div class="col-sm-12">
+                        <button class="btn btn-primary" id="ProceedToPay" name="Button" value="ProceedToPay">Proceed To Pay</button>
+                      </div>
+                    </div>
+                    <hr>
+                  </div>
+                  <div class="col-sm-6">
+                    <div style="border:1px solid black;border-radius:10px;text-align:left;padding:10px;">
+                      <div class="row">
+                        <div class="col-sm-10">
+                          <b>Order Details</b>
+                        </div>
+                        <div class="col-sm-2" style="padding-left:0px;">
+                          <b>Amount</b>
+                        </div>
+                      </div>
+                      <hr>
+                      {% for i in ProductDetails %}
+                        <div class="row">
+                          <div class="col-sm-10">
+                            {{ i.ProductName }} :
+                          </div>
+                          <div class="col-sm-2">
+                            <b>&#8364;{{ i.Price }}</b>
+                          </div>
+                        </div>
+                        <br>
+                      {% endfor %}
+                      <div class="row">
+                        <div class="col-sm-10">
+                          Service Charge :
+                        </div>
+                        <div class="col-sm-2">
+                          <b>&#8364;1.0</b>
+                        </div>
+                      </div>
+                      <br>
+                      {% if CartData.OrderType == "Delivery" %}
+                        <div class="row">
+                          <div class="col-sm-10">
+                            Delivery Charge :
+                          </div>
+                          <div class="col-sm-2">
+                            <b>&#8364;{{ DeliveryCharge }}</b>
+                          </div>
+                        </div>
+                      {% endif %}
+                      <hr>
+                      <div class="row">
+                        <div class="col-sm-10">
+                          Total :
+                        </div>
+                        <div class="col-sm-2">
+                          <b>&#8364;{{ OrderTotal }}</b>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-1"></div>
+            </div>
+            <hr>
+          </form>
+          {% else %}
+            <div class="row">
+              <div class="col-sm-12">
+                There are no products to display in your shopping cart.
+              </div>
+            </div>
+            <hr>
+          {% endif %}
+          <hr>
+        </div>
+      </div>
+    </center>
+  </body>
+</html>

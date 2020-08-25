@@ -24,6 +24,7 @@ from ContactUs import ContactUs
 from TermsOfUse import TermsOfUse
 from Profile import Profile
 from ShoppingCart import ShoppingCart
+from ConfirmOrder import ConfirmOrder
 from VerifyEmail import VerifyEmail
 from ResetPassword import ResetPassword
 
@@ -101,6 +102,7 @@ class mainPage(webapp2.RequestHandler):
             else:
                 CartDBStatus = CartDB(id=userEmail)
                 CartDBStatus.userEmail = userEmail
+                CartDBStatus.OrderType = "None"
                 CartDBStatus.ProductID.append(ProductID)
                 CartDBStatus.Quantity.append(0)
                 CartDBStatus.PharmacyID.append("None")
@@ -123,6 +125,7 @@ app = webapp2.WSGIApplication([
     ('/TermsOfUse',TermsOfUse),
     ('/Profile',Profile),
     ('/ShoppingCart',ShoppingCart),
+    ('/ConfirmOrder',ConfirmOrder),
     ('/OfferedProducts',OfferedProducts),
     ('/VerifyEmail',VerifyEmail),
     ('/AdminPanel',AdminPanel),
