@@ -60,7 +60,7 @@ class MyOrders(webapp2.RequestHandler):
                         if(CompletedOrderDetails[i].OrderID not in Unique_OrderNumber):
                             Unique_OrderNumber.append(CompletedOrderDetails[i].OrderID)
                     for i in range(0,len(Unique_OrderNumber)):
-                        CompletedOrderDetails = OrdersDB.query(OrdersDB.userEmail == userEmail and OrdersDB.OrderStatus == "Active" and OrdersDB.OrderID == Unique_OrderNumber[i]).fetch()
+                        CompletedOrderDetails = OrdersDB.query(OrdersDB.userEmail == userEmail and OrdersDB.OrderStatus == "Completed" and OrdersDB.OrderID == Unique_OrderNumber[i]).fetch()
                         Unique_COD.append(CompletedOrderDetails[0])
                         PharmacyID = [Unique_COD[i].PharmacyID]
                         for k in range(1,len(CompletedOrderDetails)):
