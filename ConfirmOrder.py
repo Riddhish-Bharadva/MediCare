@@ -1,6 +1,7 @@
 import webapp2
 import jinja2
 import os
+from datetime import datetime
 from google.appengine.ext import ndb
 from math import sin, cos, sqrt, atan2, radians
 from UsersDB import UsersDB
@@ -8,6 +9,7 @@ from ProductsDB import ProductsDB
 from VendorProductsDB import VendorProductsDB
 from PharmacyDB import PharmacyDB
 from CartDB import CartDB
+from OrdersDB import OrdersDB
 
 JINJA_ENVIRONMENT = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.dirname(__file__)),extensions=['jinja2.ext.autoescape'],autoescape=True)
 
@@ -23,6 +25,7 @@ class ConfirmOrder(webapp2.RequestHandler):
         ProductDetails = []
         OrderTotal = 1.0
         DeliveryCharge = 0.0
+        SubTotal = 0.0
         Price = []
         UniquePharmacy = []
         Distance = {}
@@ -45,6 +48,7 @@ class ConfirmOrder(webapp2.RequestHandler):
                         ProductData = ndb.Key("ProductsDB",CartData.ProductID[i]).get()
                         VendorProductsData = ndb.Key("VendorProductsDB",CartData.PharmacyID[i]+""+CartData.ProductID[i]).get()
                         ProductData.Price = CartData.Quantity[i]*VendorProductsData.Price
+                        SubTotal = SubTotal + CartData.Quantity[i]*VendorProductsData.Price
                         ProductData.Quantity = CartData.Quantity[i]
                         Price.append(ProductData.Price)
                         ProductDetails.append(ProductData)
@@ -89,6 +93,7 @@ class ConfirmOrder(webapp2.RequestHandler):
                         DeliveryCharge = DeliveryCharge + 3.0
             if(CartData.OrderType == "Delivery"):
                 CartData.DeliveryCharge = DeliveryCharge
+                OrderTotal = OrderTotal + DeliveryCharge
             else:
                 CartData.DeliveryCharge = 0.0
             CartData.CartTotal = OrderTotal
@@ -101,6 +106,7 @@ class ConfirmOrder(webapp2.RequestHandler):
             'ProductDetails' : ProductDetails,
             'OrderTotal' : OrderTotal,
             'DeliveryCharge' : DeliveryCharge,
+            'SubTotal' : SubTotal,
             'Category' : Category,
             'notification' : notification,
         }
@@ -112,7 +118,46 @@ class ConfirmOrder(webapp2.RequestHandler):
         self.response.headers['content-type'] = 'text/html'
 
         userEmail = self.request.get("userEmail")
-
+        if(userEmail != ""):
+            UserDetails = ndb.Key('UsersDB',userEmail).get()
+            if(UserDetails != None and UserDetails.IsActive == 0):
+                self.redirect('/UserSignIn?notification=EmailIdNotRegisteredOrInActive')
+            elif(UserDetails == None):
+                self.redirect('/UserSignIn?notification=EmailIdNotRegisteredOrInActive')
+            elif(UserDetails != None and UserDetails.IsActive == 1):
+                SignInStatus = "SignOut"
+                PaymentStatus = self.request.get("PaymentStatus")
+                if(PaymentStatus == "Success"):
+                    CartData = ndb.Key("CartDB",userEmail).get()
+                    UniquePharmacyID = []
+                    OrderID = datetime.now().strftime("%Y%m%d%H%M%S")
+                    OrderPlacedOn = datetime.now().strftime("%d/%m/%Y at %H:%M:%S")
+                    for i in range(0,len(CartData.PharmacyID)):
+                        if(CartData.PharmacyID[i] not in UniquePharmacyID):
+                            UniquePharmacyID.append(CartData.PharmacyID[i])
+                    for i in range(0,len(UniquePharmacyID)):
+                        OrdersConnect = OrdersDB(userEmail = userEmail)
+                        OrdersConnect.OrderID = OrderID
+                        OrdersConnect.PrescriptionRequired = 0
+                        OrdersConnect.OrderType = CartData.OrderType
+                        OrdersConnect.PharmacyID = UniquePharmacyID[i]
+                        for j in range(0,len(CartData.ProductID)):
+                            if(UniquePharmacyID[i] == CartData.PharmacyID[j]):
+                                OrdersConnect.ProductID.append(CartData.ProductID[j])
+                                OrdersConnect.Price.append(CartData.Price[j])
+                                OrdersConnect.Quantity.append(CartData.Quantity[j])
+                        OrdersConnect.DeliveryCharge = CartData.DeliveryCharge
+                        OrdersConnect.ServiceCharge = CartData.ServiceCharge
+                        OrdersConnect.OrderTotal = CartData.CartTotal
+                        OrdersConnect.OrderPlacedOn = OrderPlacedOn
+                        OrdersConnect.put()
+                    CartData.key.delete()
+                    self.redirect("/ConfirmOrder?userEmail="+userEmail+"&notification=Success")
+                elif(PaymentStatus == "Failed"):
+                    defg = 0
+                    self.redirect("/ConfirmOrder?userEmail="+userEmail+"&notification=Failed")
+        else:
+            self.redirect('/UserSignIn')
 
 app = webapp2.WSGIApplication([
     ('/ConfirmOrder',ConfirmOrder),
