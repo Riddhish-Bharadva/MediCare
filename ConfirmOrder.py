@@ -4,6 +4,7 @@ import os
 from datetime import datetime
 from google.appengine.ext import ndb
 from math import sin, cos, sqrt, atan2, radians
+from EmailModule import SendEmail
 from UsersDB import UsersDB
 from ProductsDB import ProductsDB
 from VendorProductsDB import VendorProductsDB
@@ -23,8 +24,9 @@ class ConfirmOrder(webapp2.RequestHandler):
         UserDetails = None
         CartData = None
         ProductDetails = []
-        OrderTotal = 1.0
+        OrderTotal = 0.0
         DeliveryCharge = 0.0
+        ServiceCharge = 1.0
         SubTotal = 0.0
         Price = []
         UniquePharmacy = []
@@ -52,7 +54,6 @@ class ConfirmOrder(webapp2.RequestHandler):
                         ProductData.Quantity = CartData.Quantity[i]
                         Price.append(ProductData.Price)
                         ProductDetails.append(ProductData)
-                    CartData.ServiceCharge = 1.0
                     CartData.Price = Price
                     CartData.put()
         else:
@@ -92,10 +93,13 @@ class ConfirmOrder(webapp2.RequestHandler):
                     elif(round(Result,3) > 4.5 and round(Result,3) <= 6.0):
                         DeliveryCharge = DeliveryCharge + 3.0
             if(CartData.OrderType == "Delivery"):
-                CartData.DeliveryCharge = DeliveryCharge
-                OrderTotal = OrderTotal + DeliveryCharge
+                CartData.DeliveryCharge = DeliveryCharge + ServiceCharge
+                CartData.ServiceCharge = ServiceCharge
+                OrderTotal = OrderTotal + DeliveryCharge + ServiceCharge
             else:
                 CartData.DeliveryCharge = 0.0
+                CartData.ServiceCharge = 0.0
+                ServiceCharge = 0.0
             CartData.CartTotal = OrderTotal
             CartData.put()
 
@@ -106,6 +110,7 @@ class ConfirmOrder(webapp2.RequestHandler):
             'ProductDetails' : ProductDetails,
             'OrderTotal' : OrderTotal,
             'DeliveryCharge' : DeliveryCharge,
+            'ServiceCharge' : ServiceCharge,
             'SubTotal' : SubTotal,
             'Category' : Category,
             'notification' : notification,
@@ -129,30 +134,58 @@ class ConfirmOrder(webapp2.RequestHandler):
                 PaymentStatus = self.request.get("PaymentStatus")
                 if(PaymentStatus == "Success"):
                     CartData = ndb.Key("CartDB",userEmail).get()
-                    UniquePharmacyID = []
-                    OrderID = datetime.now().strftime("%Y%m%d%H%M%S")
-                    OrderPlacedOn = datetime.now().strftime("%d/%m/%Y at %H:%M:%S")
-                    for i in range(0,len(CartData.PharmacyID)):
-                        if(CartData.PharmacyID[i] not in UniquePharmacyID):
-                            UniquePharmacyID.append(CartData.PharmacyID[i])
-                    for i in range(0,len(UniquePharmacyID)):
-                        OrdersConnect = OrdersDB(userEmail = userEmail)
-                        OrdersConnect.OrderID = OrderID
-                        OrdersConnect.PrescriptionRequired = 0
-                        OrdersConnect.OrderType = CartData.OrderType
-                        OrdersConnect.PharmacyID = UniquePharmacyID[i]
-                        for j in range(0,len(CartData.ProductID)):
-                            if(UniquePharmacyID[i] == CartData.PharmacyID[j]):
-                                OrdersConnect.ProductID.append(CartData.ProductID[j])
-                                OrdersConnect.Price.append(CartData.Price[j])
-                                OrdersConnect.Quantity.append(CartData.Quantity[j])
-                        OrdersConnect.DeliveryCharge = CartData.DeliveryCharge
-                        OrdersConnect.ServiceCharge = CartData.ServiceCharge
-                        OrdersConnect.OrderTotal = CartData.CartTotal
-                        OrdersConnect.OrderPlacedOn = OrderPlacedOn
-                        OrdersConnect.put()
-                    CartData.key.delete()
-                    self.redirect("/ConfirmOrder?userEmail="+userEmail+"&notification=Success")
+                    if(CartData != None):
+                        OrderID = datetime.now().strftime("%Y%m%d%H%M%S")
+                        OrderPlacedOn = datetime.now().strftime("%d/%m/%Y at %H:%M:%S")
+                        UniquePharmacyID = []
+                        for i in range(0,len(CartData.PharmacyID)):
+                            ProductsData = ndb.Key("ProductsDB",CartData.ProductID[i]).get()
+                            if(ProductsData.Quantity > 0):
+                                ProductsData.Quantity = ProductsData.Quantity - CartData.Quantity[i]
+                            VendorProductsData = ndb.Key("VendorProductsDB",CartData.PharmacyID[i]+""+CartData.ProductID[i]).get()
+                            if(VendorProductsData.Quantity > 0):
+                                VendorProductsData.Quantity = VendorProductsData.Quantity - CartData.Quantity[i]
+                            else:
+                                self.redirect("/ConfirmOrder?userEmail="+userEmail+"&notification=ProductNotAvailableInSelectedVendor")
+                            VendorProductsData.put()
+                            ProductsData.put()
+                            if(CartData.PharmacyID[i] not in UniquePharmacyID):
+                                UniquePharmacyID.append(CartData.PharmacyID[i])
+                        for i in range(0,len(UniquePharmacyID)):
+                            OrdersConnect = OrdersDB(userEmail = userEmail)
+                            OrdersConnect.OrderID = OrderID
+                            OrdersConnect.PrescriptionRequired = 0
+                            OrdersConnect.OrderType = CartData.OrderType
+                            OrdersConnect.PharmacyID = UniquePharmacyID[i]
+                            for j in range(0,len(CartData.ProductID)):
+                                if(UniquePharmacyID[i] == CartData.PharmacyID[j]):
+                                    OrdersConnect.ProductID.append(CartData.ProductID[j])
+                                    OrdersConnect.Price.append(CartData.Price[j])
+                                    OrdersConnect.Quantity.append(CartData.Quantity[j])
+                            OrdersConnect.DeliveryCharge = CartData.DeliveryCharge
+                            OrdersConnect.ServiceCharge = CartData.ServiceCharge
+                            OrdersConnect.OrderTotal = CartData.CartTotal
+                            OrdersConnect.OrderPlacedOn = OrderPlacedOn
+                            OrdersConnect.OrderStatus = "Active"
+                            OrdersConnect.OrderSubStatus = "OrderPlaced"
+                            OrdersConnect.put()
+                        SendEmail(userEmail,"Your order has been successfully placed at MediCare","""
+Dear """+UserDetails.user_FirstName+""",
+
+This is an automated email confirmation sent to you in regards of your recently placed order at MediCare.
+
+Your order has been successfully placed on """+OrderPlacedOn+""".
+You can view the same in "My Orders" tab after logging into your MediCare account.
+
+Please note your Order ID : """+OrderID+""" for the reference.
+
+Thanks & regards,
+MediCare Team.
+                        """)
+                        CartData.key.delete()
+                        self.redirect("/ConfirmOrder?userEmail="+userEmail+"&notification=Success")
+                    else:
+                        self.redirect("/?userEmail="+userEmail)
                 elif(PaymentStatus == "Failed"):
                     defg = 0
                     self.redirect("/ConfirmOrder?userEmail="+userEmail+"&notification=Failed")

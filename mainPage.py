@@ -25,6 +25,7 @@ from TermsOfUse import TermsOfUse
 from Profile import Profile
 from ShoppingCart import ShoppingCart
 from ConfirmOrder import ConfirmOrder
+from MyOrders import MyOrders
 from VerifyEmail import VerifyEmail
 from ResetPassword import ResetPassword
 
@@ -126,6 +127,7 @@ app = webapp2.WSGIApplication([
     ('/Profile',Profile),
     ('/ShoppingCart',ShoppingCart),
     ('/ConfirmOrder',ConfirmOrder),
+    ('/MyOrders',MyOrders),
     ('/OfferedProducts',OfferedProducts),
     ('/VerifyEmail',VerifyEmail),
     ('/AdminPanel',AdminPanel),

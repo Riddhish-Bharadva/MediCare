@@ -1,0 +1,217 @@
+<html>
+  <head>
+    <title>MediCare</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src='https://kit.fontawesome.com/a076d05399.js'></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+  </head>
+  <style>
+    .container
+    {
+       background:rgba(255, 255, 255, 1.0);
+       border-radius:10px !important;
+    }
+    .navbar
+    {
+      margin-top:5px;
+      border-radius: 10px;
+    }
+  </style>
+  <body style="background:url('https://www.longprairiepharmacy.com/wp-content/themes/longprairie/images/slider/9.jpg');">
+    <center>
+      <div style="max-width:80%;">
+        <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+          <a class="navbar-brand" href="/?userEmail={{ UserDetails.user_Email }}">MediCare</a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#NavigationBar">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="NavigationBar">
+            <ul class="navbar-nav">
+              {% if UserDetails.EmailVerified == 0 %}
+                <li class="nav-item">
+                  <a class="nav-link" href="/?userEmail={{ UserDetails.user_Email }}">Restricted access as email is not verified</a>
+                </li>
+              {% else %}
+                <li class="nav-item">
+                  <a class="nav-link" href="/?userEmail={{ UserDetails.user_Email }}">Home</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="/Profile?userEmail={{ UserDetails.user_Email }}">Profile</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="/MyOrders?userEmail={{ UserDetails.user_Email }}">My Orders</a>
+                </li>
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" id="BrowseByCategory" data-toggle="dropdown">Browse By Category</a>
+                  <div class="dropdown-menu" style="background:#444444;">
+                    {% if Category != [] %}
+                      {% for i in Category %}
+                        <a class="dropdown-item" href="/BrowseByCategory?userEmail={{ UserDetails.user_Email }}&Category={{ i }}" style="color:white;background:#444444;">{{ i }}</a>
+                      {% endfor %}
+                    {% endif %}
+                  </div>
+                </li>
+                <form action="/" method="get" style="margin:0px;padding:0px;">
+                  <li class="nav-item">
+                    <div class="row" style="margin:0px;padding:0px;">
+                      <div class="col-sm-10" style="margin:0px;padding:0px;">
+                        <input type='hidden' class='form-control' name='userEmail' id='userEmail' value="{{ UserDetails.user_Email }}">
+                        <input type='text' class='form-control' name='SearchBarText' id='SearchBarText' placeholder='Search' required>
+                      </div>
+                      <div class="col-sm-2" style="margin:0px;padding:0px;">
+                        <button class="btn btn-primary" name='Button' id='SearchButton' value='Search' style="padding:10px;">
+                          <span class="fas fa-search"></span>
+                        </button>
+                      </div>
+                    </div>
+                  </li>
+                </form>
+              {% endif %}
+            </ul>
+            <ul class="navbar-nav ml-auto">
+              {% if UserDetails.EmailVerified != 0 %}
+                <li class="nav-item">
+                  <a class="nav-link" href="/ShoppingCart?userEmail={{ UserDetails.user_Email }}"><span class="fas fa-shopping-cart"></span>&nbsp;Shopping Cart</a>
+                </li>
+              {% endif %}
+              <li class="nav-item">
+                <a class="nav-link" href="/"><span class="fas fa-sign-out-alt"></span>&nbsp;{{ SignInStatus }}</a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+        <div class="container">
+          <hr>
+          <hr>
+          <div class="row">
+            <div class="col-sm-1"></div>
+            <div class="col-sm-10">
+              You can <a href="/UploadPrescription?userEmail={{ UserDetails.user_Email }}">click here</a> to upload prescription and place order.
+            </div>
+            <div class="col-sm-1"></div>
+          </div>
+          <hr>
+          {% if Unique_AOD != [] %}
+            <div class="row">
+              <div class="col-sm-12 btn-primary" style="padding:10px;border-radius:10px;">
+                You can click on each order to view in more details.
+              </div>
+            </div>
+            <hr>
+          {% elif Unique_COD != [] %}
+            <div class="row">
+              <div class="col-sm-12 btn-primary" style="padding:10px;border-radius:10px;">
+                You can click on each order to view in more details.
+              </div>
+            </div>
+            <hr>
+          {% endif %}
+          <div class="row">
+            <div class="col-sm-2"><hr></div>
+            <div class="col-sm-2">
+              Active Orders
+            </div>
+            <div class="col-sm-8"><hr></div>
+          </div>
+          {% if Unique_AOD != [] %}
+            <div class="row">
+              <div class="col-sm-1"></div>
+              <div class="col-sm-10">
+                <div class="row" style="border:1px solid black;padding:10px;border-radius:10px;background:yellow;">
+                  <div class="col-sm-2">Order ID</div>
+                  <div class="col-sm-3">Order Date</div>
+                  <div class="col-sm-2">Order Type</div>
+                  <div class="col-sm-3">Order Status</div>
+                  <div class="col-sm-2">Order Total</div>
+                </div>
+                <br>
+                {% for i in range(0,Unique_AOD_Length) %}
+                  <form action="/ViewOrderDetails" method="get">
+                    <button class="btn" style="width:100%;">
+                      <input type="hidden" name="SignInAs" value="User" class="form-control"/>
+                      <input type="hidden" name="userEmail" value="{{ UserDetails.user_Email }}" class="form-control"/>
+                      <input type="hidden" name="OrderID" value="{{ Unique_AOD[i].OrderID }}" class="form-control"/>
+                      <div class="row">
+                        <div class="col-sm-2">{{ Unique_AOD[i].OrderID }}</div>
+                        <div class="col-sm-3">{{ Unique_AOD[i].OrderPlacedOn }}</div>
+                        <div class="col-sm-2">{{ Unique_AOD[i].OrderType }}</div>
+                        <div class="col-sm-3">{{ Unique_AOD[i].OrderSubStatus }}</div>
+                        <div class="col-sm-2">&#8364;{{ Unique_AOD[i].OrderTotal }}</div>
+                      </div>
+                      <div class="row">
+                      </div>
+                    </button>
+                  </form>
+                {% endfor %}
+              </div>
+              <div class="col-sm-1"></div>
+            </div>
+          {% else %}
+          <div class="row">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-8">
+              There are no active orders to display.
+            </div>
+            <div class="col-sm-2"></div>
+          </div>
+          {% endif %}
+          <hr>
+          <div class="row">
+            <div class="col-sm-2"><hr></div>
+            <div class="col-sm-2">
+              Completed Orders
+            </div>
+            <div class="col-sm-8"><hr></div>
+          </div>
+          {% if Unique_COD != [] %}
+            <div class="row">
+              <div class="col-sm-1"></div>
+              <div class="col-sm-10">
+                <div class="row" style="border:1px solid black;padding:10px;border-radius:10px;background:yellow;">
+                  <div class="col-sm-2">Order ID</div>
+                  <div class="col-sm-3">Order Date</div>
+                  <div class="col-sm-2">Order Type</div>
+                  <div class="col-sm-3">Order Status</div>
+                  <div class="col-sm-2">Order Total</div>
+                </div>
+                <br>
+                {% for i in range(0,Unique_COD_Length) %}
+                  <form action="/ViewOrderDetails" method="get">
+                    <button class="btn" name="Button" value="Order" style="width:100%;">
+                      <input type="hidden" name="SignInAs" value="User" class="form-control"/>
+                      <input type="hidden" name="userEmail" value="{{ UserDetails.user_Email }}" class="form-control"/>
+                      <input type="hidden" name="OrderID" value="{{ Unique_AOD[i].OrderID }}" class="form-control"/>
+                      <div class="row">
+                        <div class="col-sm-2">{{ Unique_COD[i].OrderID }}</div>
+                        <div class="col-sm-3">{{ Unique_COD[i].OrderPlacedOn }}</div>
+                        <div class="col-sm-2">{{ Unique_COD[i].OrderType }}</div>
+                        <div class="col-sm-3">{{ Unique_COD[i].OrderSubStatus }}</div>
+                        <div class="col-sm-2">&#8364;{{ Unique_COD[i].OrderTotal }}</div>
+                      </div>
+                      <div class="row">
+                      </div>
+                    </button>
+                  </form>
+                {% endfor %}
+              </div>
+              <div class="col-sm-1"></div>
+            </div>
+          {% else %}
+          <div class="row">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-8">
+              There are no Completed orders to display.
+            </div>
+            <div class="col-sm-2"></div>
+          </div>
+          {% endif %}
+          <hr>
+          <hr>
+        </div>
+      </div>
+    </center>
+  </body>
+</html>

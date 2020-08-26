@@ -15,3 +15,7 @@ class OrdersDB(ndb.Model):
     ServiceCharge = ndb.FloatProperty()
     OrderTotal = ndb.FloatProperty()
     OrderPlacedOn = ndb.StringProperty()
+    OrderStatus = ndb.StringProperty()
+    OrderSubStatus = ndb.StringProperty()
+    UserComments = ndb.StringProperty()
+    VendorComments = ndb.StringProperty()

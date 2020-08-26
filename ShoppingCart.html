@@ -178,15 +178,17 @@
                           <option value="">Select Pharmacy</option>
                           {% for j in VendorProductsDetails %}
                             {% if CartData.ProductID[i] == j.ProductID %}
-                              {% for k in Distance %}
-                                {% if j.PharmacyID == k[0] %}
-                                  {% for l in PharmacyDetails %}
-                                    {% if l.PharmacyID == j.PharmacyID %}
-                                      <option value="{{ k[0] }}">{{ k[1] }} KMs || {{ l.PharmacyName }}</option>
-                                    {% endif %}
-                                  {% endfor %}
-                                {% endif %}
-                              {% endfor %}
+                              {% if j.Quantity > 0 %}
+                                {% for k in Distance %}
+                                  {% if j.PharmacyID == k[0] %}
+                                    {% for l in PharmacyDetails %}
+                                      {% if l.PharmacyID == j.PharmacyID %}
+                                        <option value="{{ k[0] }}">{{ k[1] }} KMs || {{ l.PharmacyName }}</option>
+                                      {% endif %}
+                                    {% endfor %}
+                                  {% endif %}
+                                {% endfor %}
+                              {% endif %}
                             {% endif %}
                           {% endfor %}
                         </select>
@@ -195,19 +197,21 @@
                           <option value="">Select Pharmacy</option>
                           {% for j in VendorProductsDetails %}
                             {% if CartData.ProductID[i] == j.ProductID %}
-                              {% for k in Distance %}
-                                {% if j.PharmacyID == k[0] %}
-                                  {% for l in PharmacyDetails %}
-                                    {% if l.PharmacyID == j.PharmacyID %}
-                                      {% if CartData.PharmacyID[i] == k[0] %}
-                                        <option value="{{ k[0] }}" selected>{{ k[1] }} KMs || {{ l.PharmacyName }}</option>
-                                      {% else %}
-                                        <option value="{{ k[0] }}">{{ k[1] }} KMs || {{ l.PharmacyName }}</option>
+                              {% if j.Quantity > 0 %}
+                                {% for k in Distance %}
+                                  {% if j.PharmacyID == k[0] %}
+                                    {% for l in PharmacyDetails %}
+                                      {% if l.PharmacyID == j.PharmacyID %}
+                                        {% if CartData.PharmacyID[i] == k[0] %}
+                                          <option value="{{ k[0] }}" selected>{{ k[1] }} KMs || {{ l.PharmacyName }}</option>
+                                        {% else %}
+                                          <option value="{{ k[0] }}">{{ k[1] }} KMs || {{ l.PharmacyName }}</option>
+                                        {% endif %}
                                       {% endif %}
-                                    {% endif %}
-                                  {% endfor %}
-                                {% endif %}
-                              {% endfor %}
+                                    {% endfor %}
+                                  {% endif %}
+                                {% endfor %}
+                              {% endif %}
                             {% endif %}
                           {% endfor %}
                         </select>

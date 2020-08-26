@@ -234,7 +234,7 @@
           },
           {
             label: "ServiceCharge",
-            type: "TAX",
+            type: "SUBTOTAL",
             price: "{{ CartData.ServiceCharge }}",
           },
           {
@@ -366,6 +366,8 @@
                 <div style="background:green;color:white;padding:10px;border-radius:10px;font-size:15px;">Payment was successful and your order has been successfully placed. You can be track the order from "My Orders".</div>
               {% elif notification == "Failed" %}
                 <div style="background:red;color:white;padding:10px;border-radius:10px;font-size:15px;">Payment was unsuccessful and your order was not placed. Please try again to make the payment.</div>
+              {% elif notification == "ProductNotAvailableInSelectedVendor" %}
+                <div style="background:red;color:white;padding:10px;border-radius:10px;font-size:15px;">There are few products not available for selected vendor.</div>
               {% else %}
                 <div style="background:yellow;color:black;padding:10px;border-radius:10px;font-size:15px;">
                   Please check the quantity of each product carefully before making payment.
@@ -454,7 +456,7 @@
                           Service Charge
                         </div>
                         <div class="col-sm-2">
-                          <b>&#8364;1.0</b>
+                          <b>&#8364;{{ ServiceCharge }}</b>
                         </div>
                       </div>
                       {% if CartData.OrderType == "Delivery" %}
