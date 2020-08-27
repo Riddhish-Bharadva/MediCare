@@ -30,15 +30,15 @@ In case above link doesn't work, copy and paste the same in url bar of your brow
 Thanks & regards,
 MediCare Team.
             """)
-                Data['Email'] = Email
+                Data['userEmail'] = Email
                 Data['notification'] = "ResetLinkSent"
                 self.response.write(json.dumps(Data))
             else:
-                Data['Email'] = Email
+                Data['userEmail'] = Email
                 Data['notification'] = "EmailIdNotRegistered"
                 self.response.write(json.dumps(Data))
         else:
-            Data['Email'] = Email
+            Data['userEmail'] = Email
             Data['notification'] = "FunctionNotRecognized"
             self.response.write(json.dumps(Data))
 
