@@ -140,7 +140,7 @@
                 Prescription Image :
               </div>
               <div class="col-sm-5">
-                <input type='file' name='Image' id='Image' class="form-control" style="padding:3px;" accept=".png, .jpg" required>
+                <input type='file' name='Image' id='Image' class="form-control" style="padding:3px;" accept=".png, .jpg, .jpeg" required>
               </div>
               <div class="col-sm-2"></div>
             </div>
@@ -152,6 +152,21 @@
               </div>
               <div class="col-sm-5">
                 <textarea id="UserComments" name="UserComments" class="form-control" placeholder="Enter your comments here"></textarea>
+              </div>
+              <div class="col-sm-2"></div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-sm-2"></div>
+              <div class="col-sm-3 form-check-inline">
+                Order Type :
+              </div>
+              <div class="col-sm-5">
+                <select class="form-control" id="OrderType" name="OrderType" required>
+                  <option value="">Select Order Type</option>
+                  <option value="Collection">I would like to collect products from selected pharmacies</option>
+                  <option value="Delivery">I would like products to be delivered home</option>
+                </select>
               </div>
               <div class="col-sm-2"></div>
             </div>

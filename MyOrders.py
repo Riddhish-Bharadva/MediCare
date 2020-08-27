@@ -34,14 +34,14 @@ class MyOrders(webapp2.RequestHandler):
                 self.redirect('/UserSignIn?notification=EmailIdNotRegisteredOrInActive')
             elif(UserDetails != None and UserDetails.IsActive == 1):
                 SignInStatus = "SignOut"
-                ActiveOrderDetails = OrdersDB.query(OrdersDB.userEmail == userEmail and OrdersDB.OrderStatus == "Active").fetch()
+                ActiveOrderDetails = OrdersDB.query(OrdersDB.userEmail == userEmail, OrdersDB.OrderStatus == "Active").fetch()
                 if(ActiveOrderDetails != []):
                     Unique_OrderNumber = []
                     for i in range(0,len(ActiveOrderDetails)):
                         if(ActiveOrderDetails[i].OrderID not in Unique_OrderNumber):
                             Unique_OrderNumber.append(ActiveOrderDetails[i].OrderID)
                     for i in range(0,len(Unique_OrderNumber)):
-                        ActiveOrderDetails = OrdersDB.query(OrdersDB.userEmail == userEmail and OrdersDB.OrderStatus == "Active" and OrdersDB.OrderID == Unique_OrderNumber[i]).fetch()
+                        ActiveOrderDetails = OrdersDB.query(OrdersDB.userEmail == userEmail, OrdersDB.OrderStatus == "Active" and OrdersDB.OrderID == Unique_OrderNumber[i]).fetch()
                         Unique_AOD.append(ActiveOrderDetails[0])
                         PharmacyID = [Unique_AOD[i].PharmacyID]
                         for k in range(1,len(ActiveOrderDetails)):
@@ -53,14 +53,14 @@ class MyOrders(webapp2.RequestHandler):
                         Unique_AOD[i].PharmacyID = ""
                         U_AOD_PharmacyID = PharmacyID
                         Unique_AOD_Length = len(Unique_AOD)
-                CompletedOrderDetails = OrdersDB.query(OrdersDB.userEmail == userEmail and OrdersDB.OrderStatus == "Completed").fetch()
+                CompletedOrderDetails = OrdersDB.query(OrdersDB.userEmail == userEmail, OrdersDB.OrderStatus == "Completed").fetch()
                 if(CompletedOrderDetails != []):
                     Unique_OrderNumber = []
                     for i in range(0,len(CompletedOrderDetails)):
                         if(CompletedOrderDetails[i].OrderID not in Unique_OrderNumber):
                             Unique_OrderNumber.append(CompletedOrderDetails[i].OrderID)
                     for i in range(0,len(Unique_OrderNumber)):
-                        CompletedOrderDetails = OrdersDB.query(OrdersDB.userEmail == userEmail and OrdersDB.OrderStatus == "Completed" and OrdersDB.OrderID == Unique_OrderNumber[i]).fetch()
+                        CompletedOrderDetails = OrdersDB.query(OrdersDB.userEmail == userEmail, OrdersDB.OrderStatus == "Completed", OrdersDB.OrderID == Unique_OrderNumber[i]).fetch()
                         Unique_COD.append(CompletedOrderDetails[0])
                         PharmacyID = [Unique_COD[i].PharmacyID]
                         for k in range(1,len(CompletedOrderDetails)):

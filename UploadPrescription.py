@@ -97,16 +97,46 @@ class UploadPrescription(blobstore_handlers.BlobstoreUploadHandler):
                 PharmacyID = self.request.get('PharmacyID')
                 PatientName = self.request.get('PatientName')
                 UserComments = self.request.get('UserComments')
+                OrderType = self.request.get('OrderType')
                 OrderStatus = "Active"
                 OrderSubStatus = "OrderPlaced"
                 OrdersConnect = OrdersDB(userEmail = userEmail)
+                Latitude1 = UserDetails.Latitude
+                Longitude1 = UserDetails.Longitude
+                PharmacyDetails = ndb.Key("PharmacyDB",PharmacyID).get()
+                if(PharmacyDetails != None):
+                    Latitude2 = PharmacyDetails.Latitude
+                    Longitude2 = PharmacyDetails.Longitude
+                    DifferenceInLatitude = radians(Latitude2 - Latitude1)
+                    DifferenceInLongitude = radians(Longitude2 - Longitude1)
+                    Formula = (sin(DifferenceInLatitude/2)**2) + cos(radians(Latitude1)) * cos(radians(Latitude2)) * (sin(DifferenceInLongitude/2)**2)
+                    Result = 6373.0*2*atan2(sqrt(Formula),sqrt(1-Formula))
+                    Result = round(Result,3)
+                    DeliveryCharge = 0.0
+                    ServiceCharge = 0.0
+                    if(OrderType == "Delivery"):
+                        if(round(Result,3) <= 1.5):
+                            DeliveryCharge = DeliveryCharge + 1.0
+                        elif(round(Result,3) > 1.5 and round(Result,3) <= 3.0):
+                            DeliveryCharge = DeliveryCharge + 2.0
+                        elif(round(Result,3) > 3.5 and round(Result,3) <= 4.5):
+                            DeliveryCharge = DeliveryCharge + 3.0
+                        elif(round(Result,3) > 4.5 and round(Result,3) <= 6.0):
+                            DeliveryCharge = DeliveryCharge + 3.0
+                        OrdersConnect.DeliveryCharge = DeliveryCharge
+                        OrdersConnect.ServiceCharge = ServiceCharge
+                    else:
+                        OrdersConnect.DeliveryCharge = DeliveryCharge
+                        OrdersConnect.ServiceCharge = ServiceCharge
                 OrdersConnect.OrderID = OrderID
                 OrdersConnect.PrescriptionRequired = 1
                 OrdersConnect.PrescriptionImage = PrescriptionImage
+                OrdersConnect.OrderType = OrderType
                 OrdersConnect.PharmacyID = PharmacyID
                 OrdersConnect.OrderPlacedOn = OrderPlacedOn
                 OrdersConnect.OrderStatus = OrderStatus
                 OrdersConnect.OrderSubStatus = OrderSubStatus
+                OrdersConnect.PatientName = PatientName
                 OrdersConnect.UserComments = UserComments
                 OrdersConnect.put()
                 self.redirect("/UploadPrescription?userEmail="+userEmail+"&notification=OrderSuccessfullyPlaced")

@@ -19,3 +19,5 @@ class OrdersDB(ndb.Model):
     OrderSubStatus = ndb.StringProperty()
     UserComments = ndb.StringProperty()
     VendorComments = ndb.StringProperty()
+    StatusChangedBy = ndb.StringProperty()
+    PatientName = ndb.StringProperty()

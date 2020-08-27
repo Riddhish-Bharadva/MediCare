@@ -97,14 +97,14 @@
           {% if Unique_AOD != [] %}
             <div class="row">
               <div class="col-sm-12 btn-primary" style="padding:10px;border-radius:10px;">
-                You can click on each order to view in more details.
+                You can click on each order to view in more details. There can be an order with same order id listed in active and completed orders list at the same time. This is due to the fact there are few items yet to be delivered by vendor.
               </div>
             </div>
             <hr>
           {% elif Unique_COD != [] %}
             <div class="row">
               <div class="col-sm-12 btn-primary" style="padding:10px;border-radius:10px;">
-                You can click on each order to view in more details.
+                You can click on each order to view in more details. There can be an order with same order id listed in active and completed orders list at the same time. This is due to the fact there are few items yet to be delivered by vendor.
               </div>
             </div>
             <hr>
@@ -183,7 +183,7 @@
                     <button class="btn" name="Button" value="Order" style="width:100%;">
                       <input type="hidden" name="SignInAs" value="User" class="form-control"/>
                       <input type="hidden" name="userEmail" value="{{ UserDetails.user_Email }}" class="form-control"/>
-                      <input type="hidden" name="OrderID" value="{{ Unique_AOD[i].OrderID }}" class="form-control"/>
+                      <input type="hidden" name="OrderID" value="{{ Unique_COD[i].OrderID }}" class="form-control"/>
                       <div class="row">
                         <div class="col-sm-2">{{ Unique_COD[i].OrderID }}</div>
                         <div class="col-sm-3">{{ Unique_COD[i].OrderPlacedOn }}</div>

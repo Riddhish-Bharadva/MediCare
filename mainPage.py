@@ -27,6 +27,7 @@ from ShoppingCart import ShoppingCart
 from ConfirmOrder import ConfirmOrder
 from MyOrders import MyOrders
 from VendorOrders import VendorOrders
+from ViewOrderDetails import ViewOrderDetails
 from UploadPrescription import UploadPrescription
 from VerifyEmail import VerifyEmail
 from ResetPassword import ResetPassword
@@ -133,6 +134,7 @@ app = webapp2.WSGIApplication([
     ('/VendorOrders',VendorOrders),
     ('/UploadPrescription',UploadPrescription),
     ('/OfferedProducts',OfferedProducts),
+    ('/ViewOrderDetails',ViewOrderDetails),
     ('/VerifyEmail',VerifyEmail),
     ('/AdminPanel',AdminPanel),
     ('/API_MediCare',API_MediCare),

@@ -104,8 +104,8 @@
                 {% for i in range(0,AOD_Length) %}
                   <form action="/ViewOrderDetails" method="get">
                     <button class="btn" style="width:100%;">
-                      <input type="hidden" name="SignInAs" value="User" class="form-control"/>
-                      <input type="hidden" name="userEmail" value="{{ VendorDetails.Email }}" class="form-control"/>
+                      <input type="hidden" name="SignInAs" value="Vendor" class="form-control"/>
+                      <input type="hidden" name="vendorEmail" value="{{ VendorDetails.Email }}" class="form-control"/>
                       <input type="hidden" name="OrderID" value="{{ ActiveOrderDetails[i].OrderID }}" class="form-control"/>
                       <div class="row">
                         <div class="col-sm-2">{{ ActiveOrderDetails[i].OrderID }}</div>
@@ -154,8 +154,8 @@
                 {% for i in range(0,COD_Length) %}
                   <form action="/ViewOrderDetails" method="get">
                     <button class="btn" style="width:100%;">
-                      <input type="hidden" name="SignInAs" value="User" class="form-control"/>
-                      <input type="hidden" name="userEmail" value="{{ VendorDetails.Email }}" class="form-control"/>
+                      <input type="hidden" name="SignInAs" value="Vendor" class="form-control"/>
+                      <input type="hidden" name="vendorEmail" value="{{ VendorDetails.Email }}" class="form-control"/>
                       <input type="hidden" name="OrderID" value="{{ CompletedOrderDetails[i].OrderID }}" class="form-control"/>
                       <div class="row">
                         <div class="col-sm-2">{{ CompletedOrderDetails[i].OrderID }}</div>
