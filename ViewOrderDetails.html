@@ -535,6 +535,7 @@
               {% if VendorDetails.RegisteredAs == "Pharmacist" %}
                 <hr>
                 <form action="/ViewOrderDetails" method="post">
+                  <input type="hidden" class="form-control" id="SignInAs" name="SignInAs" value="Vendor" />
                   <input type="hidden" class="form-control" id="vendorEmail" name="vendorEmail" value="{{ VendorDetails.Email }}" />
                   <input type="hidden" class="form-control" id="userData" name="userData" value="{{ UserData.user_Email }}" />
                   <input type="hidden" class="form-control" id="PharmacyID" name="PharmacyID" value="{{ VendorDetails.PharmacyID }}" />
