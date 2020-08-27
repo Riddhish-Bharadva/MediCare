@@ -31,6 +31,7 @@ class ViewOrderDetails(blobstore_handlers.BlobstoreUploadHandler):
         ProductStatus = []
         Button = self.request.get("Button")
         ImageUploadURL = ""
+        SubTotalPrice = 0.0
 
         if(SignInAs == "User"):
             userEmail = self.request.get('userEmail')
@@ -53,7 +54,6 @@ class ViewOrderDetails(blobstore_handlers.BlobstoreUploadHandler):
                                 ProductStatus.append("Delivered")
                             else:
                                 ProductStatus.append("Order In Progress")
-                        OrderDetails.PharmacyID = ""
                         for i in range(1,len(OrderData)):
                             for j in range(0,len(OrderData[i].ProductID)):
                                 if(OrderData[i].OrderStatus == "Completed"):
@@ -68,9 +68,27 @@ class ViewOrderDetails(blobstore_handlers.BlobstoreUploadHandler):
                             ProductData = ndb.Key("ProductsDB",OrderDetails.ProductID[i]).get()
                             if(ProductData != None):
                                 ProductDetails.append(ProductData)
-                    ProductsCount = len(OrderDetails.ProductID)
+                    if(OrderDetails.PrescriptionRequired == 0):
+                        ProductsCount = len(OrderDetails.ProductID)
+                    else:
+                        ProductsCount = len(OrderDetails.ProductName)
                     if(OrderDetails.OrderSubStatus == "ReuploadPrescription"):
                         ImageUploadURL = blobstore.create_upload_url("/ViewOrderDetails")
+                    for i in range(0,len(OrderDetails.Price)):
+                        SubTotalPrice = SubTotalPrice + OrderDetails.Quantity[i] * OrderDetails.Price[i]
+                    OrderDetails.OrderTotal = SubTotalPrice + OrderDetails.DeliveryCharge + OrderDetails.ServiceCharge
+                    OrderDetails.put()
+                    if(Button == "RemoveProduct"):
+                        index = self.request.get("index")
+                        for i in range(0,len(OrderDetails.ProductName)):
+                            if(i == int(index)):
+                                del OrderDetails.ProductName[int(index)]
+                                del OrderDetails.Quantity[int(index)]
+                                del OrderDetails.Price[int(index)]
+                                break
+                        OrderDetails.put()
+                        self.redirect('/ViewOrderDetails?SignInAs=User&userEmail='+UserDetails.user_Email+'&OrderID='+OrderDetails.OrderID)
+                    OrderDetails.PharmacyID = ""
             else:
                 self.redirect('/UserSignIn')
         elif(SignInAs == "Vendor"):
@@ -133,6 +151,7 @@ class ViewOrderDetails(blobstore_handlers.BlobstoreUploadHandler):
             'ProductsCount' : ProductsCount,
             'ProductStatus' : ProductStatus,
             'ImageUploadURL' : ImageUploadURL,
+            'SubTotalPrice' : SubTotalPrice,
         }
 
         template = JINJA_ENVIRONMENT.get_template('ViewOrderDetails.html')
@@ -251,16 +270,24 @@ MediCare Team.
                     OrderDetails.put()
                     self.redirect('/ViewOrderDetails?SignInAs=Vendor&vendorEmail='+VendorDetails.Email+'&OrderID='+OrderDetails.OrderID)
         elif(SignInAs == "User" and userEmail != ""):
-            PrescriptionImage = self.get_uploads()[0]
-            PrescriptionImage = get_serving_url(PrescriptionImage.key())
             Button = self.request.get('Button')
             OrderID = self.request.get('OrderID')
             OrderDetails = OrdersDB.query(OrdersDB.OrderID == OrderID, OrdersDB.userEmail == userEmail, OrdersDB.PrescriptionRequired == 1).get()
             if(OrderDetails != [] and Button == "Upload"):
+                PrescriptionImage = self.get_uploads()[0]
+                PrescriptionImage = get_serving_url(PrescriptionImage.key())
                 OrderDetails.PrescriptionImage = PrescriptionImage
                 OrderDetails.OrderSubStatus = "OrderPlaced"
                 OrderDetails.put()
-            self.redirect('/ViewOrderDetails?SignInAs=User&userEmail='+userEmail+'&OrderID='+OrderDetails.OrderID)
+                self.redirect('/ViewOrderDetails?SignInAs=User&userEmail='+userEmail+'&OrderID='+OrderDetails.OrderID)
+            elif(OrderDetails != [] and Button == "ProceedToBilling"):
+                OrderDetails.OrderSubStatus = "ProceedToBilling"
+                OrderDetails.put()
+                self.redirect('/ViewOrderDetails?SignInAs=User&userEmail='+userEmail+'&OrderID='+OrderDetails.OrderID)
+            elif(OrderDetails != [] and Button == "Pay"):
+                OrderDetails.OrderSubStatus = "PaymentSuccessful"
+                OrderDetails.put()
+                self.redirect('/ViewOrderDetails?SignInAs=User&userEmail='+userEmail+'&OrderID='+OrderDetails.OrderID)
         else:
             self.redirect('/VendorSignIn')
 
