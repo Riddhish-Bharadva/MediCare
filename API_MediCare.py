@@ -1,46 +1,116 @@
 import webapp2
-import json
 import hashlib
+import json
+import urllib
 from google.appengine.ext import ndb
-from UsersDB import UsersDB
+from google.appengine.api import urlfetch
+from urllib import urlencode
 from EmailModule import SendEmail
+from UsersDB import UsersDB
 
 class API_MediCare(webapp2.RequestHandler):
     def post(self):
         self.response.headers['Content-Type'] = 'application/json'
 
         WebPageLink = "https://medicare-287205.nw.r.appspot.com/"
-        Json_Data = json.loads(self.request.body)
-        Data = {}
-        FunctionOption = Json_Data["function"]
-        Email = Json_Data["userEmail"]
-        DBConnect = ndb.Key('UsersDB',Email).get()
-        if(FunctionOption == "ForgotPassword"):
-            if(DBConnect != None):
-                SendEmail(Email,"Reset password for your MediCare account","""
+        JD = json.loads(self.request.body)
+        ResponseData = {}
+        FunctionOption = JD["function"]
+        userEmail = JD["userEmail"]
+        DBConnect = ndb.Key('UsersDB',userEmail).get()
+
+# Below is code for SignUp.
+        if(FunctionOption == "SignUp" and DBConnect == None):
+            API_Key = "AIzaSyDvLc7SvzpX6KP6HCfn033xNKaM8UH3e2w"
+            params = {"address":JD["Address"],"key":API_Key}
+            GoogleAPI = "https://maps.googleapis.com/maps/api/geocode/json"
+            url_params = urlencode(params)
+            url = GoogleAPI+"?"+url_params
+            result = urlfetch.fetch(url=url,method=urlfetch.POST,headers=params)
+            Latitude = json.loads(result.content)['results'][0]['geometry']['location']['lat']
+            Longitude = json.loads(result.content)['results'][0]['geometry']['location']['lng']
+            DBConnect = UsersDB(id=userEmail)
+            DBConnect.user_FirstName = JD["FirstName"]
+            DBConnect.user_LastName = JD["LastName"]
+            DBConnect.user_Email = userEmail
+            DBConnect.user_Password = JD["Password"]
+            DBConnect.user_Contact = JD["Contact"]
+            DBConnect.user_Address = JD["Address"]
+            DBConnect.Latitude = Latitude
+            DBConnect.Longitude = Longitude
+            DBConnect.user_Gender = JD["Gender"]
+            DBConnect.user_DOB = JD["DOB"]
+            DBConnect.EmailVerified = 0
+            DBConnect.ResetPasswordLinkSent = 0
+            DBConnect.IsActive = 1
+            DBConnect.put()
+            SendEmail(userEmail,"Congratulations! Your MediCare account has been setup","""
+Dear """+DBConnect.user_FirstName+""",
+
+This is an automated email confirmation sent to you in regards of your MediCare account.
+
+Please click on below link to verify your Email Id:
+"""+WebPageLink+"""VerifyEmail?RegisteredAs=User&userEmail="""+userEmail+"""&VerifyStatus="""+hashlib.md5(DBConnect.user_Password.encode()).hexdigest()+"""
+
+Thanks & regards,
+MediCare Team.
+            """)
+            ResponseData['userEmail'] = userEmail
+            ResponseData['notification'] = "UserSuccessfullyRegistered"
+            self.response.write(json.dumps(ResponseData))
+        elif(FunctionOption == "SignUp" and DBConnect != None):
+            ResponseData['userEmail'] = userEmail
+            ResponseData['notification'] = "UserAlreadyRegistered"
+            self.response.write(json.dumps(ResponseData))
+
+# Below is code for SignIn.
+        elif(FunctionOption == "SignIn" and DBConnect != None):
+            userPassword = JD["Password"]
+            if(DBConnect.IsActive == 1):
+                if(DBConnect.user_Password == userPassword):
+                    ResponseData['userEmail'] = userEmail
+                    ResponseData['notification'] = "SuccessfulSignIn"
+                    self.response.write(json.dumps(ResponseData))
+                else:
+                    ResponseData['userEmail'] = userEmail
+                    ResponseData['notification'] = "PasswordMissmatch"
+                    self.response.write(json.dumps(ResponseData))
+            else:
+                ResponseData['userEmail'] = userEmail
+                ResponseData['notification'] = "UserInActive"
+                self.response.write(json.dumps(ResponseData))
+
+# Below is code for Forgot Password.
+        elif(FunctionOption == "ForgotPassword" and DBConnect != None):
+            DBConnect.ResetPasswordLinkSent = 1
+            DBConnect.put()
+            SendEmail(userEmail,"Reset password for your MediCare account","""
 Dear """+DBConnect.user_FirstName+""",
 
 This is an automated email sent to reset password of your MediCare account.
 
 Click on below link to reset your password:
-"""+WebPageLink+"""ResetPassword?RegisteredAs=User&userEmail="""+Email+"""&FromPage=/UserSignIn&ResetStatus="""+hashlib.md5(DBConnect.user_Password.encode()).hexdigest()+"""
+
+"""+WebPageLink+"""ResetPassword?RegisteredAs=User&userEmail="""+userEmail+"""&FromPage=/UserSignIn&ResetStatus="""+hashlib.md5(DBConnect.user_Password.encode()).hexdigest()+"""
 
 In case above link doesn't work, copy and paste the same in url bar of your browser.
 
 Thanks & regards,
 MediCare Team.
             """)
-                Data['userEmail'] = Email
-                Data['notification'] = "ResetLinkSent"
-                self.response.write(json.dumps(Data))
-            else:
-                Data['userEmail'] = Email
-                Data['notification'] = "EmailIdNotRegistered"
-                self.response.write(json.dumps(Data))
+            ResponseData['userEmail'] = userEmail
+            ResponseData['notification'] = "ResetLinkSent"
+            self.response.write(json.dumps(ResponseData))
+        elif(FunctionOption == "ForgotPassword" and DBConnect == None):
+            ResponseData['userEmail'] = userEmail
+            ResponseData['notification'] = "UserNotRegistered"
+            self.response.write(json.dumps(ResponseData))
+
+# In case no function satisfy conditions, below will be returned.
         else:
-            Data['userEmail'] = Email
-            Data['notification'] = "FunctionNotRecognized"
-            self.response.write(json.dumps(Data))
+            ResponseData['userEmail'] = userEmail
+            ResponseData['notification'] = "FunctionNotRecognized"
+            self.response.write(json.dumps(ResponseData))
 
 app = webapp2.WSGIApplication([
     ('/API_MediCare',API_MediCare),
