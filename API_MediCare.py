@@ -70,6 +70,13 @@ MediCare Team.
                 if(DBConnect.user_Password == userPassword):
                     ResponseData['userEmail'] = userEmail
                     ResponseData['notification'] = "SuccessfulSignIn"
+                    ResponseData['FirstName'] = DBConnect.user_FirstName
+                    ResponseData['LastName'] = DBConnect.user_LastName
+                    ResponseData['Contact'] = DBConnect.user_Contact
+                    ResponseData['Address'] = DBConnect.user_Address
+                    ResponseData['Gender'] = DBConnect.user_Gender
+                    ResponseData['DOB'] = DBConnect.user_DOB
+                    ResponseData['EmailVerified'] = DBConnect.EmailVerified
                     self.response.write(json.dumps(ResponseData))
                 else:
                     ResponseData['userEmail'] = userEmail
@@ -79,6 +86,10 @@ MediCare Team.
                 ResponseData['userEmail'] = userEmail
                 ResponseData['notification'] = "UserInActive"
                 self.response.write(json.dumps(ResponseData))
+        elif(FunctionOption == "SignIn" and DBConnect == None):
+            ResponseData['userEmail'] = userEmail
+            ResponseData['notification'] = "UserNotRegistered"
+            self.response.write(json.dumps(ResponseData))
 
 # Below is code for Forgot Password.
         elif(FunctionOption == "ForgotPassword" and DBConnect != None):
