@@ -106,6 +106,17 @@ MediCare Team.
             ResponseData['notification'] = "UserNotRegistered"
             self.response.write(json.dumps(ResponseData))
 
+# Below is code for DeletingUserProfile.
+        elif(FunctionOption == "DeleteUser" and DBConnect != None):
+            DBConnect.key.delete()
+            ResponseData['userEmail'] = userEmail
+            ResponseData['notification'] = "UserSuccessfullyDeleted"
+            self.response.write(json.dumps(ResponseData))
+        elif(FunctionOption == "DeleteUser" and DBConnect == None):
+            ResponseData['userEmail'] = userEmail
+            ResponseData['notification'] = "UserNotRegistered"
+            self.response.write(json.dumps(ResponseData))
+
 # In case no function satisfy conditions, below will be returned.
         else:
             ResponseData['userEmail'] = userEmail
