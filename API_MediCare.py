@@ -76,7 +76,7 @@ MediCare Team.
                     ResponseData['Address'] = DBConnect.user_Address
                     ResponseData['Gender'] = DBConnect.user_Gender
                     ResponseData['DOB'] = DBConnect.user_DOB
-                    ResponseData['EmailVerified'] = DBConnect.EmailVerified
+                    ResponseData['EmailVerified'] = "\""+DBConnect.EmailVerified+"\""
                     self.response.write(json.dumps(ResponseData))
                 else:
                     ResponseData['userEmail'] = userEmail
