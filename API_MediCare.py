@@ -76,19 +76,36 @@ MediCare Team.
                     ResponseData['Address'] = DBConnect.user_Address
                     ResponseData['Gender'] = DBConnect.user_Gender
                     ResponseData['DOB'] = DBConnect.user_DOB
-                    ResponseData['EmailVerified'] = DBConnect.EmailVerified
                     self.response.write(json.dumps(ResponseData))
                 else:
                     ResponseData['userEmail'] = userEmail
                     ResponseData['notification'] = "PasswordMissmatch"
+                    ResponseData['FirstName'] = ""
+                    ResponseData['LastName'] = ""
+                    ResponseData['Contact'] = ""
+                    ResponseData['Address'] = ""
+                    ResponseData['Gender'] = ""
+                    ResponseData['DOB'] = ""
                     self.response.write(json.dumps(ResponseData))
             else:
                 ResponseData['userEmail'] = userEmail
                 ResponseData['notification'] = "UserInActive"
+                ResponseData['FirstName'] = ""
+                ResponseData['LastName'] = ""
+                ResponseData['Contact'] = ""
+                ResponseData['Address'] = ""
+                ResponseData['Gender'] = ""
+                ResponseData['DOB'] = ""
                 self.response.write(json.dumps(ResponseData))
         elif(FunctionOption == "SignIn" and DBConnect == None):
             ResponseData['userEmail'] = userEmail
             ResponseData['notification'] = "UserNotRegistered"
+            ResponseData['FirstName'] = ""
+            ResponseData['LastName'] = ""
+            ResponseData['Contact'] = ""
+            ResponseData['Address'] = ""
+            ResponseData['Gender'] = ""
+            ResponseData['DOB'] = ""
             self.response.write(json.dumps(ResponseData))
 
 # Below is code for Forgot Password.
