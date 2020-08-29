@@ -7,6 +7,7 @@ from google.appengine.api import urlfetch
 from urllib import urlencode
 from EmailModule import SendEmail
 from UsersDB import UsersDB
+from ProductsDB import ProductsDB
 
 class API_MediCare(webapp2.RequestHandler):
     def post(self):
@@ -17,7 +18,8 @@ class API_MediCare(webapp2.RequestHandler):
         ResponseData = {}
         FunctionOption = JD["function"]
         userEmail = JD["userEmail"]
-        DBConnect = ndb.Key('UsersDB',userEmail).get()
+        if(userEmail != "" and userEmail != None):
+            DBConnect = ndb.Key('UsersDB',userEmail).get()
 
 # Below is code for SignUp.
         if(FunctionOption == "SignUp" and DBConnect == None):
@@ -127,6 +129,37 @@ MediCare Team.
             ResponseData['userEmail'] = userEmail
             ResponseData['notification'] = "UserNotRegistered"
             self.response.write(json.dumps(ResponseData))
+
+# Below is code for HomePageAllProductsID.
+        elif(FunctionOption == "AllProductID"):
+            ProductsData = ProductsDB.query().fetch()
+            ResponseProductID = {}
+            Product = []
+            for i in range(0,len(ProductsData)):
+                Product.append(ProductsData[i].ProductID)
+            ResponseProductID['ProductID'] = Product
+            self.response.write(json.dumps(ResponseProductID))
+
+# Below is code for HomePageAllProductsData.
+        elif(FunctionOption == "ProductData"):
+            ResponseProduct = {}
+            ProductID = JD["ProductID"]
+            ProductData = ndb.Key("ProductsDB",ProductID).get()
+            ResponseProduct['ProductID'] = ProductData.ProductID
+            ResponseProduct['ProductName'] = ProductData.ProductName
+            ResponseProduct['Image'] = ProductData.Images[0]
+            ResponseProduct['Description'] = ProductData.Description
+            ResponseProduct['Dosage'] = ProductData.Dosage
+            ResponseProduct['Category'] = ProductData.Category
+            ResponseProduct['Ingredients'] = ProductData.Ingredients
+            ResponseProduct['Price'] = ProductData.Price
+            ResponseProduct['ProductLife'] = ProductData.ProductLife
+            ResponseProduct['Quantity'] = ProductData.Quantity
+            Stock = []
+            for j in range(0,len(ProductData.StockedIn)):
+                Stock.append(ProductData.StockedIn[j])
+            ResponseProduct['StockedIn'] = Stock
+            self.response.write(json.dumps(ResponseProduct))
 
 # In case no function satisfy conditions, below will be returned.
         else:
