@@ -124,7 +124,7 @@ class UploadPrescription(blobstore_handlers.BlobstoreUploadHandler):
                         elif(round(Result,3) > 4.5 and round(Result,3) <= 6.0):
                             DeliveryCharge = DeliveryCharge + 3.0
                         OrdersConnect.DeliveryCharge = DeliveryCharge
-                        OrdersConnect.ServiceCharge = ServiceCharge
+                        OrdersConnect.ServiceCharge = 1.0
                     else:
                         OrdersConnect.DeliveryCharge = DeliveryCharge
                         OrdersConnect.ServiceCharge = ServiceCharge

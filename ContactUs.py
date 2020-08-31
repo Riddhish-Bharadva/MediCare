@@ -49,7 +49,6 @@ class ContactUs(webapp2.RequestHandler):
         ContactUsDBConnect.Contact = Contact
         ContactUsDBConnect.Query = Query
         ContactUsDBConnect.FormSubmittedOn = FormSubmittedOn
-        ContactUsDBConnect.Replied = 0
         ContactUsDBConnect.put()
 
         SendEmail(userEmail,"Your query was successfully submitted to MediCare team","""

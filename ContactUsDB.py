@@ -7,5 +7,3 @@ class ContactUsDB(ndb.Model):
     Contact = ndb.StringProperty()
     Query = ndb.StringProperty()
     FormSubmittedOn = ndb.StringProperty()
-    Replied = ndb.IntegerProperty()
-    RepliedOn = ndb.StringProperty()

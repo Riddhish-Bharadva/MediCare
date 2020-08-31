@@ -87,7 +87,11 @@ class ViewOrderDetails(blobstore_handlers.BlobstoreUploadHandler):
                                 del OrderDetails.Price[int(index)]
                                 break
                         OrderDetails.put()
-                        self.redirect('/ViewOrderDetails?SignInAs=User&userEmail='+UserDetails.user_Email+'&OrderID='+OrderDetails.OrderID)
+                        if(len(OrderDetails.ProductName) == 0):
+                            OrderDetails.key.delete()
+                            self.redirect('/MyOrders?userEmail='+userEmail)
+                        else:
+                            self.redirect('/ViewOrderDetails?SignInAs=User&userEmail='+UserDetails.user_Email+'&OrderID='+OrderDetails.OrderID)
                     OrderDetails.PharmacyID = ""
             else:
                 self.redirect('/UserSignIn')
@@ -114,7 +118,7 @@ class ViewOrderDetails(blobstore_handlers.BlobstoreUploadHandler):
                             ProductsCount = len(OrderDetails.ProductID)
                         else:
                             ProductsCount = len(OrderDetails.ProductName)
-                    UserData = ndb.Key("UsersDB", OrderDetails.userEmail).get()
+                    UserData = ndb.Key("UsersDB", OrderData[0].userEmail).get()
                     if(Button == "RemoveProduct"):
                         index = self.request.get("index")
                         for i in range(0,len(OrderDetails.ProductName)):
@@ -251,7 +255,8 @@ MediCare Team.
                     OrderDetails.Quantity = Quantity
                     OrderDetails.Price = Price
                     OrderDetails.VendorComments = VendorComments
-                    OrderDetails.OrderSubStatus = "BillingRequired"
+                    if(len(OrderDetails.ProductName) != 0):
+                        OrderDetails.OrderSubStatus = "BillingRequired"
                     OrderDetails.put()
                     SendEmail(OrderDetails.userEmail,"Your order uploaded with Prescreption requires billing","""
 Dear """+OrderDetails.userEmail+""",
