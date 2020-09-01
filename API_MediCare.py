@@ -205,6 +205,61 @@ MediCare Team.
             ResponseData['userEmail'] = userEmail
             self.response.write(json.dumps(ResponseData))
 
+# Below is code for Fetching user profile data.
+        elif(FunctionOption == "FetchProfileData" and DBConnect != None):
+            ResponseData['userEmail'] = DBConnect.user_Email
+            ResponseData['notification'] = "ProfileDataFound"
+            ResponseData['FirstName'] = DBConnect.user_FirstName
+            ResponseData['LastName'] = DBConnect.user_LastName
+            ResponseData['Contact'] = DBConnect.user_Contact
+            ResponseData['Address'] = DBConnect.user_Address
+            ResponseData['Gender'] = DBConnect.user_Gender
+            ResponseData['DOB'] = DBConnect.user_DOB
+            ResponseData['EmailVerified'] = DBConnect.EmailVerified
+            self.response.write(json.dumps(ResponseData))
+        elif(FunctionOption == "FetchProfileData" and DBConnect == None):
+            ResponseData['userEmail'] = userEmail
+            ResponseData['notification'] = "UserNotRegistered"
+            self.response.write(json.dumps(ResponseData))
+
+# Below is code for Fetching user profile data.
+        elif(FunctionOption == "UpdateProfileData" and DBConnect != None):
+            API_Key = "AIzaSyDvLc7SvzpX6KP6HCfn033xNKaM8UH3e2w"
+            params = {"address":JD["Address"],"key":API_Key}
+            GoogleAPI = "https://maps.googleapis.com/maps/api/geocode/json"
+            url_params = urlencode(params)
+            url = GoogleAPI+"?"+url_params
+            result = urlfetch.fetch(url=url,method=urlfetch.POST,headers=params)
+            DBConnect.user_FirstName = JD["FirstName"]
+            DBConnect.user_LastName = JD["LastName"]
+            DBConnect.user_Contact = JD["Contact"]
+            DBConnect.user_Address = JD["Address"]
+            DBConnect.Latitude = json.loads(result.content)['results'][0]['geometry']['location']['lat']
+            DBConnect.Longitude = json.loads(result.content)['results'][0]['geometry']['location']['lng']
+            DBConnect.put()
+            SendEmail(DBConnect.user_Email,"Congratulations! Your MediCare account details are updated successfully","""
+Dear """+DBConnect.user_FirstName+""",
+
+This is an automated email confirmation sent to you in regards of successful updation of your MediCare account.
+
+Thanks & regards,
+MediCare Team.
+            """)
+            ResponseData['userEmail'] = DBConnect.user_Email
+            ResponseData['notification'] = "ProfileSuccessfullyUpdated"
+            ResponseData['FirstName'] = DBConnect.user_FirstName
+            ResponseData['LastName'] = DBConnect.user_LastName
+            ResponseData['Contact'] = DBConnect.user_Contact
+            ResponseData['Address'] = DBConnect.user_Address
+            ResponseData['Gender'] = DBConnect.user_Gender
+            ResponseData['DOB'] = DBConnect.user_DOB
+            ResponseData['EmailVerified'] = DBConnect.EmailVerified
+            self.response.write(json.dumps(ResponseData))
+        elif(FunctionOption == "UpdateProfileData" and DBConnect == None):
+            ResponseData['userEmail'] = userEmail
+            ResponseData['notification'] = "UserNotRegistered"
+            self.response.write(json.dumps(ResponseData))
+
 # In case no function satisfy conditions, below will be returned.
         else:
             ResponseData['userEmail'] = userEmail
