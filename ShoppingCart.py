@@ -51,6 +51,7 @@ class ShoppingCart(webapp2.RequestHandler):
                             if(CartData.ProductID[i] == ProductID):
                                 del CartData.ProductID[i]
                                 del CartData.Quantity[i]
+                                del CartData.PharmacyID[i]
                                 CartData.put()
                                 break
                     else:

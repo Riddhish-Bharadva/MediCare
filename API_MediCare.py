@@ -8,6 +8,7 @@ from urllib import urlencode
 from EmailModule import SendEmail
 from UsersDB import UsersDB
 from ProductsDB import ProductsDB
+from CartDB import CartDB
 
 class API_MediCare(webapp2.RequestHandler):
     def post(self):
@@ -160,6 +161,48 @@ MediCare Team.
                 Stock.append(ProductData.StockedIn[j])
             ResponseProduct['StockedIn'] = Stock
             self.response.write(json.dumps(ResponseProduct))
+
+# Below is code to add products to cart.
+        elif(FunctionOption == "AddToCart" and DBConnect != None):
+            ProductID = JD["ProductID"]
+            CartDBStatus = ndb.Key("CartDB",userEmail).get()
+            if(CartDBStatus != None):
+                if(ProductID not in CartDBStatus.ProductID):
+                    CartDBStatus.ProductID.append(ProductID)
+                    CartDBStatus.Quantity.append(0)
+                    CartDBStatus.PharmacyID.append("None")
+            else:
+                CartDBStatus = CartDB(id=userEmail)
+                CartDBStatus.userEmail = userEmail
+                CartDBStatus.OrderType = "None"
+                CartDBStatus.ProductID.append(ProductID)
+                CartDBStatus.Quantity.append(0)
+                CartDBStatus.PharmacyID.append("None")
+            CartDBStatus.put()
+            ResponseData['userEmail'] = userEmail
+            ResponseData['notification'] = "ProductSuccessfullyAdded"
+            self.response.write(json.dumps(ResponseData))
+
+# Below is code to remove products from cart.
+        elif(FunctionOption == "RemoveFromCart" and DBConnect != None):
+            ProductID = JD["ProductID"]
+            CartData = ndb.Key("CartDB",userEmail).get()
+            if(CartData != None):
+                if(len(CartData.ProductID)>1):
+                    for i in range(0,len(CartData.ProductID)):
+                        if(CartData.ProductID[i] == ProductID):
+                            del CartData.ProductID[i]
+                            del CartData.Quantity[i]
+                            del CartData.PharmacyID[i]
+                            CartData.put()
+                            break
+                else:
+                    CartData.key.delete()
+                ResponseData['notification'] = "ProductSuccessfullyRemoved"
+            else:
+                ResponseData['notification'] = "FailedToRemoveProduct"
+            ResponseData['userEmail'] = userEmail
+            self.response.write(json.dumps(ResponseData))
 
 # In case no function satisfy conditions, below will be returned.
         else:
