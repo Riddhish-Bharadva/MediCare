@@ -9,6 +9,7 @@ from EmailModule import SendEmail
 from UsersDB import UsersDB
 from ProductsDB import ProductsDB
 from CartDB import CartDB
+from VendorProductsDB import VendorProductsDB
 
 class API_MediCare(webapp2.RequestHandler):
     def post(self):
