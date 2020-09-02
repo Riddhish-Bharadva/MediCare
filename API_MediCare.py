@@ -222,7 +222,7 @@ MediCare Team.
             ResponseData['notification'] = "UserNotRegistered"
             self.response.write(json.dumps(ResponseData))
 
-# Below is code for Fetching user profile data.
+# Below is code for updating user profile data.
         elif(FunctionOption == "UpdateProfileData" and DBConnect != None):
             API_Key = "AIzaSyDvLc7SvzpX6KP6HCfn033xNKaM8UH3e2w"
             params = {"address":JD["Address"],"key":API_Key}
@@ -258,6 +258,27 @@ MediCare Team.
         elif(FunctionOption == "UpdateProfileData" and DBConnect == None):
             ResponseData['userEmail'] = userEmail
             ResponseData['notification'] = "UserNotRegistered"
+            self.response.write(json.dumps(ResponseData))
+
+# Below is code for searching product and returning product id if keyword matches.
+        elif(FunctionOption == "SearchProduct"):
+            ResponseData = {}
+            ProductIDs = []
+            SearchKeyword = JD["SearchKeyword"]
+            if(SearchKeyword != ""):
+                AllProducts = ProductsDB.query().fetch()
+                if(AllProducts != None):
+                    for i in range(0,len(AllProducts)):
+                        ProdName = AllProducts[i].ProductName.lower()
+                        ProdDescription = AllProducts[i].Description.lower()
+                        ProdIngredients = AllProducts[i].Ingredients.lower()
+                        if(ProdName.find(SearchKeyword.lower()) != -1):
+                            ProductIDs.append(AllProducts[i].ProductID)
+                        elif(ProdDescription.find(SearchKeyword.lower()) != -1):
+                            ProductIDs.append(AllProducts[i].ProductID)
+                        elif(ProdIngredients.find(SearchKeyword.lower()) != -1):
+                            ProductIDs.append(AllProducts[i].ProductID)
+            ResponseData['ProductID'] = ProductIDs
             self.response.write(json.dumps(ResponseData))
 
 # In case no function satisfy conditions, below will be returned.
