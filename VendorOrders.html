@@ -59,14 +59,6 @@
         <div class="container">
           <hr>
           <hr>
-          <div class="row">
-            <div class="col-sm-1"></div>
-            <div class="col-sm-10">
-              Below orders are placed by users.
-            </div>
-            <div class="col-sm-1"></div>
-          </div>
-          <hr>
           {% if ActiveOrderDetails != [] %}
             <div class="row">
               <div class="col-sm-12 btn-primary" style="padding:10px;border-radius:10px;">
@@ -123,7 +115,7 @@
               <div class="col-sm-1"></div>
             </div>
           {% else %}
-          <div class="row">
+          <div class="row btn-primary" style="padding:10px;border-radius:10px;">
             <div class="col-sm-2"></div>
             <div class="col-sm-8">
               There are no active orders to display.
@@ -173,7 +165,7 @@
               <div class="col-sm-1"></div>
             </div>
           {% else %}
-          <div class="row">
+          <div class="row btn-primary" style="padding:10px;border-radius:10px;">
             <div class="col-sm-2"></div>
             <div class="col-sm-8">
               There are no completed orders to display.

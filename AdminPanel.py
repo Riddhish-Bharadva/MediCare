@@ -51,7 +51,7 @@ class AdminPanel(webapp2.RequestHandler):
     def post(self):
         self.response.headers['content-type'] = 'text/html'
 
-        WebPageLink = "https://medicare-287205.nw.r.appspot.com/"
+        WebPageLink = "https://medicare-287205.nw.r.appspot.com"
         Button = self.request.get('Button')
         AdminLoggedIn = users.get_current_user()
         AdminEmail = AdminLoggedIn.email()

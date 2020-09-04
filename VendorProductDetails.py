@@ -58,7 +58,7 @@ class VendorProductDetails(webapp2.RequestHandler):
                     Dosage = self.request.get('Dosage')
                     ProductLife = self.request.get('ProductLife')
                     Category = self.request.get('Category')
-                    SubCategory = self.request.get('SubCategory')
+                    PrescriptionRequired = int(self.request.get('PrescriptionRequired'))
                     Quantity = int(self.request.get('Quantity'))
                     Price = float(self.request.get('Price'))
                     LastModifiedOn = datetime.now().strftime("%d/%m/%Y at %H:%M:%S")
@@ -70,7 +70,7 @@ class VendorProductDetails(webapp2.RequestHandler):
                     ProductDetails.Dosage = Dosage
                     ProductDetails.ProductLife = ProductLife
                     ProductDetails.Category = Category
-                    ProductDetails.SubCategory = SubCategory
+                    ProductDetails.PrescriptionRequired = PrescriptionRequired
 
                     VendorProductsDBConnect = ndb.Key("VendorProductsDB",VendorDetails.PharmacyID+ProductID).get()
 

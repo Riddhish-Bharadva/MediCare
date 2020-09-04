@@ -2,6 +2,7 @@ import webapp2
 import jinja2
 import os
 from google.appengine.ext import ndb
+from CartCount import getCartCount
 from UsersDB import UsersDB
 from ProductsDB import ProductsDB
 
@@ -38,6 +39,7 @@ class ProductDetails(webapp2.RequestHandler):
             elif(UserDetails == None):
                 self.redirect('/UserSignIn?notification=EmailIdNotRegisteredOrInActive')
             SignInStatus = "SignOut"
+            CartCount = getCartCount(self,userEmail)
         else:
             SignInStatus = "SignIn"
 
@@ -61,6 +63,7 @@ class ProductDetails(webapp2.RequestHandler):
         template_values = {
             'SignInStatus' : SignInStatus,
             'Category' : Category,
+            'CartCount' : CartCount,
             'UserDetails' : UserDetails,
             'ProductDetails' : ProductDetails,
             'ImageCount' : ImageCount,

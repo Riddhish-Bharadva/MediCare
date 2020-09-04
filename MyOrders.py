@@ -2,6 +2,7 @@ import webapp2
 import jinja2
 import os
 from google.appengine.ext import ndb
+from CartCount import getCartCount
 from UsersDB import UsersDB
 from OrdersDB import OrdersDB
 from ProductsDB import ProductsDB
@@ -18,13 +19,7 @@ class MyOrders(webapp2.RequestHandler):
         UserDetails = None
         Category = []
         ActiveOrderDetails = []
-        Unique_AOD = []
-        U_AOD_PharmacyID = []
         CompletedOrderDetails = []
-        Unique_COD = []
-        U_COD_PharmacyID = []
-        Unique_AOD_Length = 0
-        Unique_COD_Length = 0
 
         if(userEmail != ""):
             UserDetails = ndb.Key('UsersDB',userEmail).get()
@@ -34,44 +29,29 @@ class MyOrders(webapp2.RequestHandler):
                 self.redirect('/UserSignIn?notification=EmailIdNotRegisteredOrInActive')
             elif(UserDetails != None and UserDetails.IsActive == 1):
                 SignInStatus = "SignOut"
-                ActiveOrderDetails = OrdersDB.query(OrdersDB.userEmail == userEmail, OrdersDB.OrderStatus == "Active").fetch()
-                if(ActiveOrderDetails != []):
-                    Unique_OrderNumber = []
-                    for i in range(0,len(ActiveOrderDetails)):
-                        if(ActiveOrderDetails[i].OrderID not in Unique_OrderNumber):
-                            Unique_OrderNumber.append(ActiveOrderDetails[i].OrderID)
-                    for i in range(0,len(Unique_OrderNumber)):
-                        ActiveOrderDetails = OrdersDB.query(OrdersDB.userEmail == userEmail, OrdersDB.OrderStatus == "Active" and OrdersDB.OrderID == Unique_OrderNumber[i]).fetch()
-                        Unique_AOD.append(ActiveOrderDetails[0])
-                        PharmacyID = [Unique_AOD[i].PharmacyID]
-                        for k in range(1,len(ActiveOrderDetails)):
-                            for j in range(0,len(ActiveOrderDetails[k].ProductID)):
-                                PharmacyID.append(ActiveOrderDetails[k].PharmacyID)
-                                Unique_AOD[i].ProductID.append(ActiveOrderDetails[k].ProductID[j])
-                                Unique_AOD[i].Price.append(ActiveOrderDetails[k].Price[j])
-                                Unique_AOD[i].Quantity.append(ActiveOrderDetails[k].Quantity[j])
-                        Unique_AOD[i].PharmacyID = ""
-                        U_AOD_PharmacyID = PharmacyID
-                        Unique_AOD_Length = len(Unique_AOD)
-                CompletedOrderDetails = OrdersDB.query(OrdersDB.userEmail == userEmail, OrdersDB.OrderStatus == "Completed").fetch()
-                if(CompletedOrderDetails != []):
-                    Unique_OrderNumber = []
-                    for i in range(0,len(CompletedOrderDetails)):
-                        if(CompletedOrderDetails[i].OrderID not in Unique_OrderNumber):
-                            Unique_OrderNumber.append(CompletedOrderDetails[i].OrderID)
-                    for i in range(0,len(Unique_OrderNumber)):
-                        CompletedOrderDetails = OrdersDB.query(OrdersDB.userEmail == userEmail, OrdersDB.OrderStatus == "Completed", OrdersDB.OrderID == Unique_OrderNumber[i]).fetch()
-                        Unique_COD.append(CompletedOrderDetails[0])
-                        PharmacyID = [Unique_COD[i].PharmacyID]
-                        for k in range(1,len(CompletedOrderDetails)):
-                            for j in range(0,len(CompletedOrderDetails[k].ProductID)):
-                                PharmacyID.append(CompletedOrderDetails[k].PharmacyID)
-                                Unique_COD[i].ProductID.append(CompletedOrderDetails[k].ProductID[j])
-                                Unique_COD[i].Price.append(CompletedOrderDetails[k].Price[j])
-                                Unique_COD[i].Quantity.append(CompletedOrderDetails[k].Quantity[j])
-                        Unique_COD[i].PharmacyID = ""
-                        U_COD_PharmacyID = PharmacyID
-                        Unique_COD_Length = len(Unique_COD)
+                CartCount = getCartCount(self,userEmail)
+                OrderDetails = OrdersDB.query(OrdersDB.userEmail == userEmail, OrdersDB.OrderStatus == "Active").fetch()
+                if(OrderDetails != []):
+                    UON = []
+                    for i in range(0,len(OrderDetails)):
+                        if(OrderDetails[i].OrderID not in UON):
+                            UON.append(OrderDetails[i].OrderID)
+                    for i in range(0,len(UON)):
+                        OrderDetails = OrdersDB.query(OrdersDB.userEmail == userEmail, OrdersDB.OrderStatus == "Active", OrdersDB.OrderID == UON[i]).fetch()
+                        ActiveOrderDetails.append(OrderDetails[0])
+                        if(len(OrderDetails) > 1):
+                            for j in range(1,len(OrderDetails)):
+                                if(ActiveOrderDetails[i].OrderSubStatus == "Reviewed" and OrderDetails[j].OrderSubStatus == "Reviewing"):
+                                    ActiveOrderDetails[i].OrderSubStatus = OrderDetails[j].OrderSubStatus
+                OrderDetails = OrdersDB.query(OrdersDB.userEmail == userEmail, OrdersDB.OrderStatus == "Completed").fetch()
+                if(OrderDetails != []):
+                    UON = []
+                    for i in range(0,len(OrderDetails)):
+                        if(OrderDetails[i].OrderID not in UON):
+                            UON.append(OrderDetails[i].OrderID)
+                    for i in range(0,len(UON)):
+                        OrderDetails = OrdersDB.query(OrdersDB.userEmail == userEmail, OrdersDB.OrderStatus == "Completed", OrdersDB.OrderID == UON[i]).fetch()
+                        CompletedOrderDetails.append(OrderDetails[0])
         else:
             self.redirect('/UserSignIn')
 
@@ -89,12 +69,9 @@ class MyOrders(webapp2.RequestHandler):
             'UserDetails' : UserDetails,
             'Category' : Category,
             'notification' : notification,
-            'Unique_AOD' : Unique_AOD,
-            'Unique_COD' : Unique_COD,
-            'Unique_AOD_Length' : Unique_AOD_Length,
-            'Unique_COD_Length' : Unique_COD_Length,
-            'U_AOD_PharmacyID' : U_AOD_PharmacyID,
-            'U_COD_PharmacyID' : U_COD_PharmacyID,
+            'CartCount' : CartCount,
+            'ActiveOrderDetails' : ActiveOrderDetails,
+            'CompletedOrderDetails' : CompletedOrderDetails,
         }
 
         template = JINJA_ENVIRONMENT.get_template('MyOrders.html')
@@ -111,7 +88,7 @@ class MyOrders(webapp2.RequestHandler):
             elif(UserDetails == None):
                 self.redirect('/UserSignIn?notification=EmailIdNotRegisteredOrInActive')
             elif(UserDetails != None and UserDetails.IsActive == 1):
-                SignInStatus = "SignOut"
+                self.redirect('/?userEmail='+userEmail)
         else:
             self.redirect('/UserSignIn')
 

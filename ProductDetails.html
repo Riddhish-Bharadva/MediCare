@@ -108,7 +108,7 @@
               {% if UserDetails != None %}
                 {% if UserDetails.EmailVerified != 0 %}
                   <li class="nav-item">
-                    <a class="nav-link" href="/ShoppingCart?userEmail={{ UserDetails.user_Email }}"><span class="fas fa-shopping-cart"></span>&nbsp;Shopping Cart</a>
+                    <a class="nav-link" href="/ShoppingCart?userEmail={{ UserDetails.user_Email }}"><span class="fas fa-shopping-cart"></span><sup class="badge badge-danger" style="margin-left:-5px;">{{ CartCount }}</sup>&nbsp;Shopping Cart</a>
                   </li>
                 {% endif %}
                 <li class="nav-item">
@@ -205,6 +205,21 @@
             </div>
             <div class="col-sm-5">
               &#8364; {{ ProductDetails.Price }}
+            </div>
+            <div class="col-sm-2"></div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-3">
+              Priscription Required?
+            </div>
+            <div class="col-sm-5">
+              {% if ProductDetails.PrescriptionRequired == 1 %}
+                <div  style="background:red;color:white;border-radius:10px;">You will require prescription to buy this product.</div>
+              {% else %}
+                Not Required
+              {% endif %}
             </div>
             <div class="col-sm-2"></div>
           </div>

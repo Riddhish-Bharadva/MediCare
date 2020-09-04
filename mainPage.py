@@ -9,6 +9,7 @@ from PharmacyDB import PharmacyDB
 from VendorsDB import VendorsDB
 from ProductsDB import ProductsDB
 from CartDB import CartDB
+from CartCount import getCartCount
 from ContactUsDB import ContactUsDB
 from EmailModule import SendEmail
 from AdminPanel import AdminPanel
@@ -28,7 +29,6 @@ from ConfirmOrder import ConfirmOrder
 from MyOrders import MyOrders
 from VendorOrders import VendorOrders
 from ViewOrderDetails import ViewOrderDetails
-from UploadPrescription import UploadPrescription
 from VerifyEmail import VerifyEmail
 from ResetPassword import ResetPassword
 
@@ -44,6 +44,7 @@ class mainPage(webapp2.RequestHandler):
         UserDetails = None
         ProductDetails = []
         Category = []
+        CartCount = 0
 
         if(userEmail != ""):
             UserDetails = ndb.Key('UsersDB',userEmail).get()
@@ -52,6 +53,7 @@ class mainPage(webapp2.RequestHandler):
             elif(UserDetails == None):
                 self.redirect('/UserSignIn?notification=EmailIdNotRegisteredOrInActive')
             SignInStatus = "SignOut"
+            CartCount = getCartCount(self,userEmail)
         else:
             SignInStatus = "SignIn"
 
@@ -86,6 +88,7 @@ class mainPage(webapp2.RequestHandler):
             'UserDetails' : UserDetails,
             'ProductDetails' : ProductDetails,
             'Category' : Category,
+            'CartCount' : CartCount,
         }
 
         template = JINJA_ENVIRONMENT.get_template('mainPage.html')
@@ -97,12 +100,15 @@ class mainPage(webapp2.RequestHandler):
         userEmail = self.request.get('userEmail')
         if(Button == "Add To Cart"):
             ProductID = self.request.get('ProductID')
+            ProductDBStatus = ndb.Key("ProductsDB",ProductID).get()
             CartDBStatus = ndb.Key("CartDB",userEmail).get()
             if(CartDBStatus != None):
                 if(ProductID not in CartDBStatus.ProductID):
                     CartDBStatus.ProductID.append(ProductID)
                     CartDBStatus.Quantity.append(0)
                     CartDBStatus.PharmacyID.append("None")
+                    if(ProductDBStatus.PrescriptionRequired == 1 and CartDBStatus.PrescriptionRequired != 1):
+                        CartDBStatus.PrescriptionRequired = 1
             else:
                 CartDBStatus = CartDB(id=userEmail)
                 CartDBStatus.userEmail = userEmail
@@ -110,7 +116,12 @@ class mainPage(webapp2.RequestHandler):
                 CartDBStatus.ProductID.append(ProductID)
                 CartDBStatus.Quantity.append(0)
                 CartDBStatus.PharmacyID.append("None")
+                if(ProductDBStatus.PrescriptionRequired == 1):
+                    CartDBStatus.PrescriptionRequired = 1
+                else:
+                    CartDBStatus.PrescriptionRequired = 0
             CartDBStatus.put()
+            self.response.write(CartDBStatus)
             self.redirect('/?userEmail='+userEmail)
         else:
             self.redirect('/?userEmail='+userEmail)
@@ -132,7 +143,6 @@ app = webapp2.WSGIApplication([
     ('/ConfirmOrder',ConfirmOrder),
     ('/MyOrders',MyOrders),
     ('/VendorOrders',VendorOrders),
-    ('/UploadPrescription',UploadPrescription),
     ('/OfferedProducts',OfferedProducts),
     ('/ViewOrderDetails',ViewOrderDetails),
     ('/VerifyEmail',VerifyEmail),

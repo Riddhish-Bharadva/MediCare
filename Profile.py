@@ -6,6 +6,7 @@ import urllib
 from google.appengine.ext import ndb
 from google.appengine.api import urlfetch
 from urllib import urlencode
+from CartCount import getCartCount
 from UsersDB import UsersDB
 from ProductsDB import ProductsDB
 from EmailModule import SendEmail
@@ -29,6 +30,7 @@ class Profile(webapp2.RequestHandler):
             elif(UserDetails == None):
                 self.redirect('/UserSignIn?notification=EmailIdNotRegisteredOrInActive')
             SignInStatus = "SignOut"
+            CartCount = getCartCount(self,userEmail)
         else:
             self.redirect('/UserSignIn')
 
@@ -47,6 +49,7 @@ class Profile(webapp2.RequestHandler):
             'Category' : Category,
             'Mode' : Mode,
             'notification' : notification,
+            'CartCount' : CartCount,
         }
 
         template = JINJA_ENVIRONMENT.get_template('Profile.html')

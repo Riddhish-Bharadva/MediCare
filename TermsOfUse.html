@@ -8,23 +8,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
   </head>
-  <script>
-    function CheckNumber(value)
-    {
-      var size = document.getElementById("Contact").value;
-      var charCode = (value.which) ? value.which : value.keyCode;
-      if ((charCode > 47 && charCode < 58) && size.length != 9)
-        return true;
-      return false;
-    }
-    function CheckName(value)
-    {
-      var charCode = (value.which) ? value.which : value.keyCode;
-      if ((charCode > 64 && charCode < 91) || (charCode > 96 && charCode < 123))
-        return true;
-      return false;
-    }
-  </script>
   <style>
     .container
     {
@@ -109,6 +92,12 @@
                 </li>
                 <li style="text-align:justify;">
                   We will be storing your personel information like Name, Email, Contact Number, Address, etc. to provide services offered via this website.
+                </li>
+                <li style="text-align:justify;">
+                  All the prescriptions uploaded for required medicines must not have date older than 7 days else, the prescription will not be accepted.
+                </li>
+                <li style="text-align:justify;">
+                  Medicines that requires prescription will be sold only for prescibed amount. You cannot buy them in access quantity.
                 </li>
                 <li style="text-align:justify;">
                   MediCare will not be responsible for any type of side effects/illness caused by products purchased as MediCare is a platform to bind vendors and customers online. We request you to please read product description, dosage and ingredients carefully before purchase of the same.

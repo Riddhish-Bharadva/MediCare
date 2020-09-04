@@ -203,13 +203,29 @@
             <div class="row">
               <div class="col-sm-2"></div>
               <div class="col-sm-3 form-check-inline">
-                Sub Category (Optional) :
+                Prescription Required?
               </div>
               <div class="col-sm-5">
                 {% if Mode == "Edit" %}
-                  <input type="text" id="SubCategory" name="SubCategory" class="form-control" placeholder="SubCategory" value="{{ ProductDetails.SubCategory }}" required>
+                  {% if ProductDetails.PrescriptionRequired == 0 %}
+                    <select class="form-control" id="PrescriptionRequired" name="PrescriptionRequired" required autofocus>
+                      <option>Select</option>
+                      <option value="1">Yes</option>
+                      <option value="0" selected>No</option>
+                    </select>
+                  {% else %}
+                    <select class="form-control" id="PrescriptionRequired" name="PrescriptionRequired" required autofocus>
+                      <option>Select</option>
+                      <option value="1" selected>Yes</option>
+                      <option value="0">No</option>
+                    </select>
+                  {% endif %}
                 {% else %}
-                  {{ ProductDetails.SubCategory }}
+                  {% if ProductDetails.PrescriptionRequired == 0 %}
+                    Not Required
+                  {% else %}
+                    Required
+                  {% endif %}
                 {% endif %}
               </div>
               <div class="col-sm-2"></div>

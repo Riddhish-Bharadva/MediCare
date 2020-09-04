@@ -3,6 +3,8 @@ from google.appengine.ext import ndb
 class CartDB(ndb.Model):
     userEmail = ndb.StringProperty()
     OrderType = ndb.StringProperty()
+    PrescriptionRequired = ndb.IntegerProperty()
+    PrescriptionImage = ndb.StringProperty()
     ProductID = ndb.StringProperty(repeated=True)
     Quantity = ndb.IntegerProperty(repeated=True)
     Price = ndb.FloatProperty(repeated=True)
@@ -10,3 +12,4 @@ class CartDB(ndb.Model):
     DeliveryCharge = ndb.FloatProperty()
     ServiceCharge = ndb.FloatProperty()
     CartTotal = ndb.FloatProperty()
+    UserComments = ndb.StringProperty()

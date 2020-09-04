@@ -21,8 +21,6 @@ class AddProducts(blobstore_handlers.BlobstoreUploadHandler):
         notification = self.request.get('notification')
         Category = []
         CategoryCount = 0
-        SubCategory = []
-        SubCategoryCount = 0
         ImageUploadURL = "/AddProducts?vendorEmail="+vendorEmail
         QueryProducts = []
         ProductsData = None
@@ -57,9 +55,6 @@ class AddProducts(blobstore_handlers.BlobstoreUploadHandler):
                         if(ProductsData[i].Category not in Category):
                             Category.append(ProductsData[i].Category)
                             CategoryCount = CategoryCount + 1
-                        if(ProductsData[i].SubCategory not in SubCategory):
-                            SubCategory.append(ProductsData[i].SubCategory)
-                            SubCategoryCount = SubCategoryCount + 1
         else:
             self.redirect('/VendorSignIn')
 
@@ -67,12 +62,11 @@ class AddProducts(blobstore_handlers.BlobstoreUploadHandler):
             'VendorDetails' : VendorDetails,
             'Category' : Category,
             'CategoryCount' : CategoryCount,
-            'SubCategory' : SubCategory,
-            'SubCategoryCount' : SubCategoryCount,
             'ProductsData' : ProductsData,
             'ImageUploadURL' : ImageUploadURL,
             'notification' : notification,
             'QueryProducts' : QueryProducts,
+            'Query' : Query,
         }
 
         template = JINJA_ENVIRONMENT.get_template('AddProducts.html')
@@ -96,17 +90,11 @@ class AddProducts(blobstore_handlers.BlobstoreUploadHandler):
                 Dosage = self.request.get('Dosage')
                 ProductLife = self.request.get('ProductLife')
                 Category = self.request.get('Category')
+                if(Category == ""):
+                    Category = "General"
                 if(Category == "Select Category"):
                     Category = self.request.get('NewCategory')
-                if(Category == ""):
-                    Category = "Medicine"
-                SubCategory = self.request.get('SubCategory')
-                if(SubCategory == "Select Sub Category"):
-                    SubCategory = self.request.get('NewSubCategory')
-                if(SubCategory == ""):
-                    SubCategory = self.request.get('NewSubCategory')
-                if(SubCategory == "Select Sub Category"):
-                    SubCategory = "General"
+                PrescriptionRequired = self.request.get('PrescriptionRequired')
                 Quantity = self.request.get('Quantity')
                 Price = self.request.get('Price')
                 Images = self.get_uploads()
@@ -121,7 +109,7 @@ class AddProducts(blobstore_handlers.BlobstoreUploadHandler):
                     ProductsDBConnect.Dosage = Dosage
                     ProductsDBConnect.ProductLife = ProductLife
                     ProductsDBConnect.Category = Category
-                    ProductsDBConnect.SubCategory = SubCategory
+                    ProductsDBConnect.PrescriptionRequired = PrescriptionRequired
                     ProductsDBConnect.Quantity = int(Quantity)
                     ProductsDBConnect.Price = float(Price)
                     for i in Images:

@@ -164,38 +164,21 @@
               <div class="col-sm-2"></div>
             </div>
             {% endif %}
-            {% if SubCategoryCount == 0 %}
             <br>
             <div class="row">
               <div class="col-sm-2"></div>
               <div class="col-sm-3 form-check-inline">
-                Sub Category :
+                Prescription Required?
               </div>
               <div class="col-sm-5">
-                <input type="text" id="SubCategory" name="SubCategory" class="form-control" placeholder="SubCategory" required autofocus>
-              </div>
-              <div class="col-sm-2"></div>
-            </div>
-            {% else %}
-            <hr>
-            <div class="row">
-              <div class="col-sm-2"></div>
-              <div class="col-sm-3 form-check-inline">
-                Sub Category :
-              </div>
-              <div class="col-sm-5">
-                <select class="form-control" id="SubCategory" name="SubCategory" autofocus>
-                  <option>Select Sub Category</option>
-                  {% for i in SubCategory %}
-                    <option value="{{ i }}">{{ i }}</option>
-                  {% endfor %}
+                <select class="form-control" id="PrescriptionRequired" name="PrescriptionRequired" required autofocus>
+                  <option>Select</option>
+                  <option value="1">Yes</option>
+                  <option value="0">No</option>
                 </select>
-                OR
-                <input type="text" id="NewSubCategory" name="NewSubCategory" class="form-control" placeholder="Form a new Sub Category" autofocus>
               </div>
               <div class="col-sm-2"></div>
             </div>
-            {% endif %}
             <br>
             <div class="row">
               <div class="col-sm-2"></div>
@@ -268,7 +251,7 @@
               </div>
             </div>
             <br>
-            {% if QueryProducts == [] %}
+            {% if QueryProducts == [] and Query != "True"%}
               {% for i in ProductsData %}
                 <form action="/VendorProductDetails" method="post">
                   <input type="hidden" id="vendorEmail" name="vendorEmail" class="form-control" value="{{ VendorDetails.Email }}">
@@ -293,7 +276,7 @@
                   </div>
                 </form>
               {% endfor %}
-            {% else %}
+            {% elif QueryProducts != [] and Query == "True" %}
               {% for i in QueryProducts %}
                 <form action="/VendorProductDetails" method="post">
                   <input type="hidden" id="vendorEmail" name="vendorEmail" class="form-control" value="{{ VendorDetails.Email }}">
@@ -318,6 +301,12 @@
                   </div>
                 </form>
               {% endfor %}
+            {% else %}
+              <div class="row">
+                <div class="col-sm-12">
+                  No products found for your search keyword.
+                </div>
+              </div>
             {% endif %}
           {% else %}
           <div class="row" style="padding:10px;background:yellow;">

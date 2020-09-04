@@ -35,7 +35,7 @@ class VendorHomePage(webapp2.RequestHandler):
     def post(self):
         self.response.headers['content-type'] = 'text/html'
 
-        WebPageLink = "https://medicare-287205.nw.r.appspot.com/"
+        WebPageLink = "https://medicare-287205.nw.r.appspot.com"
 
         Button = self.request.get("Button")
         vendorEmail = self.request.get("vendorEmail")

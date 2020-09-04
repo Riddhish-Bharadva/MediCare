@@ -95,7 +95,7 @@
             <ul class="navbar-nav ml-auto">
               {% if UserDetails.EmailVerified != 0 %}
                 <li class="nav-item">
-                  <a class="nav-link" href="/ShoppingCart?userEmail={{ UserDetails.user_Email }}"><span class="fas fa-shopping-cart"></span>&nbsp;Shopping Cart</a>
+                  <a class="nav-link" href="/ShoppingCart?userEmail={{ UserDetails.user_Email }}"><span class="fas fa-shopping-cart"></span><sup class="badge badge-danger" style="margin-left:-5px;">{{ CartCount }}</sup>&nbsp;Shopping Cart</a>
                 </li>
               {% endif %}
               <li class="nav-item">

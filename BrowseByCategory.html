@@ -99,7 +99,7 @@
               {% if UserDetails != None %}
                 {% if UserDetails.EmailVerified != 0 %}
                   <li class="nav-item">
-                    <a class="nav-link" href="/ShoppingCart?userEmail={{ UserDetails.user_Email }}"><span class="fas fa-shopping-cart"></span>&nbsp;Shopping Cart</a>
+                    <a class="nav-link" href="/ShoppingCart?userEmail={{ UserDetails.user_Email }}"><span class="fas fa-shopping-cart"></span><sup class="badge badge-danger" style="margin-left:-5px;">{{ CartCount }}</sup>&nbsp;Shopping Cart</a>
                   </li>
                 {% endif %}
                 <li class="nav-item">
@@ -153,25 +153,39 @@
                   <hr>
                   <div class="row">
                     <div class="col-sm-12">
-                      Price : &#8364; {{ i.Price }}
+                      {% if i.PrescriptionRequired == 0 %}
+                        Prescription is not required to buy this product.
+                      {% else %}
+                        <div style="font-size:15px;background:red;color:white;padding:5px;border-radius:10px;">You will need a prescription to buy this product.</div>
+                      {% endif %}
                     </div>
                   </div>
                   <br>
                   {% if UserDetails != None %}
                     <div class="row">
-                      <div class="col-sm-12">
+                      <div class="col-sm-1"></div>
+                      <div class="col-sm-5">
+                        <div style="font-size:20px;">Price : &#8364; {{ i.Price }}</div>
+                      </div>
+                      <div class="col-sm-4">
                         <form action="/" method="post">
                           <input type="hidden" id="userEmail" name="userEmail" class="form-control" value="{{ UserDetails.user_Email }}">
                           <input type="hidden" id="ProductID" name="ProductID" class="form-control" value="{{ i.ProductID }}">
                           <input type="submit" name="Button" id="AddToCartButton" class="btn btn-primary" value="Add To Cart">
                         </form>
                       </div>
+                      <div class="col-sm-2"></div>
                     </div>
                   {% else %}
                   <div class="row">
-                    <div class="col-sm-12">
+                    <div class="col-sm-1"></div>
+                    <div class="col-sm-5">
+                      <div style="font-size:20px;">Price : &#8364; {{ i.Price }}</div>
+                    </div>
+                    <div class="col-sm-5">
                       <a class="btn btn-primary" href="/UserSignIn">Sign In to Buy</a>
                     </div>
+                    <div class="col-sm-1"></div>
                   </div>
                   {% endif %}
                 </div>
