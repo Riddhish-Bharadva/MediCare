@@ -289,6 +289,10 @@
       margin-top:5px;
       border-radius: 10px;
     }
+    .modal .modal-dialog
+    {
+      max-width:75%;
+    }
   </style>
   <body style="background:url('https://www.longprairiepharmacy.com/wp-content/themes/longprairie/images/slider/9.jpg');">
     <center>
@@ -404,7 +408,7 @@
                 {% if UserDetails != None %}
                   {% if UserDetails.EmailVerified != 0 %}
                     <li class="nav-item">
-                      <a class="nav-link" href="/ShoppingCart?userEmail={{ UserDetails.user_Email }}"><span class="fas fa-shopping-cart"></span>&nbsp;Shopping Cart</a>
+                      <a class="nav-link" href="/ShoppingCart?userEmail={{ UserDetails.user_Email }}"><span class="fas fa-shopping-cart"></span><sup class="badge badge-danger" style="margin-left:-5px;">{{ CartCount }}</sup>&nbsp;Shopping Cart</a>
                     </li>
                   {% endif %}
                   <li class="nav-item">
@@ -422,432 +426,493 @@
         <div class="container">
           <hr>
           <hr>
-          {% if VendorDetails != None %}
-            <div class="row btn-primary" style="padding:10px;border-radius:10px;">
-              <div class="col-sm-1"></div>
-              <div class="col-sm-10">
-                Displaying User Details
-              </div>
-              <div class="col-sm-1"></div>
-            </div>
-            <hr>
+          <div class="btn-primary" style="padding:10px;border-radius:10px;">Order ID : {{ OrderDetails.OrderID }}</div>
+          <hr>
+          {% if SignInAs == "User" %}
             <div class="row">
-              <div class="col-sm-4"></div>
-              <div class="col-sm-4" style="border:1px solid black;border-radius:10px;padding:10px;">
-                <div class="row">
-                  <div class="col-sm-6">
-                    First Name :
-                  </div>
-                  <div class="col-sm-6">
-                     {{ UserData.user_FirstName }}
-                  </div>
-                </div>
-                <br>
-                <div class="row">
-                  <div class="col-sm-6">
-                    Last Name :
-                  </div>
-                  <div class="col-sm-6">
-                    {{ UserData.user_LastName }}
-                  </div>
-                </div>
-                <br>
-                <div class="row">
-                  <div class="col-sm-3">
-                    Email :
-                  </div>
-                  <div class="col-sm-9">
-                    {{ UserData.user_Email }}
-                  </div>
-                </div>
-                <br>
-                <div class="row">
-                  <div class="col-sm-6">
-                    Contact :
-                  </div>
-                  <div class="col-sm-6">
-                    +353-{{ UserData.user_Contact }}
-                  </div>
-                </div>
-                <br>
-                <div class="row">
-                  <div class="col-sm-4">
-                    Address :
-                  </div>
-                  <div class="col-sm-8">
-                    {{ UserData.user_Address }}
-                  </div>
-                </div>
-              </div>
-              <div class="col-sm-4"></div>
-            </div>
-            <hr>
-            <div class="row btn-primary" style="padding:10px;border-radius:10px;">
               <div class="col-sm-1"></div>
-              <div class="col-sm-10">
-                Displaying Order Details for Order ID : {{ OrderDetails.OrderID }}
-              </div>
-              <div class="col-sm-1"></div>
-            </div>
-            <hr>
-            {% if OrderDetails.PrescriptionRequired == 0 %}
-              {% for i in range(0,ProductsCount) %}
+              <div class="col-sm-10" style="text-align:left;">
                 <div class="row">
-                  <div class="col-sm-1"></div>
-                  <div class="col-sm-4">
-                    <img src="{{ ProductDetails[i].Images[0] }}" class="rounded" alt="Unable to display image." style="max-width:225px;">
-                  </div>
-                  <div class="col-sm-5">
-                    <br>
-                    <div class="row">
-                      <div class="col-sm-12" style="font-size:20px;font-style:bold;border-radius:10px;padding:5px;">
-                        {{ ProductDetails[i].ProductName }}
-                      </div>
-                    </div>
-                    <hr>
-                    <div class="row">
-                      <div class="col-sm-6">
-                        Quantity : {{ OrderDetails.Quantity[i] }}
-                      </div>
-                      <div class="col-sm-6">
-                        Price : &#8364; {{ OrderDetails.Price[i] }}
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-sm-2"></div>
-                </div>
-                <hr>
-              {% endfor %}
-              <div class="row">
-                <div class="col-sm-3">
-                  Order Type : {{ OrderDetails.OrderType }}
-                </div>
-                <div class="col-sm-3">
-                  Service Charge : &#8364; {{ OrderDetails.ServiceCharge }}
-                </div>
-                <div class="col-sm-3">
-                  Delivery Charge : &#8364; {{ OrderDetails.DeliveryCharge }}
-                </div>
-                <div class="col-sm-3">
-                  Order Total : &#8364; {{ OrderDetails.OrderTotal }}
-                </div>
-              </div>
-              {% if VendorDetails.RegisteredAs == "Pharmacist" %}
-                <hr>
-                <form action="/ViewOrderDetails" method="post">
-                  <input type="hidden" class="form-control" id="SignInAs" name="SignInAs" value="Vendor" />
-                  <input type="hidden" class="form-control" id="vendorEmail" name="vendorEmail" value="{{ VendorDetails.Email }}" />
-                  <input type="hidden" class="form-control" id="userData" name="userData" value="{{ UserData.user_Email }}" />
-                  <input type="hidden" class="form-control" id="PharmacyID" name="PharmacyID" value="{{ VendorDetails.PharmacyID }}" />
-                  <input type="hidden" class="form-control" id="OrderID" name="OrderID" value="{{ OrderDetails.OrderID }}" />
-                  <div class="row">
-                    <div class="col-sm-12">
-                      {% if OrderDetails.OrderSubStatus == "OrderPlaced" %}
-                        <button class="btn btn-primary" id="MarkPacking" name="Button" value="MarkPacking">Mark Packing</button>
-                      {% elif OrderDetails.OrderSubStatus == "OrderPacking" %}
-                        {% if OrderDetails.OrderType == "Delivery" %}
-                          <button class="btn btn-primary" id="OutForDelivery" name="Button" value="OutForDelivery">Mark as Out for Delivery</button>
-                        {% elif OrderDetails.OrderType == "Collection" %}
-                          <button class="btn btn-primary" id="ReadyForCollection" name="Button" value="ReadyForCollection">Mark ready for collection</button>
-                        {% endif %}
-                      {% elif OrderDetails.OrderSubStatus == "OutForDelivery" %}
-                        <button class="btn btn-primary" id="MarkDelivered" name="Button" value="MarkDelivered">Mark as Delivered</button>
-                      {% elif OrderDetails.OrderSubStatus == "ReadyForCollection" %}
-                        <button class="btn btn-primary" id="MarkCollected" name="Button" value="MarkCollected">Mark as Collected</button>
-                      {% else %}
-                        This order is marked complete and hence no action is possible.
-                      {% endif %}
-                    </div>
-                  </div>
-                </form>
-              {% endif %}
-            {% elif OrderDetails.PrescriptionRequired == 1 %}
-              <div class="row">
-                <div class="col-sm-6">
-                  <br>
-                  <br>
-                  <div class="row">
-                    <div class="col-sm-1"></div>
-                    <div class="col-sm-10">
-                      Patient Name : {{ OrderDetails.PatientName }}
-                    </div>
-                    <div class="col-sm-1"></div>
-                  </div>
-                  <br>
-                  <div class="row">
-                    <div class="col-sm-1"></div>
-                    <div class="col-sm-10">
-                      User Comments : {{ OrderDetails.UserComments }}
-                    </div>
-                    <div class="col-sm-1"></div>
-                  </div>
-                  {% if OrderDetails.OrderSubStatus == "OrderPlaced" %}
-                    <br>
-                    <div class="row">
-                      <div class="col-sm-1"></div>
-                      <div class="col-sm-10">
-                        <form action="/ViewOrderDetails" method="post">
-                          <input type="hidden" class="form-control" id="SignInAs" name="SignInAs" value="Vendor" />
-                          <input type="hidden" class="form-control" id="vendorEmail" name="vendorEmail" value="{{ VendorDetails.Email }}" />
-                          <input type="hidden" class="form-control" id="userData" name="userData" value="{{ UserData.user_Email }}" />
-                          <input type="hidden" class="form-control" id="PharmacyID" name="PharmacyID" value="{{ VendorDetails.PharmacyID }}" />
-                          <input type="hidden" class="form-control" id="OrderID" name="OrderID" value="{{ OrderDetails.OrderID }}" />
-                          <button class="btn btn-primary" id="ReuploadPrescription" name="Button" value="ReuploadPrescription">Ask to Re-upload Prescreption</button>
-                        </form>
-                      </div>
-                      <div class="col-sm-1"></div>
-                    </div>
-                  {% endif %}
-                </div>
-                <div class="col-sm-6">
-                  <button class="btn" data-toggle="modal" data-target="#PrescriptionImageModal">
-                    <img src="{{ OrderDetails.PrescriptionImage }}" class="rounded" alt="Unable to display image." style="max-width:225px;">
-                  </button>
-                </div>
-              </div>
-              <hr>
-              <form action="/ViewOrderDetails" method="post">
-                <input type="hidden" class="form-control" id="SignInAs" name="SignInAs" value="Vendor" />
-                <input type="hidden" class="form-control" id="vendorEmail" name="vendorEmail" value="{{ VendorDetails.Email }}" />
-                <input type="hidden" class="form-control" id="userData" name="userData" value="{{ UserData.user_Email }}" />
-                <input type="hidden" class="form-control" id="PharmacyID" name="PharmacyID" value="{{ VendorDetails.PharmacyID }}" />
-                <input type="hidden" class="form-control" id="OrderID" name="OrderID" value="{{ OrderDetails.OrderID }}" />
-                {% if OrderDetails.ProductName != [] %}
-                  {% for i in range(0,ProductsCount) %}
-                    {% if OrderDetails.ProductName[i] == "New" %}
-                      <div class="row">
-                        <div class="col-sm-1"></div>
-                        <div class="col-sm-5"><input type="text" id="ProductName{{ i }}" name="ProductName{{ i }}" class="form-control" placeholder="Product Name" required></div>
-                        <div class="col-sm-2"><input type="number" id="Quantity{{ i }}" name="Quantity{{ i }}" class="form-control" placeholder="Quantity" min="1" required></div>
-                        <div class="col-sm-2"><input type="number" id="Price{{ i }}" name="Price{{ i }}" class="form-control" placeholder="Price" min="0.01" step="0.01" required></div>
-                        <div class="col-sm-1">
-                          {% if OrderDetails.OrderSubStatus == "OrderPlaced" %}
-                            <a class="btn btn-primary" href="/ViewOrderDetails?SignInAs=Vendor&vendorEmail={{ VendorDetails.Email }}&OrderID={{ OrderDetails.OrderID }}&index={{ i }}&Button=RemoveProduct">Remove</a>
-                          {% endif %}
-                        </div>
-                        <div class="col-sm-1"></div>
-                      </div>
-                      <br>
-                    {% else %}
-                      <div class="row">
-                        <div class="col-sm-1"></div>
-                        <div class="col-sm-5"><input type="text" id="ProductName{{ i }}" name="ProductName{{ i }}" class="form-control" placeholder="Product Name" value="{{ OrderDetails.ProductName[i] }}" required></div>
-                        <div class="col-sm-2"><input type="number" id="Quantity{{ i }}" name="Quantity{{ i }}" class="form-control" placeholder="Quantity" min="1" value="{{ OrderDetails.Quantity[i] }}" required></div>
-                        <div class="col-sm-2"><input type="number" id="Price{{ i }}" name="Price{{ i }}" class="form-control" placeholder="Price" min="0.01" step="0.01" value="{{ OrderDetails.Price[i] }}" required></div>
-                        <div class="col-sm-1">
-                          {% if OrderDetails.OrderSubStatus == "OrderPlaced" %}
-                            <a class="btn btn-primary" href="/ViewOrderDetails?SignInAs=Vendor&vendorEmail={{ VendorDetails.Email }}&OrderID={{ OrderDetails.OrderID }}&index={{ i }}&Button=RemoveProduct">Remove</a>
-                          {% endif %}
-                        </div>
-                        <div class="col-sm-1"></div>
-                      </div>
-                      <br>
-                    {% endif %}
-                  {% endfor %}
-                {% endif %}
-                {% if OrderDetails.OrderSubStatus == "OrderPlaced" %}
-                  <div class="row">
-                    <div class="col-sm-8"></div>
-                    <div class="col-sm-4"><button class="btn btn-primary" name="Button" id="AddProduct" value="AddProduct">Add New Product</button></div>
-                  </div>
-                  <hr>
-                {% endif %}
-                <div class="row">
-                  <div class="col-sm-2"></div>
-                  <div class="col-sm-8"><textarea id="VendorComments" name="VendorComments" class="form-control" placeholder="Comments">{{ OrderDetails.VendorComments }}</textarea></div>
-                  <div class="col-sm-2"></div>
-                </div>
-                <br>
-                <div class="row">
-                  <div class="col-sm-12">
-                    {% if OrderDetails.OrderSubStatus == "OrderPlaced" %}
-                      <button class="btn btn-primary" name="Button" id="AskToPay" value="SubmitForBilling">Submit For Billing</button>
-                      <input class="btn btn-primary" type="reset" value="Reset" />
-                    {% elif OrderDetails.OrderSubStatus == "PaymentSuccessful" %}
-                      <button class="btn btn-primary" id="MarkPacking" name="Button" value="MarkPacking">Mark Packing</button>
-                    {% elif OrderDetails.OrderSubStatus == "OrderPacking" %}
-                      {% if OrderDetails.OrderType == "Delivery" %}
-                        <button class="btn btn-primary" id="OutForDelivery" name="Button" value="OutForDelivery">Mark as Out for Delivery</button>
-                      {% elif OrderDetails.OrderType == "Collection" %}
-                        <button class="btn btn-primary" id="ReadyForCollection" name="Button" value="ReadyForCollection">Mark ready for collection</button>
-                      {% endif %}
-                    {% elif OrderDetails.OrderSubStatus == "OutForDelivery" %}
-                      <button class="btn btn-primary" id="MarkDelivered" name="Button" value="MarkDelivered">Mark as Delivered</button>
-                    {% elif OrderDetails.OrderSubStatus == "ReadyForCollection" %}
-                      <button class="btn btn-primary" id="MarkCollected" name="Button" value="MarkCollected">Mark as Collected</button>
-                    {% elif OrderDetails.OrderSubStatus == "BillingRequired" %}
-                      Billing is expected from customer's end.
-                    {% elif OrderDetails.OrderSubStatus == "ProceedToBilling" %}
-                      Billing is expected from customer's end.
-                    {% elif OrderDetails.OrderSubStatus == "ReuploadPrescription" %}
-                      Customer is asked to Re-upload the Prescreption.
-                    {% else %}
-                      This order is marked complete and hence no action is possible.
-                    {% endif %}
-                  </div>
-                </div>
-              </form>
-            {% endif %}
-          {% elif UserDetails != None %}
-            <div class="row btn-primary" style="padding:10px;border-radius:10px;">
-              <div class="col-sm-1"></div>
-              <div class="col-sm-10">
-                Below order may contain few items already delivered by a vendor and few items yet to be delivered by another vendor in case multiple vendors were selected at the time of placing an order.
-              </div>
-              <div class="col-sm-1"></div>
-            </div>
-            <hr>
-            {% if OrderDetails.PrescriptionRequired == 0 %}
-              {% for i in range(0,ProductsCount) %}
-                <div class="row">
-                  <div class="col-sm-1"></div>
-                  <div class="col-sm-4">
-                    <img src="{{ ProductDetails[i].Images[0] }}" class="rounded" alt="Unable to display image." style="max-width:225px;">
-                  </div>
-                  <div class="col-sm-5">
-                    <br>
-                    <div class="row">
-                      <div class="col-sm-12" style="font-size:20px;font-style:bold;border-radius:10px;padding:5px;">
-                        {{ ProductDetails[i].ProductName }}
-                      </div>
-                    </div>
-                    <hr>
-                    <div class="row">
-                      <div class="col-sm-6">
-                        Quantity : {{ OrderDetails.Quantity[i] }}
-                      </div>
-                      <div class="col-sm-6">
-                        Price : &#8364; {{ OrderDetails.Price[i] }}
-                      </div>
-                    </div>
-                    <br>
+                  <div class="col-sm-6" style="border:1px solid black;border-radius:10px;padding:10px;">
                     <div class="row">
                       <div class="col-sm-12">
-                        Product Status : {{ ProductStatus[i] }}
+                        <h4>Your Details</h4>
                       </div>
                     </div>
-                  </div>
-                  <div class="col-sm-2"></div>
-                </div>
-                <hr>
-              {% endfor %}
-              <div class="row">
-                <div class="col-sm-3">
-                  Order Type : {{ OrderDetails.OrderType }}
-                </div>
-                <div class="col-sm-3">
-                  Service Charge : &#8364; {{ OrderDetails.ServiceCharge }}
-                </div>
-                <div class="col-sm-3">
-                  Delivery Charge : &#8364; {{ OrderDetails.DeliveryCharge }}
-                </div>
-                <div class="col-sm-3">
-                  Order Total : &#8364; {{ OrderDetails.OrderTotal }}
-                </div>
-              </div>
-            {% elif OrderDetails.PrescriptionRequired == 1 %}
-              <div class="row">
-                <div class="col-sm-6">
-                  <br>
-                  <br>
-                  <div class="row">
-                    <div class="col-sm-1"></div>
-                    <div class="col-sm-10">
-                      Patient Name : {{ OrderDetails.PatientName }}
+                    <hr>
+                    <div class="row">
+                      <div class="col-sm-1"></div>
+                      <div class="col-sm-3">
+                        First Name :
+                      </div>
+                      <div class="col-sm-7">
+                        {{ UserDetails.user_FirstName }}
+                      </div>
+                      <div class="col-sm-1"></div>
                     </div>
-                    <div class="col-sm-1"></div>
-                  </div>
-                  <br>
-                  <div class="row">
-                    <div class="col-sm-1"></div>
-                    <div class="col-sm-10">
-                      Your Comments : {{ OrderDetails.UserComments }}
-                    </div>
-                    <div class="col-sm-1"></div>
-                  </div>
-                  {% if OrderDetails.OrderSubStatus == "ReuploadPrescription" %}
                     <br>
-                    <form action="{{ ImageUploadURL }}" method="post" name="UploadPrescription" enctype="multipart/form-data">
+                    <div class="row">
+                      <div class="col-sm-1"></div>
+                      <div class="col-sm-3">
+                        Last Name :
+                      </div>
+                      <div class="col-sm-7">
+                        {{ UserDetails.user_LastName }}
+                      </div>
+                      <div class="col-sm-1"></div>
+                    </div>
+                    <br>
+                    <div class="row">
+                      <div class="col-sm-1"></div>
+                      <div class="col-sm-3">
+                        Email :
+                      </div>
+                      <div class="col-sm-7">
+                        {{ UserDetails.user_Email }}
+                      </div>
+                      <div class="col-sm-1"></div>
+                    </div>
+                    <br>
+                    <div class="row">
+                      <div class="col-sm-1"></div>
+                      <div class="col-sm-3">
+                        Contact :
+                      </div>
+                      <div class="col-sm-7">
+                        +353-{{ UserDetails.user_Contact }}
+                      </div>
+                      <div class="col-sm-1"></div>
+                    </div>
+                    <br>
+                    {% if OrderDetails.OrderType == "Delivery" %}
                       <div class="row">
-                        <div class="col-sm-1">
-                          <input type="hidden" class="form-control" id="SignInAs" name="SignInAs" value="User" />
-                          <input type="hidden" class="form-control" id="userEmail" name="userEmail" value="{{ UserDetails.user_Email }}" />
-                          <input type="hidden" class="form-control" id="OrderID" name="OrderID" value="{{ OrderDetails.OrderID }}" />
+                        <div class="col-sm-1"></div>
+                        <div class="col-sm-3">
+                          Delivery Address :
                         </div>
-                        <div class="col-sm-6">
-                          <input type='file' name='Image' id='Image' class="form-control" style="padding:3px;" accept=".png, .jpg, .jpeg" required>
-                        </div>
-                        <div class="col-sm-2">
-                          <button class="btn btn-primary" id="Upload" name="Button" value="Upload">Upload</button>
-                        </div>
-                        <div class="col-sm-2">
-                          <input class="btn btn-primary" type="reset" value="Reset" />
+                        <div class="col-sm-7">
+                          {{ UserDetails.user_Address }}
                         </div>
                         <div class="col-sm-1"></div>
                       </div>
-                    </form>
-                  {% endif %}
-                </div>
-                <div class="col-sm-6">
-                  <button class="btn" data-toggle="modal" data-target="#PrescriptionImageModal">
-                    <img src="{{ OrderDetails.PrescriptionImage }}" class="rounded" alt="Unable to display image." style="max-width:225px;">
-                  </button>
+                      <br>
+                    {% endif %}
+                    <div class="row">
+                      <div class="col-sm-1"></div>
+                      <div class="col-sm-3">
+                        DOB :
+                      </div>
+                      <div class="col-sm-7">
+                          {{ UserDetails.user_DOB }}
+                      </div>
+                      <div class="col-sm-1"></div>
+                    </div>
+                    <br>
+                    <div class="row">
+                      <div class="col-sm-1"></div>
+                      <div class="col-sm-3">
+                        Gender :
+                      </div>
+                      <div class="col-sm-7">
+                        {{ UserDetails.user_Gender }}
+                      </div>
+                      <div class="col-sm-1"></div>
+                    </div>
+                    <br>
+                    {% if ReUploadPrescription == 1 %}
+                      <div class="row">
+                        <div class="col-sm-1"></div>
+                        <div class="col-sm-10" style="background:red;color:white;padding:10px;border-radius:10px;">
+                          Vendor have requested you to re-upload correct prescription.
+                        </div>
+                        <div class="col-sm-1"></div>
+                      </div>
+                      <br>
+                      <form action="{{ ImageUploadURL }}" method="post" name="UploadPrescription" enctype="multipart/form-data">
+                        <input class="form-control" type="hidden" name="SignInAs" value="{{ SignInAs }}" />
+                        <input class="form-control" type="hidden" name="userEmail" value="{{ UserDetails.user_Email }}" />
+                        <input class="form-control" type="hidden" name="OrderID" value="{{ OrderDetails.OrderID }}" />
+                        <div class="row">
+                          <div class="col-sm-1"></div>
+                          <div class="col-sm-7">
+                            <input type='file' name='Image' id='Image' class="form-control" style="padding:3px;" accept=".png, .jpg, .jpeg" required>
+                          </div>
+                          <div class="col-sm-3">
+                            <button class="btn btn-primary" id="UploadPrescription" name="Button" value="UploadPrescription">Upload</button>
+                          </div>
+                          <div class="col-sm-1"></div>
+                        </div>
+                      </form>
+                    {% endif %}
+                  </div>
+                  <div class="col-sm-6">
+                    {% if OrderDetails.PrescriptionRequired == 1 %}
+                      <button class="btn" data-toggle="modal" data-target="#PrescriptionImageModal"><img id="myimage" src="{{ OrderDetails.PrescriptionImage }}" style="max-width:400px;border-radius:10px;border:1px solid black;" alt="Oops! Error occurred while downloading prescription image." /></button>
+                    {% endif %}
+                  </div>
                 </div>
               </div>
-              <hr>
-              <form action="/ViewOrderDetails" method="post" id="PayForm" name="PayForm">
-                <input type="hidden" class="form-control" id="SignInAs" name="SignInAs" value="User" />
-                <input type="hidden" class="form-control" id="userEmail" name="userEmail" value="{{ UserDetails.user_Email }}" />
-                <input type="hidden" class="form-control" id="OrderID" name="OrderID" value="{{ OrderDetails.OrderID }}" />
-                {% if OrderDetails.ProductName != [] %}
+              <div class="col-sm-1"></div>
+            </div>
+            <hr>
+            <div class="row btn-primary">
+              <div class="col-sm-12" style="padding:10px;">Below are product details with their individual status.</div>
+            </div>
+            <hr>
+            <form action="/ViewOrderDetails" method="post" id="PayForm">
+              <input class="form-control" type="hidden" name="SignInAs" value="{{ SignInAs }}" />
+              <input class="form-control" type="hidden" name="userEmail" value="{{ UserDetails.user_Email }}" />
+              <input class="form-control" type="hidden" name="OrderID" value="{{ OrderDetails.OrderID }}" />
+              <div class="row">
+                <div class="col-sm-1"></div>
+                <div class="col-sm-10">
                   {% for i in range(0,ProductsCount) %}
                     <div class="row">
-                      <div class="col-sm-2"></div>
-                      <div class="col-sm-4 form-check-inline">{{ OrderDetails.ProductName[i] }}</div>
-                      <div class="col-sm-1 form-check-inline">{{ OrderDetails.Quantity[i] }}</div>
-                      <div class="col-sm-1 form-check-inline">{{ OrderDetails.Price[i] }}</div>
-                      <div class="col-sm-2">
-                        {% if OrderDetails.OrderSubStatus == "BillingRequired" %}
-                          <a class="btn btn-primary" href="/ViewOrderDetails?SignInAs=User&userEmail={{ UserDetails.user_Email }}&OrderID={{ OrderDetails.OrderID }}&index={{ i }}&Button=RemoveProduct">Remove</a>
+                      <div class="col-sm-1"></div>
+                      <div class="col-sm-4">
+                        <img src="{{ ProductDetails[i].Images[0] }}" class="rounded" alt="Unable to display image." style="max-width:250px;">
+                      </div>
+                      <div class="col-sm-5">
+                        {% if OrderDetails.OrderType == "Delivery" %}
+                          <br>
+                        {% endif %}
+                        <div class="row">
+                          <div class="col-sm-12">
+                              <div style="font-size:20px;">{{ ProductDetails[i].ProductName }}</div>
+                          </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                          <div class="col-sm-12">
+                            {% if ProductDetails[i].PrescriptionRequired == 0 %}
+                              Prescription is not required to buy this product
+                            {% else %}
+                              <div style="font-size:15px;background:red;color:white;padding:5px;border-radius:10px;">Prescription is required to buy this product</div>
+                            {% endif %}
+                          </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                          <div class="col-sm-6">
+                            Approved Quantity : {{ OrderDetails.Quantity[i] }}
+                          </div>
+                          <div class="col-sm-6">
+                            Price : &#8364; {{ OrderDetails.Price[i] }}
+                          </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                          <div class="col-sm-12">
+                            Order Status : {{ ProductStatus[i] }}
+                          </div>
+                        </div>
+                        {% if OrderDetails.OrderType == "Collection" %}
+                          <br>
+                          <div class="row">
+                            <div class="col-sm-4">
+                              Buyed From :
+                            </div>
+                            <div class="col-sm-8">
+                              {% for j in PharmacyDetails %}
+                                {% if PPID[i] == j.PharmacyID %}
+                                  {{ j.PharmacyName }}
+                                {% endif %}
+                              {% endfor %}
+                            </div>
+                          </div>
                         {% endif %}
                       </div>
                       <div class="col-sm-2"></div>
                     </div>
-                    <br>
+                    <hr>
                   {% endfor %}
-                {% endif %}
-                <hr>
+                </div>
+                <div class="col-sm-1"></div>
+              </div>
+              <div class="row">
+                <div class="col-sm-3">Order Type : {{ OrderDetails.OrderType }}</div>
+                <div class="col-sm-3">ServiceCharge : &#8364; {{ OrderDetails.ServiceCharge }}</div>
+                <div class="col-sm-3">Delivery Charge : &#8364; {{ OrderDetails.DeliveryCharge }}</div>
+                <div class="col-sm-3">Order Total : &#8364; {{ OrderDetails.OrderTotal }}</div>
+              </div>
+              <hr>
+              {% if OrderDetails.OrderType == "Collection" %}
                 <div class="row">
+                  <div class="col-sm-6">Select Pharmacy to view location of same on map</div>
+                  <div class="col-sm-6">Dropdown</div>
+                </div>
+                <br>
+                <div class="row">
+                  <div class="col-sm-2"></div>
+                  <div class="col-sm-8">Google Map</div>
+                  <div class="col-sm-2"></div>
+                </div>
+                <hr>
+              {% endif %}
+              <div class="row">
+                {% if ReUploadPrescription == 0 and PaymentRequired == 1 %}
+                  <div class="col-sm-3"></div>
                   <div class="col-sm-3">
-                    Order Type : {{ OrderDetails.OrderType }}
+                    <button class="btn btn-primary" name="Button" value="CancelOrder">Cancel Order</button>
                   </div>
                   <div class="col-sm-3">
-                    Service Charge : {{ OrderDetails.ServiceCharge }}
+                    <input type="hidden" name="Button" id="Pay" value="Pay" />
+                    <div id="PayButton"></div>
                   </div>
-                  <div class="col-sm-3">
-                    Delivery Charge : {{ OrderDetails.DeliveryCharge }}
+                  <div class="col-sm-3"></div>
+                {% else %}
+                  <div class="col-sm-12">
+                    Currently no action is possible on this order.
                   </div>
-                  <div class="col-sm-3">
-                    Order Total : {{ OrderDetails.OrderTotal }}
+                {% endif %}
+              </div>
+            </form>
+
+          {% elif SignInAs == "Vendor" %}
+            <div class="row">
+              <div class="col-sm-1"></div>
+              <div class="col-sm-10" style="text-align:left;">
+                <div class="row">
+                  <div class="col-sm-6" style="border:1px solid black;border-radius:10px;padding:10px;">
+                    <div class="row">
+                      <div class="col-sm-12">
+                        <h4>User Details</h4>
+                      </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                      <div class="col-sm-1"></div>
+                      <div class="col-sm-3">
+                        First Name :
+                      </div>
+                      <div class="col-sm-7">
+                        {{ UserDetails.user_FirstName }}
+                      </div>
+                      <div class="col-sm-1"></div>
+                    </div>
+                    <br>
+                    <div class="row">
+                      <div class="col-sm-1"></div>
+                      <div class="col-sm-3">
+                        Last Name :
+                      </div>
+                      <div class="col-sm-7">
+                        {{ UserDetails.user_LastName }}
+                      </div>
+                      <div class="col-sm-1"></div>
+                    </div>
+                    <br>
+                    <div class="row">
+                      <div class="col-sm-1"></div>
+                      <div class="col-sm-3">
+                        Email :
+                      </div>
+                      <div class="col-sm-7">
+                        {{ UserDetails.user_Email }}
+                      </div>
+                      <div class="col-sm-1"></div>
+                    </div>
+                    <br>
+                    <div class="row">
+                      <div class="col-sm-1"></div>
+                      <div class="col-sm-3">
+                        Contact :
+                      </div>
+                      <div class="col-sm-7">
+                        +353-{{ UserDetails.user_Contact }}
+                      </div>
+                      <div class="col-sm-1"></div>
+                    </div>
+                    <br>
+                    <div class="row">
+                      <div class="col-sm-1"></div>
+                      <div class="col-sm-3">
+                        Address :
+                      </div>
+                      <div class="col-sm-7">
+                        {{ UserDetails.user_Address }}
+                      </div>
+                      <div class="col-sm-1"></div>
+                    </div>
+                    <br>
+                    <div class="row">
+                      <div class="col-sm-1"></div>
+                      <div class="col-sm-3">
+                        DOB :
+                      </div>
+                      <div class="col-sm-7">
+                          {{ UserDetails.user_DOB }}
+                      </div>
+                      <div class="col-sm-1"></div>
+                    </div>
+                    <br>
+                    <div class="row">
+                      <div class="col-sm-1"></div>
+                      <div class="col-sm-3">
+                        Gender :
+                      </div>
+                      <div class="col-sm-7">
+                        {{ UserDetails.user_Gender }}
+                      </div>
+                      <div class="col-sm-1"></div>
+                    </div>
+                    <br>
+                    {% if OrderDetails.PrescriptionRequired == 1 and OrderDetails.OrderSubStatus == "Reviewing" %}
+                      <div class="row">
+                        <div class="col-sm-1"></div>
+                        <div class="col-sm-5 form-check-inline">
+                          Issue with Prescreption?
+                        </div>
+                        <div class="col-sm-5">
+                          <form action="/ViewOrderDetails" method="post">
+                            <input class="form-control" type="hidden" name="SignInAs" value="{{ SignInAs }}" />
+                            <input class="form-control" type="hidden" name="vendorEmail" value="{{ VendorDetails.Email }}" />
+                            <input class="form-control" type="hidden" name="userEmail" value="{{ UserDetails.user_Email }}" />
+                            <input class="form-control" type="hidden" name="OrderID" value="{{ OrderDetails.OrderID }}" />
+                            <input class="form-control" type="hidden" name="VendorComments1" value="Vendor have reported an issue in uploaded prescription. Please re-upload your doctor's prescription to continue." />
+                            <button class="btn btn-primary" id="AskUserToUpload" name="Button" value="AskUserToUpload">Ask User To Upload Again</button>
+                          </form>
+                        </div>
+                        <div class="col-sm-1"></div>
+                      </div>
+                    {% endif %}
+                  </div>
+                  <div class="col-sm-6">
+                    {% if OrderDetails.PrescriptionRequired == 1 %}
+                      <button class="btn" data-toggle="modal" data-target="#PrescriptionImageModal"><img id="myimage" src="{{ OrderDetails.PrescriptionImage }}" style="max-width:400px;border-radius:10px;border:1px solid black;" alt="Oops! Error occurred while downloading prescription image." /></button>
+                    {% endif %}
                   </div>
                 </div>
                 <hr>
-                {% if OrderDetails.ProductName != [] %}
+                <div class="row">
+                  <div class="col-sm-3">Order Type : {{ OrderDetails.OrderType }}</div>
+                  <div class="col-sm-3">ServiceCharge : &#8364; {{ OrderDetails.ServiceCharge }}</div>
+                  <div class="col-sm-3">Delivery Charge : &#8364; {{ OrderDetails.DeliveryCharge }}</div>
+                  <div class="col-sm-3">Order Total : &#8364; {{ OrderDetails.OrderTotal }}</div>
+                </div>
+              </div>
+              <div class="col-sm-1"></div>
+            </div>
+            <hr>
+            <form action="/ViewOrderDetails" method="post">
+              <input class="form-control" type="hidden" name="SignInAs" value="{{ SignInAs }}" />
+              <input class="form-control" type="hidden" name="vendorEmail" value="{{ VendorDetails.Email }}" />
+              <input class="form-control" type="hidden" name="userEmail" value="{{ UserDetails.user_Email }}" />
+              <input class="form-control" type="hidden" name="OrderID" value="{{ OrderDetails.OrderID }}" />
+              <div class="row">
+                <div class="col-sm-1"></div>
+                <div class="col-sm-10">
+                  {% for i in range(0,ProductsCount) %}
+                    <div class="row">
+                      <div class="col-sm-1"></div>
+                      <div class="col-sm-4">
+                        <img src="{{ ProductDetails[i].Images[0] }}" class="rounded" alt="Unable to display image." style="max-width:225px;">
+                      </div>
+                      <div class="col-sm-5">
+                        <br>
+                        <div class="row">
+                          <div class="col-sm-12">
+                              <div style="font-size:20px;">{{ ProductDetails[i].ProductName }}</div>
+                          </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                          <div class="col-sm-12">
+                            {% if ProductDetails[i].PrescriptionRequired == 0 %}
+                              Prescription is not required to buy this product
+                            {% else %}
+                              <div style="font-size:15px;background:red;color:white;padding:5px;border-radius:10px;">Prescription is required to buy this product</div>
+                            {% endif %}
+                          </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                          <div class="col-sm-6">
+                            <input type="hidden" id="ProductID" name="ProductID{{ OrderDetails.ProductID[i] }}" class="form-control" value="{{ OrderDetails.ProductID[i] }}">
+                            {% if OrderDetails.OrderSubStatus == "Reviewing" %}
+                              <select class="form-control" id="ProductQuantity" name="Quantity{{ OrderDetails.ProductID[i] }}" required>
+                                <option value="">Select Quantity</option>
+                                {% if ProductDetails[i].Quantity > 5 %}
+                                  {% for j in range(0,6) %}
+                                    {% if OrderDetails.Quantity[i] == j %}
+                                      <option value="{{ j }}" selected>{{ j }}</option>
+                                    {% else %}
+                                      <option value="{{ j }}">{{ j }}</option>
+                                    {% endif %}
+                                  {% endfor %}
+                                {% else %}
+                                  {% for j in range(0,ProductDetails[i].Quantity+1) %}
+                                    {% if OrderDetails.Quantity[i] == j %}
+                                      <option value="{{ j }}" selected>{{ j }}</option>
+                                    {% else %}
+                                      <option value="{{ j }}">{{ j }}</option>
+                                    {% endif %}
+                                  {% endfor %}
+                                {% endif %}
+                              </select>
+                            {% else %}
+                              {{ OrderDetails.Quantity[i] }}
+                            {% endif %}
+                          </div>
+                          <div class="col-sm-6">
+                            <div style="font-size:20px;">Price : &#8364; {{ OrderDetails.Price[i] }}</div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-sm-2"></div>
+                    </div>
+                    <hr>
+                  {% endfor %}
+                </div>
+                <div class="col-sm-1"></div>
+              </div>
+              <div class="row">
+                <div class="col-sm-2"></div>
+                <div class="col-sm-8">
                   <div class="row">
-                    <div class="col-sm-12">
-                      {% if OrderDetails.OrderSubStatus == "BillingRequired" %}
-                        <button class="btn btn-primary" name="Button" id="ProceedToBilling" value="ProceedToBilling">Proceed To Billing</button>
-                      {% elif OrderDetails.OrderSubStatus == "ProceedToBilling" %}
-                        <input type="hidden" name="Button" id="Pay" value="Pay" />
-                        <div id="PayButton"></div>
-                      {% elif OrderDetails.OrderStatus == "Completed" %}
-                        This order is marked complete and hence no action is possible.
-                      {% endif %}
+                    <div class="col-sm-4">Comments (Optional) :</div>
+                    <div class="col-sm-8">
+                      <textarea id="VendorComments" name="VendorComments" class="form-control" placeholder="Type your message to consumer."></textarea>
                     </div>
                   </div>
-                {% endif %}
-              </form>
-            {% endif %}
+                </div>
+                <div class="col-sm-2"></div>
+              </div>
+              <hr>
+              <div class="row">
+                <div class="col-sm-12">
+                  {% if OrderDetails.OrderSubStatus == "Reviewing" %}
+                    <button class="btn btn-primary" name="Button" value="SubmitForPayment">Submit for Payment</button>
+                    <button class="btn btn-primary" name="Button" value="CancelOrder">Cancel Order</button>
+                    <input type="reset" class="btn btn-primary" value="Reset"/>
+                  {% elif OrderDetails.OrderSubStatus == "PaymentRequired" %}
+                    Consumer is expected to make payment for this order.
+                    <br>
+                    <br>
+                    <button class="btn btn-primary" name="Button" value="CancelOrder">Cancel Order</button>
+                  {% elif OrderDetails.OrderSubStatus == "PaymentSuccessful" %}
+                    <button class="btn btn-primary" name="Button" value="MarkPacking">Mark Packing</button>
+                  {% elif OrderDetails.OrderSubStatus == "PackingInProgress" %}
+                    <button class="btn btn-primary" name="Button" value="MarkPacked">Mark Packed</button>
+                  {% elif OrderDetails.OrderSubStatus == "ProductPacked" and OrderDetails.OrderType == "Delivery" %}
+                    <button class="btn btn-primary" name="Button" value="OutForDelivery">Out for Delivery</button>
+                  {% elif OrderDetails.OrderSubStatus == "ProductPacked" and OrderDetails.OrderType == "Collection" %}
+                    <button class="btn btn-primary" name="Button" value="ReadyForCollection">Ready for Collection</button>
+                  {% elif OrderDetails.OrderSubStatus == "OutForDelivery" %}
+                    <button class="btn btn-primary" name="Button" value="MarkDelivered">Mark Delivered</button>
+                  {% elif OrderDetails.OrderSubStatus == "ReadyForCollection" %}
+                    <button class="btn btn-primary" name="Button" value="MarkCollected">Mark Collected</button>
+                  {% elif OrderDetails.OrderSubStatus == "ReUploadPrescription" %}
+                    Consumer is requested to re-upload prescription for this order.
+                    <br>
+                    <br>
+                    <button class="btn btn-primary" name="Button" value="CancelOrder">Cancel Order</button>
+                  {% else %}
+                    No action is possible on this order.
+                  {% endif %}
+                </div>
+              </div>
+            </form>
           {% endif %}
           <hr>
           <hr>
@@ -868,7 +933,7 @@
           <div class="modal-body">
             <div class="row">
               <div class="col-sm-12">
-                <img src="{{ OrderDetails.PrescriptionImage }}" class="rounded" alt="Unable to display image." style="max-width:470px;">
+                <img src="{{ OrderDetails.PrescriptionImage }}" class="rounded" alt="Unable to display image." style="max-width:100%;">
               </div>
             </div>
           </div>

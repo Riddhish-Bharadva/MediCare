@@ -41,7 +41,7 @@ class MyOrders(webapp2.RequestHandler):
                         ActiveOrderDetails.append(OrderDetails[0])
                         if(len(OrderDetails) > 1):
                             for j in range(1,len(OrderDetails)):
-                                if(ActiveOrderDetails[i].OrderSubStatus == "Reviewed" and OrderDetails[j].OrderSubStatus == "Reviewing"):
+                                if(ActiveOrderDetails[i].OrderSubStatus != "Reviewing" and OrderDetails[j].OrderSubStatus == "Reviewing"):
                                     ActiveOrderDetails[i].OrderSubStatus = OrderDetails[j].OrderSubStatus
                 OrderDetails = OrdersDB.query(OrdersDB.userEmail == userEmail, OrdersDB.OrderStatus == "Completed").fetch()
                 if(OrderDetails != []):
@@ -50,8 +50,17 @@ class MyOrders(webapp2.RequestHandler):
                         if(OrderDetails[i].OrderID not in UON):
                             UON.append(OrderDetails[i].OrderID)
                     for i in range(0,len(UON)):
-                        OrderDetails = OrdersDB.query(OrdersDB.userEmail == userEmail, OrdersDB.OrderStatus == "Completed", OrdersDB.OrderID == UON[i]).fetch()
-                        CompletedOrderDetails.append(OrderDetails[0])
+                        OrderDetails = OrdersDB.query(OrdersDB.userEmail == userEmail, OrdersDB.OrderID == UON[i]).fetch()
+                        if(len(OrderDetails)>1):
+                            OSS = OrderDetails[0].OrderStatus
+                            for j in range(1,len(OrderDetails)):
+                                if(OSS != OrderDetails[j].OrderStatus):
+                                    OSS = OrderDetails[j]
+                            if(OSS == "Completed"):
+                                CompletedOrderDetails.append(OrderDetails[0])
+                        else:
+                            if(OrderDetails[0].OrderStatus == "Completed"):
+                                CompletedOrderDetails.append(OrderDetails[0])
         else:
             self.redirect('/UserSignIn')
 
