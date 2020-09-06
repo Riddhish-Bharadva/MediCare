@@ -81,13 +81,13 @@
       var directionsService = new google.maps.DirectionsService();
       directionsRenderer.setMap(map);
       calculateAndDisplayRoute(directionsService, directionsRenderer);
-      document.getElementById("mode").addEventListener("change", () => {
+      document.getElementById("TravelMode").addEventListener("change", () => {
         calculateAndDisplayRoute(directionsService, directionsRenderer);
       });
     }
     function calculateAndDisplayRoute(directionsService, directionsRenderer)
     {
-      var selectedMode = document.getElementById("mode").value;
+      var selectedMode = document.getElementById("TravelMode").value;
       var Lat = document.getElementById("DLat").value;
       var Lng = document.getElementById("DLng").value;
       var DValues = new google.maps.LatLng(Lat, Lng);
@@ -686,7 +686,7 @@
                         </div>
                         <br>
                         <div class="row">
-                          <div class="col-sm-12">
+                          <div class="col-sm-12" style="background:yellow;padding:10px;border-radius:10px;">
                             Order Status : {{ ProductStatus[i] }}
                           </div>
                         </div>
@@ -700,6 +700,19 @@
                               {% for j in PharmacyDetails %}
                                 {% if PPID[i] == j.PharmacyID %}
                                   {{ j.PharmacyName }}
+                                {% endif %}
+                              {% endfor %}
+                            </div>
+                          </div>
+                          <br>
+                          <div class="row">
+                            <div class="col-sm-6" style="text-align:left;">
+                              Pharmacy Address :
+                            </div>
+                            <div class="col-sm-6">
+                              {% for j in PharmacyDetails %}
+                                {% if PPID[i] == j.PharmacyID %}
+                                  {{ j.PhysicalAddress }}
                                 {% endif %}
                               {% endfor %}
                             </div>
@@ -745,7 +758,7 @@
                   <div class="col-sm-1"></div>
                   <div class="col-sm-5">Select Mode :</div>
                   <div class="col-sm-5">
-                    <select class="form-control" id="mode">
+                    <select class="form-control" id="TravelMode">
                       <option value="">Select Mode</option>
                       <option value="WALKING">Walking</option>
                       <option value="DRIVING">Driving</option>
@@ -866,7 +879,7 @@
                       <div class="col-sm-1"></div>
                     </div>
                     <br>
-                    {% if OrderDetails.PrescriptionRequired == 1 and OrderDetails.OrderSubStatus == "Reviewing" %}
+                    {% if OrderDetails.PrescriptionRequired == 1 and OrderDetails.OrderSubStatus == "Reviewing" and VendorDetails.RegisteredAs == "Pharmacist" %}
                       <div class="row">
                         <div class="col-sm-1"></div>
                         <div class="col-sm-5 form-check-inline">
@@ -987,6 +1000,7 @@
                 </div>
                 <div class="col-sm-2"></div>
               </div>
+              {% if VendorDetails.RegisteredAs == "Pharmacist" %}
               <hr>
               <div class="row">
                 <div class="col-sm-12">
@@ -1021,6 +1035,7 @@
                   {% endif %}
                 </div>
               </div>
+              {% endif %}
             </form>
           {% endif %}
           <hr>
