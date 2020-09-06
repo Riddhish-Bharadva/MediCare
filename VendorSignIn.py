@@ -87,7 +87,7 @@ Please click on below link to verify your Email Id:
 
 Thanks & regards,
 MediCare Team.
-                        """)
+                            """)
                             self.redirect('/VendorSignIn?notification=VendorSuccessfullyRegistered')
                         else:
                             self.redirect('/VendorSignIn?notification=EmailAlreadyRegistered')
