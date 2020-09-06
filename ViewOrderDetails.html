@@ -7,7 +7,107 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDvLc7SvzpX6KP6HCfn033xNKaM8UH3e2w&callback=initMap&libraries=&v=weekly" defer></script>
   </head>
+  <style>
+    .container
+    {
+       background:rgba(255, 255, 255, 1.0);
+       border-radius:10px !important;
+    }
+    .navbar
+    {
+      margin-top:5px;
+      border-radius: 10px;
+    }
+    .modal .modal-dialog
+    {
+      max-width:75%;
+    }
+    #map
+    {
+      width: 85%;
+      height: 75%;
+      background-color: grey;
+      border-radius:10px;
+      border:1px solid black;
+    }
+    #floating-panel
+    {
+      position: absolute;
+      top: 10px;
+      left: 25%;
+      z-index: 5;
+      background-color: #fff;
+      padding: 5px;
+      border: 1px solid #999;
+      text-align: center;
+      font-family: "Roboto", "sans-serif";
+      line-height: 30px;
+      padding-left: 10px;
+    }
+  </style>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.3.0/jquery.min.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function()
+    {
+      $("#PharmacyName").live("change", function()
+      {
+        var PID = $(this).find("option:selected").attr("value");
+        {% for i in PharmacyDetails %}
+          if(PID == {{ i.PharmacyID }})
+          {
+            $("#DLat").val({{ i.Latitude }});
+            $("#DLng").val({{ i.Longitude }});
+            initMap();
+          }
+          else if(PID == "")
+          {
+            $("#DLat").val("");
+            $("#DLng").val("");
+          }
+        {% endfor %}
+      })
+    });
+  </script>
+  <script>
+    "use strict";
+    function initMap()
+    {
+      var map = new google.maps.Map(document.getElementById('map'), {zoom: 15, center: {lat: {{ UserDetails.Latitude }}, lng: {{ UserDetails.Longitude }}}});
+      var marker = new google.maps.Marker({position: {lat: {{ UserDetails.Latitude }}, lng: {{ UserDetails.Longitude }}}, map: map});
+      var directionsRenderer = new google.maps.DirectionsRenderer();
+      var directionsService = new google.maps.DirectionsService();
+      directionsRenderer.setMap(map);
+      calculateAndDisplayRoute(directionsService, directionsRenderer);
+      document.getElementById("mode").addEventListener("change", () => {
+        calculateAndDisplayRoute(directionsService, directionsRenderer);
+      });
+    }
+    function calculateAndDisplayRoute(directionsService, directionsRenderer)
+    {
+      var selectedMode = document.getElementById("mode").value;
+      var Lat = document.getElementById("DLat").value;
+      var Lng = document.getElementById("DLng").value;
+      var DValues = new google.maps.LatLng(Lat, Lng);
+      directionsService.route(
+        {
+          origin: {lat: {{ UserDetails.Latitude }}, lng: {{ UserDetails.Longitude }}},
+          destination: DValues,
+          travelMode: google.maps.TravelMode[selectedMode]
+        },
+        (response, status) => {
+          if (status == "OK") {
+            directionsRenderer.setDirections(response);
+          }
+          else {
+            window.alert("Directions request failed due to " + status);
+          }
+        }
+      );
+    }
+  </script>
   <script>
   /**
    * Define the version of the Google Pay API referenced when creating your
@@ -278,22 +378,6 @@
     src="https://pay.google.com/gp/p/js/pay.js"
     onload="onGooglePayLoaded()">
   </script>
-  <style>
-    .container
-    {
-       background:rgba(255, 255, 255, 1.0);
-       border-radius:10px !important;
-    }
-    .navbar
-    {
-      margin-top:5px;
-      border-radius: 10px;
-    }
-    .modal .modal-dialog
-    {
-      max-width:75%;
-    }
-  </style>
   <body style="background:url('https://www.longprairiepharmacy.com/wp-content/themes/longprairie/images/slider/9.jpg');">
     <center>
       <div style="max-width:80%;">
@@ -638,15 +722,40 @@
               <hr>
               {% if OrderDetails.OrderType == "Collection" %}
                 <div class="row">
-                  <div class="col-sm-6">Select Pharmacy to view location of same on map</div>
-                  <div class="col-sm-6">Dropdown</div>
+                  <div class="col-sm-1"></div>
+                  <div class="col-sm-5">Select Pharmacy to view location of same on map</div>
+                  <div class="col-sm-5">
+                    <select class="form-control" id="PharmacyName">
+                      <option value="">Select Pharmacy</option>
+                      {% for PID in PharmacyID %}
+                        {% for P in PharmacyDetails %}
+                          {% if PID == P.PharmacyID %}
+                            <option value="{{ PID }}">{{ P.PharmacyName }}</option>
+                          {% endif %}
+                        {% endfor %}
+                      {% endfor %}
+                    </select>
+                    <input type="hidden" id="DLat" name="DLat">
+                    <input type="hidden" id="DLng" name="DLng">
+                  </div>
+                  <div class="col-sm-1"></div>
                 </div>
                 <br>
                 <div class="row">
-                  <div class="col-sm-2"></div>
-                  <div class="col-sm-8">Google Map</div>
-                  <div class="col-sm-2"></div>
+                  <div class="col-sm-1"></div>
+                  <div class="col-sm-5">Select Mode :</div>
+                  <div class="col-sm-5">
+                    <select class="form-control" id="mode">
+                      <option value="">Select Mode</option>
+                      <option value="WALKING">Walking</option>
+                      <option value="DRIVING">Driving</option>
+                      <option value="BICYCLING">Bicycling</option>
+                    </select>
+                  </div>
+                  <div class="col-sm-1"></div>
                 </div>
+                <br>
+                <div id="map"></div>
                 <hr>
               {% endif %}
               <div class="row">

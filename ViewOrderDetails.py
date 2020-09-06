@@ -82,7 +82,7 @@ class ViewOrderDetails(blobstore_handlers.BlobstoreUploadHandler):
                             DC = DC + OrderData[i].DeliveryCharge
                             if(OrderData[i].PharmacyID not in PharmacyID):
                                 PharmacyID.append(OrderData[i].PharmacyID)
-                            if(OrderData[i].OrderStatus != "Completed"):
+                            if(OrderData[i].OrderSubStatus != "CancelledByVendor" and OrderData[i].OrderSubStatus != "CancelledByCustomer"):
                                 OrderDetails.OrderTotal = OrderDetails.OrderTotal + OrderData[i].OrderTotal - OrderData[i].ServiceCharge
                             OrderDetails.DeliveryCharge = OrderDetails.DeliveryCharge + OrderData[i].DeliveryCharge
                             if(OrderDetails.PrescriptionRequired == 0):
@@ -165,6 +165,7 @@ class ViewOrderDetails(blobstore_handlers.BlobstoreUploadHandler):
             'ProductStatus' : ProductStatus,
             'PaymentRequired' : PaymentRequired,
             'ReUploadPrescription' : ReUploadPrescription,
+            'PharmacyID' : PharmacyID,
             'DC' : DC,
             'PPID' : PPID,
             'PharmacyDetails' : PharmacyDetails,

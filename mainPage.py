@@ -25,7 +25,6 @@ from ContactUs import ContactUs
 from TermsOfUse import TermsOfUse
 from Profile import Profile
 from ShoppingCart import ShoppingCart
-from ConfirmOrder import ConfirmOrder
 from MyOrders import MyOrders
 from VendorOrders import VendorOrders
 from ViewOrderDetails import ViewOrderDetails
@@ -140,7 +139,6 @@ app = webapp2.WSGIApplication([
     ('/TermsOfUse',TermsOfUse),
     ('/Profile',Profile),
     ('/ShoppingCart',ShoppingCart),
-    ('/ConfirmOrder',ConfirmOrder),
     ('/MyOrders',MyOrders),
     ('/VendorOrders',VendorOrders),
     ('/OfferedProducts',OfferedProducts),
