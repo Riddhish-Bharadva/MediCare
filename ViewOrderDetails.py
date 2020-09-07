@@ -338,8 +338,9 @@ MediCare Team.
                 self.redirect('/MyOrders?userEmail='+userEmail)
             elif(OrderDetails != [] and Button == "Pay"):
                 for i in range(0,len(OrderDetails)):
-                    OrderDetails[i].OrderSubStatus = "PaymentSuccessful"
-                    OrderDetails[i].put()
+                    if(OrderDetails[i].OrderStatus != "Completed"):
+                        OrderDetails[i].OrderSubStatus = "PaymentSuccessful"
+                        OrderDetails[i].put()
                 self.redirect('/ViewOrderDetails?SignInAs=User&userEmail='+userEmail+'&OrderID='+OrderDetails[0].OrderID)
         else:
             self.redirect('/')
