@@ -330,7 +330,7 @@ Dear MediCare User,
 
 This is an automated email confirmation sent to you in regards of your placed order at MediCare.
 
-Your whole order ("""+ OrderDetails.OrderID +""") has been cancelled by you. You can view the same in "My Orders" tab after logging into your MediCare account.
+Your whole order ("""+ OrderDetails[0].OrderID +""") has been cancelled by you. You can view the same in "My Orders" tab after logging into your MediCare account.
 
 Thanks & regards,
 MediCare Team.
