@@ -1000,7 +1000,7 @@
                 </div>
                 <div class="col-sm-2"></div>
               </div>
-              {% if VendorDetails.RegisteredAs == "Pharmacist" %}
+              {% if VendorDetails.RegisteredAs == "Pharmacist" and OrderDetails.OrderStatus != "Completed"%}
               <hr>
               <div class="row">
                 <div class="col-sm-12">
