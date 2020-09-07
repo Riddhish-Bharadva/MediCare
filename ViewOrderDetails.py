@@ -105,6 +105,9 @@ class ViewOrderDetails(blobstore_handlers.BlobstoreUploadHandler):
                             if(OrderData[i].OrderSubStatus == "ReUploadPrescription"):
                                 ReUploadPrescription = 1
                                 PaymentRequired = 0
+                            elif(OrderData[i].OrderSubStatus == "CancelledByVendor" and PaymentRequired == 1):
+                                ReUploadPrescription = 0
+                                PaymentRequired = 1
                             elif(OrderData[i].OrderSubStatus == "PaymentRequired" and PaymentRequired == 1):
                                 ReUploadPrescription = 0
                                 PaymentRequired = 1
