@@ -61,6 +61,8 @@ class MyOrders(webapp2.RequestHandler):
                                     OSS = OrderDetails[j].OrderSubStatus
                             if(OS == "Completed"):
                                 CompletedOrderDetails.append(OrderDetails[0])
+                                if(OSS != CompletedOrderDetails[len(CompletedOrderDetails)-1].OrderSubStatus):
+                                    CompletedOrderDetails[len(CompletedOrderDetails)-1].OrderSubStatus = OSS
                         else:
                             if(OrderDetails[0].OrderStatus == "Completed"):
                                 CompletedOrderDetails.append(OrderDetails[0])
