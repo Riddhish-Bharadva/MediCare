@@ -109,7 +109,7 @@ class AddProducts(blobstore_handlers.BlobstoreUploadHandler):
                     ProductsDBConnect.Dosage = Dosage
                     ProductsDBConnect.ProductLife = ProductLife
                     ProductsDBConnect.Category = Category
-                    ProductsDBConnect.PrescriptionRequired = PrescriptionRequired
+                    ProductsDBConnect.PrescriptionRequired = int(PrescriptionRequired)
                     ProductsDBConnect.Quantity = int(Quantity)
                     ProductsDBConnect.Price = float(Price)
                     for i in Images:
