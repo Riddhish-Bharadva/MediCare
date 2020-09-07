@@ -8,6 +8,7 @@ from urllib import urlencode
 from EmailModule import SendEmail
 from UsersDB import UsersDB
 from ProductsDB import ProductsDB
+from PharmacyDB import PharmacyDB
 from CartDB import CartDB
 from OrdersDB import OrdersDB
 from VendorProductsDB import VendorProductsDB
@@ -264,7 +265,6 @@ MediCare Team.
 
 # Below is code for searching product and returning product id if keyword matches.
         elif(FunctionOption == "SearchProduct"):
-            ResponseData = {}
             ProductIDs = []
             SearchKeyword = JD["SearchKeyword"]
             if(SearchKeyword != ""):
@@ -429,12 +429,24 @@ MediCare Team.
                 ResponseData['OrderID'] = OrderID
                 ResponseData['notification'] = "NoData"
             self.response.write(json.dumps(ResponseData))
-
         elif(FunctionOption == "OrderIDData" and DBConnect == None):
             ResponseData['userEmail'] = userEmail
             ResponseData['notification'] = "UserNotRegistered"
             self.response.write(json.dumps(ResponseData))
 
+# Below is code for fetching data for given pharmacy id.
+        elif(FunctionOption == "PharmacyData" and DBConnect != None):
+            PharmacyID = JD["PharmacyID"]
+            PharmacyData = ndb.Key("PharmacyDB",PharmacyID).get()
+            ResponseData['PharmacyID'] = PharmacyData.PharmacyID
+            ResponseData['PharmacyName'] = PharmacyData.PharmacyName
+            ResponseData['OfficialEmailId'] = PharmacyData.OfficialEmailId
+            ResponseData['OfficialContact'] = PharmacyData.OfficialContact
+            ResponseData['PhysicalAddress'] = PharmacyData.PhysicalAddress
+            ResponseData['Latitude'] = PharmacyData.Latitude
+            ResponseData['Longitude'] = PharmacyData.Longitude
+            ResponseData['Longitude'] = PharmacyData.Longitude
+            self.response.write(json.dumps(ResponseData))
 
 # In case no function satisfy conditions, below will be returned.
         else:
