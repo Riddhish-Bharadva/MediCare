@@ -85,7 +85,7 @@ class ViewOrderDetails(blobstore_handlers.BlobstoreUploadHandler):
                             if(OrderData[i].OrderSubStatus != "CancelledByVendor" and OrderData[i].OrderSubStatus != "CancelledByCustomer" and OrderData[i-1].ServiceCharge == 0.0):
                                 OrderDetails.ServiceCharge = 1.0
                                 OrderDetails.OrderTotal = OrderDetails.OrderTotal + OrderData[i].OrderTotal
-                            elif(OrderData[i].OrderSubStatus != "CancelledByVendor" and OrderData[i].OrderSubStatus != "CancelledByCustomer" and OrderData[i-1].ServiceCharge == 0.0):
+                            elif(OrderData[i].OrderSubStatus != "CancelledByVendor" and OrderData[i].OrderSubStatus != "CancelledByCustomer" and OrderData[i-1].ServiceCharge != 0.0):
                                 OrderDetails.OrderTotal = OrderDetails.OrderTotal + OrderData[i].OrderTotal - OrderData[i].ServiceCharge
                             OrderDetails.DeliveryCharge = OrderDetails.DeliveryCharge + OrderData[i].DeliveryCharge
                             if(OrderDetails.PrescriptionRequired == 0):
