@@ -9,6 +9,7 @@ from EmailModule import SendEmail
 from UsersDB import UsersDB
 from ProductsDB import ProductsDB
 from CartDB import CartDB
+from OrdersDB import OrdersDB
 from VendorProductsDB import VendorProductsDB
 
 class API_MediCare(webapp2.RequestHandler):
@@ -279,6 +280,72 @@ MediCare Team.
                         elif(ProdIngredients.find(SearchKeyword.lower()) != -1):
                             ProductIDs.append(AllProducts[i].ProductID)
             ResponseData['ProductID'] = ProductIDs
+            self.response.write(json.dumps(ResponseData))
+
+# Below is code for fetching MyOrdersData for logged in user in android device.
+        elif(FunctionOption == "MyOrdersData" and DBConnect != None):
+            OrderID = []
+            OrderType = []
+            OrderStatus = []
+            OrderTotal = []
+            ActiveOrderDetails = []
+            CompletedOrderDetails = []
+            OrderDetails = OrdersDB.query(OrdersDB.userEmail == userEmail, OrdersDB.OrderStatus == "Active").fetch()
+            UON1 = []
+            UON2 = []
+            if(OrderDetails != []):
+                for i in range(0,len(OrderDetails)):
+                    if(OrderDetails[i].OrderID not in UON1):
+                        UON1.append(OrderDetails[i].OrderID)
+                for i in range(0,len(UON1)):
+                    OrderDetails = OrdersDB.query(OrdersDB.userEmail == userEmail, OrdersDB.OrderStatus == "Active", OrdersDB.OrderID == UON1[i]).fetch()
+                    ActiveOrderDetails.append(OrderDetails[0])
+                    OrderID.append(ActiveOrderDetails[i].OrderID)
+                    OrderType.append(ActiveOrderDetails[i].OrderType)
+                    OrderTotal.append(ActiveOrderDetails[i].GrandTotal)
+                    if(len(OrderDetails) > 1):
+                        for j in range(1,len(OrderDetails)):
+                            if(ActiveOrderDetails[i].OrderSubStatus != "Reviewing" and OrderDetails[j].OrderSubStatus == "Reviewing"):
+                                ActiveOrderDetails[i].OrderSubStatus = OrderDetails[j].OrderSubStatus
+                    OrderStatus.append(ActiveOrderDetails[i].OrderSubStatus)
+            OrderDetails = OrdersDB.query(OrdersDB.userEmail == userEmail, OrdersDB.OrderStatus == "Completed").fetch()
+            if(OrderDetails != []):
+                for i in range(0,len(OrderDetails)):
+                    if(OrderDetails[i].OrderID not in UON1 and OrderDetails[i].OrderID not in UON2):
+                        UON2.append(OrderDetails[i].OrderID)
+                for i in range(0,len(UON2)):
+                    OrderDetails = OrdersDB.query(OrdersDB.userEmail == userEmail, OrdersDB.OrderID == UON2[i]).fetch()
+                    OrderID.append(OrderDetails[0].OrderID)
+                    OrderType.append(OrderDetails[0].OrderType)
+                    OrderTotal.append(OrderDetails[0].GrandTotal)
+                    if(len(OrderDetails)>1):
+                        OS = OrderDetails[0].OrderStatus
+                        OSS = OrderDetails[0].OrderSubStatus
+                        for j in range(1,len(OrderDetails)):
+                            if(OS != OrderDetails[j].OrderStatus):
+                                OS = OrderDetails[j]
+                            if(OSS != OrderDetails[j].OrderSubStatus and OSS != "OrderComplete"):
+                                OSS = OrderDetails[j].OrderSubStatus
+                            if(OS == "Completed"):
+                                CompletedOrderDetails.append(OrderDetails[0])
+                                if(OSS != CompletedOrderDetails[len(CompletedOrderDetails)-1].OrderSubStatus):
+                                    CompletedOrderDetails[len(CompletedOrderDetails)-1].OrderSubStatus = OSS
+                    else:
+                        if(OrderDetails[0].OrderStatus == "Completed"):
+                            CompletedOrderDetails.append(OrderDetails[0])
+                    if(CompletedOrderDetails != []):
+                        OrderStatus.append(CompletedOrderDetails[0].OrderSubStatus)
+                    else:
+                        OrderStatus.append(OrderDetails[0].OrderSubStatus)
+            ResponseData['OrderID'] = OrderID
+            ResponseData['OrderType'] = OrderType
+            ResponseData['OrderStatus'] = OrderStatus
+            ResponseData['OrderTotal'] = OrderTotal
+            self.response.write(json.dumps(ResponseData))
+
+        elif(FunctionOption == "MyOrdersData" and DBConnect == None):
+            ResponseData['userEmail'] = userEmail
+            ResponseData['notification'] = "UserNotRegistered"
             self.response.write(json.dumps(ResponseData))
 
 # In case no function satisfy conditions, below will be returned.
