@@ -631,7 +631,7 @@
                   </div>
                   <div class="col-sm-6">
                     {% if OrderDetails.PrescriptionRequired == 1 %}
-                      <button class="btn" data-toggle="modal" data-target="#PrescriptionImageModal"><img id="myimage" src="{{ OrderDetails.PrescriptionImage }}" style="width:400px !important;border-radius:10px;border:1px solid black;" alt="Oops! Error occurred while downloading prescription image." /></button>
+                      <button class="btn" data-toggle="modal" data-target="#PrescriptionImageModal"><img id="myimage" src="{{ OrderDetails.PrescriptionImage }}" style="max-width:400px;border-radius:10px;border:1px solid black;" alt="Oops! Error occurred while downloading prescription image." /></button>
                     {% endif %}
                   </div>
                 </div>
@@ -654,7 +654,7 @@
                     <div class="row">
                       <div class="col-sm-1"></div>
                       <div class="col-sm-4">
-                        <img src="{{ ProductDetails[i].Images[0] }}" class="rounded" alt="Unable to display image." style="width:250px;">
+                        <img src="{{ ProductDetails[i].Images[0] }}" class="rounded" alt="Unable to display image." style="max-width:250px;">
                       </div>
                       <div class="col-sm-5">
                         {% if OrderDetails.OrderType == "Delivery" %}
@@ -901,7 +901,7 @@
                   </div>
                   <div class="col-sm-6">
                     {% if OrderDetails.PrescriptionRequired == 1 %}
-                      <button class="btn" data-toggle="modal" data-target="#PrescriptionImageModal"><img id="myimage" src="{{ OrderDetails.PrescriptionImage }}" style="width:400px !important;border-radius:10px;border:1px solid black;" alt="Oops! Error occurred while downloading prescription image." /></button>
+                      <button class="btn" data-toggle="modal" data-target="#PrescriptionImageModal"><img id="myimage" src="{{ OrderDetails.PrescriptionImage }}" style="max-width:400px;border-radius:10px;border:1px solid black;" alt="Oops! Error occurred while downloading prescription image." /></button>
                     {% endif %}
                   </div>
                 </div>
@@ -1057,7 +1057,7 @@
           <div class="modal-body">
             <div class="row">
               <div class="col-sm-12">
-                <img src="{{ OrderDetails.PrescriptionImage }}" class="rounded" alt="Unable to display image." style="max-width:100%;">
+                <img src="{{ OrderDetails.PrescriptionImage }}" class="rounded" alt="Unable to display image." style="width:100% !important;">
               </div>
             </div>
           </div>
