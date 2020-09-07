@@ -52,11 +52,14 @@ class MyOrders(webapp2.RequestHandler):
                     for i in range(0,len(UON)):
                         OrderDetails = OrdersDB.query(OrdersDB.userEmail == userEmail, OrdersDB.OrderID == UON[i]).fetch()
                         if(len(OrderDetails)>1):
-                            OSS = OrderDetails[0].OrderStatus
+                            OS = OrderDetails[0].OrderStatus
+                            OSS = OrderDetails[0].OrderSubStatus
                             for j in range(1,len(OrderDetails)):
-                                if(OSS != OrderDetails[j].OrderStatus):
-                                    OSS = OrderDetails[j]
-                            if(OSS == "Completed"):
+                                if(OS != OrderDetails[j].OrderStatus):
+                                    OS = OrderDetails[j]
+                                if(OSS != OrderDetails[j].OrderSubStatus and OSS != "OrderComplete"):
+                                    OSS = OrderDetails[j].OrderSubStatus
+                            if(OS == "Completed"):
                                 CompletedOrderDetails.append(OrderDetails[0])
                         else:
                             if(OrderDetails[0].OrderStatus == "Completed"):
