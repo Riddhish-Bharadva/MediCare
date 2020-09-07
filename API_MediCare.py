@@ -329,14 +329,11 @@ MediCare Team.
                             if(OS == "Completed"):
                                 CompletedOrderDetails.append(OrderDetails[0])
                                 if(OSS != CompletedOrderDetails[len(CompletedOrderDetails)-1].OrderSubStatus):
-                                    CompletedOrderDetails[len(CompletedOrderDetails)-1].OrderSubStatus = OSS
+                                    OrderDetails[0].OrderSubStatus = OSS
                     else:
                         if(OrderDetails[0].OrderStatus == "Completed"):
                             CompletedOrderDetails.append(OrderDetails[0])
-                    if(CompletedOrderDetails != []):
-                        OrderStatus.append(CompletedOrderDetails[0].OrderSubStatus)
-                    else:
-                        OrderStatus.append(OrderDetails[0].OrderSubStatus)
+                    OrderStatus.append(OrderDetails[0].OrderSubStatus)
             ResponseData['OrderID'] = OrderID
             ResponseData['OrderType'] = OrderType
             ResponseData['OrderStatus'] = OrderStatus
