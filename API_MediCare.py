@@ -415,6 +415,7 @@ MediCare Team.
 
                 ResponseData['OrderID'] = OrderID
                 ResponseData['notification'] = "DataFound"
+                ResponseData['OrderType'] = OrderDetails.OrderType
                 ResponseData['ProductID'] = ProductID
                 ResponseData['PharmacyID'] = PharmacyID
                 ResponseData['ProductStatus'] = ProductStatus
