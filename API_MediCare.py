@@ -346,6 +346,96 @@ MediCare Team.
             ResponseData['notification'] = "UserNotRegistered"
             self.response.write(json.dumps(ResponseData))
 
+# Below is code for fetching OrdersData for selected OrderID of logged in user in android device.
+        elif(FunctionOption == "OrderIDData" and DBConnect != None):
+            OrderID = JD["OrderID"]
+            ProductID = []
+            PharmacyID = []
+            ProductStatus = []
+            ServiceCharge = 0.0
+            DeliveryCharge = 0.0
+            ReUploadPrescription = 0
+            PaymentRequired = 0
+            SubTotalPrice = 0.0
+
+            OrderData = OrdersDB.query(OrdersDB.OrderID == OrderID).fetch()
+            if(OrderData != []):
+                OrderDetails = OrderData[0]
+                DeliveryCharge = DeliveryCharge + OrderData[0].DeliveryCharge
+                for i in range(0,len(OrderDetails.ProductID)):
+                    PharmacyID.append(OrderData[0].PharmacyID) # I have got pharmacy id for each product id.
+                    ProductStatus.append(OrderData[0].OrderSubStatus) # I have got individual product status from here.
+                    SubTotalPrice = SubTotalPrice + (OrderDetails.Quantity[i] * OrderDetails.Price[i])
+                    if(OrderData[0].OrderSubStatus == "ReUploadPrescription"):
+                        ReUploadPrescription = 1
+                        PaymentRequired = 0
+                    elif(OrderData[0].OrderSubStatus == "PaymentRequired"):
+                        ReUploadPrescription = 0
+                        PaymentRequired = 1
+                    elif(OrderData[0].OrderSubStatus == "CancelledByVendor" and len(OrderData) > 1):
+                        ReUploadPrescription = 0
+                        PaymentRequired = 1
+                    else:
+                        ReUploadPrescription = 0
+                        PaymentRequired = 0
+                if(len(OrderData) > 1):
+                    for i in range(1,len(OrderData)):
+                        DeliveryCharge = DeliveryCharge + OrderData[i].DeliveryCharge
+                        if(OrderData[i].OrderSubStatus != "CancelledByVendor" and OrderData[i].OrderSubStatus != "CancelledByCustomer" and OrderDetails.ServiceCharge == 0.0):
+                            if(OrderData[i].OrderType != "Collection"):
+                                OrderDetails.ServiceCharge = 1.0
+                            OrderDetails.OrderTotal = OrderDetails.OrderTotal + OrderData[i].OrderTotal
+                        elif(OrderData[i].OrderSubStatus != "CancelledByVendor" and OrderData[i].OrderSubStatus != "CancelledByCustomer" and OrderDetails.ServiceCharge != 0.0):
+                            OrderDetails.OrderTotal = OrderDetails.OrderTotal + OrderData[i].OrderTotal - OrderData[i].ServiceCharge
+                        OrderDetails.DeliveryCharge = OrderDetails.DeliveryCharge + OrderData[i].DeliveryCharge
+                        if(OrderDetails.PrescriptionRequired == 0):
+                            OrderDetails.PrescriptionRequired = OrderData[i].PrescriptionRequired
+                            if(OrderDetails.PrescriptionRequired == 1):
+                                OrderDetails.PrescriptionImage = OrderData[i].PrescriptionImage
+                        for j in range(0,len(OrderData[i].ProductID)):
+                            PharmacyID.append(OrderData[i].PharmacyID)
+                            OrderDetails.ProductID.append(OrderData[i].ProductID[j])
+                            OrderDetails.Quantity.append(OrderData[i].Quantity[j])
+                            OrderDetails.Price.append(OrderData[i].Price[j])
+                            SubTotalPrice = SubTotalPrice + (OrderData[i].Quantity[j] * OrderData[i].Price[j])
+                            ProductStatus.append(OrderData[i].OrderSubStatus)
+                        if(OrderData[i].OrderSubStatus == "ReUploadPrescription"):
+                            ReUploadPrescription = 1
+                            PaymentRequired = 0
+                        elif(OrderData[i].OrderSubStatus == "CancelledByVendor" and PaymentRequired == 1):
+                            ReUploadPrescription = 0
+                            PaymentRequired = 1
+                        elif(OrderData[i].OrderSubStatus == "PaymentRequired" and PaymentRequired == 1):
+                            ReUploadPrescription = 0
+                            PaymentRequired = 1
+                        else:
+                            PaymentRequired = 0
+                ProductID = OrderDetails.ProductID
+                ServiceCharge = OrderDetails.ServiceCharge
+
+                ResponseData['OrderID'] = OrderID
+                ResponseData['notification'] = "DataFound"
+                ResponseData['ProductID'] = ProductID
+                ResponseData['PharmacyID'] = PharmacyID
+                ResponseData['ProductStatus'] = ProductStatus
+                ResponseData['ServiceCharge'] = ServiceCharge
+                ResponseData['DeliveryCharge'] = DeliveryCharge
+                ResponseData['PrescriptionRequired'] = OrderDetails.PrescriptionRequired
+                ResponseData['PrescriptionImage'] = OrderDetails.PrescriptionImage
+                ResponseData['ReUploadPrescription'] = ReUploadPrescription
+                ResponseData['PaymentRequired'] = PaymentRequired
+                ResponseData['SubTotalPrice'] = SubTotalPrice
+            else:
+                ResponseData['OrderID'] = OrderID
+                ResponseData['notification'] = "NoData"
+            self.response.write(json.dumps(ResponseData))
+
+        elif(FunctionOption == "OrderIDData" and DBConnect == None):
+            ResponseData['userEmail'] = userEmail
+            ResponseData['notification'] = "UserNotRegistered"
+            self.response.write(json.dumps(ResponseData))
+
+
 # In case no function satisfy conditions, below will be returned.
         else:
             ResponseData['userEmail'] = userEmail

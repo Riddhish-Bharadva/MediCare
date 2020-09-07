@@ -82,8 +82,13 @@ class ViewOrderDetails(blobstore_handlers.BlobstoreUploadHandler):
                             DC = DC + OrderData[i].DeliveryCharge
                             if(OrderData[i].PharmacyID not in PharmacyID):
                                 PharmacyID.append(OrderData[i].PharmacyID)
+                            if(OrderDetails.VendorComments != None and OrderData[i].VendorComments != None):
+                                OrderDetails.VendorComments = OrderDetails.VendorComments + OrderData[i].VendorComments
+                            else:
+                                OrderDetails.VendorComments = OrderData[i].VendorComments
                             if(OrderData[i].OrderSubStatus != "CancelledByVendor" and OrderData[i].OrderSubStatus != "CancelledByCustomer" and OrderDetails.ServiceCharge == 0.0):
-                                OrderDetails.ServiceCharge = 1.0
+                                if(OrderData[i].OrderType != "Collection"):
+                                    OrderDetails.ServiceCharge = 1.0
                                 OrderDetails.OrderTotal = OrderDetails.OrderTotal + OrderData[i].OrderTotal
                             elif(OrderData[i].OrderSubStatus != "CancelledByVendor" and OrderData[i].OrderSubStatus != "CancelledByCustomer" and OrderDetails.ServiceCharge != 0.0):
                                 OrderDetails.OrderTotal = OrderDetails.OrderTotal + OrderData[i].OrderTotal - OrderData[i].ServiceCharge

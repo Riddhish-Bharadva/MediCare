@@ -733,6 +733,15 @@
                 <div class="col-sm-3">Order Total : &#8364; {{ OrderDetails.OrderTotal }}</div>
               </div>
               <hr>
+              {% if OrderDetails.VendorComments != "null" %}
+              <div class="row">
+                <div class="col-sm-2"></div>
+                <div class="col-sm-2">Vendor Comments :</div>
+                <div class="col-sm-6"><textarea class="form-control" disabled>{{ OrderDetails.VendorComments }}</textarea></div>
+                <div class="col-sm-2"></div>
+              </div>
+              <hr>
+              {% endif %}
               {% if OrderDetails.OrderType == "Collection" %}
                 <div class="row">
                   <div class="col-sm-1"></div>
