@@ -158,6 +158,7 @@ MediCare Team.
             ResponseProduct['Price'] = ProductData.Price
             ResponseProduct['ProductLife'] = ProductData.ProductLife
             ResponseProduct['Quantity'] = ProductData.Quantity
+            ResponseProduct['PrescriptionRequired'] = ProductData.PrescriptionRequired
             Stock = []
             for j in range(0,len(ProductData.StockedIn)):
                 Stock.append(ProductData.StockedIn[j])
