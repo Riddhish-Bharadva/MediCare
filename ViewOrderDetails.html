@@ -631,7 +631,7 @@
                   </div>
                   <div class="col-sm-6">
                     {% if OrderDetails.PrescriptionRequired == 1 %}
-                      <button class="btn" data-toggle="modal" data-target="#PrescriptionImageModal"><img id="myimage" src="{{ OrderDetails.PrescriptionImage }}" style="max-width:400px;border-radius:10px;border:1px solid black;" alt="Oops! Error occurred while downloading prescription image." /></button>
+                      <button class="btn" data-toggle="modal" data-target="#PrescriptionImageModal"><img id="myimage" src="{{ OrderDetails.PrescriptionImage }}" style="width:100%;border-radius:10px;border:1px solid black;" alt="Oops! Error occurred while downloading prescription image." /></button>
                     {% endif %}
                   </div>
                 </div>
