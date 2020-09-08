@@ -417,6 +417,8 @@ MediCare Team.
                 ResponseData['notification'] = "DataFound"
                 ResponseData['OrderType'] = OrderDetails.OrderType
                 ResponseData['ProductID'] = ProductID
+                ResponseData['Quantity'] = OrderDetails.Quantity
+                ResponseData['Price'] = OrderDetails.Price
                 ResponseData['PharmacyID'] = PharmacyID
                 ResponseData['ProductStatus'] = ProductStatus
                 ResponseData['ServiceCharge'] = ServiceCharge
@@ -445,7 +447,6 @@ MediCare Team.
             ResponseData['OfficialContact'] = PharmacyData.OfficialContact
             ResponseData['PhysicalAddress'] = PharmacyData.PhysicalAddress
             ResponseData['Latitude'] = PharmacyData.Latitude
-            ResponseData['Longitude'] = PharmacyData.Longitude
             ResponseData['Longitude'] = PharmacyData.Longitude
             self.response.write(json.dumps(ResponseData))
 
