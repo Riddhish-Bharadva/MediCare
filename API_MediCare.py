@@ -14,6 +14,10 @@ from OrdersDB import OrdersDB
 from VendorProductsDB import VendorProductsDB
 
 class API_MediCare(webapp2.RequestHandler):
+    def get(self):
+        self.response.headers['content-type'] = 'text/html'
+        self.redirect('/')
+
     def post(self):
         self.response.headers['Content-Type'] = 'application/json'
 
