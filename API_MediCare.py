@@ -169,12 +169,15 @@ MediCare Team.
 # Below is code to add products to cart.
         elif(FunctionOption == "AddToCart" and DBConnect != None):
             ProductID = JD["ProductID"]
+            ProductDBStatus = ndb.Key("ProductsDB", ProductID).get()
             CartDBStatus = ndb.Key("CartDB",userEmail).get()
             if(CartDBStatus != None):
                 if(ProductID not in CartDBStatus.ProductID):
                     CartDBStatus.ProductID.append(ProductID)
                     CartDBStatus.Quantity.append(0)
                     CartDBStatus.PharmacyID.append("None")
+                    if(ProductDBStatus.PrescriptionRequired == 1 and CartDBStatus.PrescriptionRequired != 1):
+                        CartDBStatus.PrescriptionRequired = 1
             else:
                 CartDBStatus = CartDB(id=userEmail)
                 CartDBStatus.userEmail = userEmail
@@ -182,6 +185,10 @@ MediCare Team.
                 CartDBStatus.ProductID.append(ProductID)
                 CartDBStatus.Quantity.append(0)
                 CartDBStatus.PharmacyID.append("None")
+                if(ProductDBStatus.PrescriptionRequired == 1):
+                    CartDBStatus.PrescriptionRequired = 1
+                else:
+                    CartDBStatus.PrescriptionRequired = 0
             CartDBStatus.put()
             ResponseData['userEmail'] = userEmail
             ResponseData['notification'] = "ProductSuccessfullyAdded"
@@ -190,16 +197,25 @@ MediCare Team.
 # Below is code to remove products from cart.
         elif(FunctionOption == "RemoveFromCart" and DBConnect != None):
             ProductID = JD["ProductID"]
+            ProductData = ndb.Key("ProductsDB", ProductID).get()
             CartData = ndb.Key("CartDB",userEmail).get()
             if(CartData != None):
                 if(len(CartData.ProductID)>1):
                     for i in range(0,len(CartData.ProductID)):
                         if(CartData.ProductID[i] == ProductID):
+                            if(ProductData.PrescriptionRequired == 1):
+                                CartData.PrescriptionRequired = 0
+                                del CartData.PrescriptionImage
                             del CartData.ProductID[i]
                             del CartData.Quantity[i]
                             del CartData.PharmacyID[i]
                             CartData.put()
                             break
+                    for i in range(0,len(CartData.ProductID)):
+                        PD = ndb.Key("ProductsDB",CartData.ProductID[i]).get()
+                        if(PD.PrescriptionRequired == 1):
+                            CartData.PrescriptionRequired = 1
+                            CartData.put()
                 else:
                     CartData.key.delete()
                 ResponseData['notification'] = "ProductSuccessfullyRemoved"

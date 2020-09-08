@@ -61,16 +61,19 @@ class ShoppingCart(blobstore_handlers.BlobstoreUploadHandler):
                     if(len(CartData.ProductID)>1):
                         for i in range(0,len(CartData.ProductID)):
                             if(CartData.ProductID[i] == ProductID):
+                                if(ProductData.PrescriptionRequired == 1):
+                                    CartData.PrescriptionRequired = 0
+                                    del CartData.PrescriptionImage
                                 del CartData.ProductID[i]
-                                # del CartData.Quantity[i]
-                                # del CartData.PharmacyID[i]
-                                # del CartData.Price[i]
+                                del CartData.Quantity[i]
+                                del CartData.PharmacyID[i]
                                 CartData.put()
                                 break
-                        if(ProductData.PrescriptionRequired == 1):
-                            CartData.PrescriptionRequired = 0
-                            del CartData.PrescriptionImage
-                            CartData.put()
+                        for i in range(0,len(CartData.ProductID)):
+                            PD = ndb.Key("ProductsDB",CartData.ProductID[i]).get()
+                            if(PD.PrescriptionRequired == 1):
+                                CartData.PrescriptionRequired = 1
+                                CartData.put()
                     else:
                         CartData.key.delete()
                     self.redirect('/ShoppingCart?userEmail='+UserDetails.user_Email+'&notification=ProductRemoved')
