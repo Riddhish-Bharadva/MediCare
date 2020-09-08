@@ -193,6 +193,10 @@ MediCare Team.
             ResponseData['userEmail'] = userEmail
             ResponseData['notification'] = "ProductSuccessfullyAdded"
             self.response.write(json.dumps(ResponseData))
+        elif(FunctionOption == "AddToCart" and DBConnect == None):
+            ResponseData['userEmail'] = userEmail
+            ResponseData['notification'] = "UserNotRegistered"
+            self.response.write(json.dumps(ResponseData))
 
 # Below is code to remove products from cart.
         elif(FunctionOption == "RemoveFromCart" and DBConnect != None):
@@ -222,6 +226,10 @@ MediCare Team.
             else:
                 ResponseData['notification'] = "FailedToRemoveProduct"
             ResponseData['userEmail'] = userEmail
+            self.response.write(json.dumps(ResponseData))
+        elif(FunctionOption == "RemoveFromCart" and DBConnect == None):
+            ResponseData['userEmail'] = userEmail
+            ResponseData['notification'] = "UserNotRegistered"
             self.response.write(json.dumps(ResponseData))
 
 # Below is code for Fetching user profile data.
@@ -356,7 +364,6 @@ MediCare Team.
             ResponseData['OrderStatus'] = OrderStatus
             ResponseData['OrderTotal'] = OrderTotal
             self.response.write(json.dumps(ResponseData))
-
         elif(FunctionOption == "MyOrdersData" and DBConnect == None):
             ResponseData['userEmail'] = userEmail
             ResponseData['notification'] = "UserNotRegistered"
@@ -464,6 +471,28 @@ MediCare Team.
             ResponseData['PhysicalAddress'] = PharmacyData.PhysicalAddress
             ResponseData['Latitude'] = PharmacyData.Latitude
             ResponseData['Longitude'] = PharmacyData.Longitude
+            self.response.write(json.dumps(ResponseData))
+        elif(FunctionOption == "PharmacyData" and DBConnect == None):
+            ResponseData['userEmail'] = userEmail
+            ResponseData['notification'] = "UserNotRegistered"
+            self.response.write(json.dumps(ResponseData))
+
+# Below is code for fetching Cart data for logged in user in android device.
+        elif(FunctionOption == "FetchCartData" and DBConnect != None):
+                CartData = ndb.Key("CartDB",userEmail).get()
+                if(CartData != None):
+                    ResponseData['userEmail'] = userEmail
+                    ResponseData['notification'] = "ProductsInCart"
+                    ResponseData['ProductID'] = CartData.ProductID
+                    ResponseData['PrescriptionRequired'] = CartData.PrescriptionRequired
+                    self.response.write(json.dumps(ResponseData))
+                else:
+                    ResponseData['userEmail'] = userEmail
+                    ResponseData['notification'] = "NoProductsInCart"
+                    self.response.write(json.dumps(ResponseData))
+        elif(FunctionOption == "FetchCartData" and DBConnect == None):
+            ResponseData['userEmail'] = userEmail
+            ResponseData['notification'] = "UserNotRegistered"
             self.response.write(json.dumps(ResponseData))
 
 # In case no function satisfy conditions, below will be returned.
