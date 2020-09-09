@@ -108,7 +108,6 @@
    * @returns {object} Google Pay API version, payment methods supported by the site
    */
   function getGoogleIsReadyToPayRequest() {
-    alert("Ready to pay request");
     return Object.assign(
         {},
         baseRequest,
@@ -125,7 +124,6 @@
    * @returns {object} PaymentDataRequest fields
    */
   function getGooglePaymentDataRequest() {
-    alert("Inside payment data request");
     const paymentDataRequest = Object.assign({}, baseRequest);
     paymentDataRequest.allowedPaymentMethods = [cardPaymentMethod];
     paymentDataRequest.transactionInfo = getGoogleTransactionInfo();
@@ -148,9 +146,7 @@
    * @returns {google.payments.api.PaymentsClient} Google Pay API client
    */
   function getGooglePaymentsClient() {
-    alert("Inside payments client");
     if ( paymentsClient === null ) {
-      alert("Payments client not null");
       paymentsClient = new google.payments.api.PaymentsClient({
           environment: 'TEST',
         paymentDataCallbacks: {
@@ -180,9 +176,7 @@
         PayForm.submit();
         resolve({transactionState: 'SUCCESS'});
       })
-      .catch(function(err) {
-        alert("This is error 1.");
-        alert(err);
+      .catch(function() {
         resolve({
           transactionState: 'ERROR',
           error: {
@@ -211,8 +205,7 @@
         })
         .catch(function(err) {
           // show error in developer console for debugging
-          alert("This is error 2.");
-          alert(err);
+          console.error(err);
         });
   }
 
@@ -223,7 +216,6 @@
    * @see {@link https://developers.google.com/pay/api/web/guides/brand-guidelines|Google Pay brand guidelines}
    */
   function addGooglePayButton() {
-    alert("Payment button added");
     const paymentsClient = getGooglePaymentsClient();
     const button =
         paymentsClient.createButton({onClick: onGooglePaymentButtonClicked,buttonType:'short',buttonColor:'black',});
@@ -267,13 +259,10 @@
    * Show Google Pay payment sheet when Google Pay payment button is clicked
    */
   function onGooglePaymentButtonClicked() {
-    alert("Button clicked");
     const paymentDataRequest = getGooglePaymentDataRequest();
-    alert(paymentDataRequest);
     paymentDataRequest.transactionInfo = getGoogleTransactionInfo();
 
     const paymentsClient = getGooglePaymentsClient();
-    alert(paymentsClient);
     paymentsClient.loadPaymentData(paymentDataRequest);
   }
 
@@ -311,8 +300,6 @@
               <input class="form-control" type="hidden" name="userEmail" value="{{ UserDetails.user_Email }}" />
               <input class="form-control" type="hidden" name="OrderID" value="{{ OrderDetails.OrderID }}" />
               <input class="form-control" type="hidden" name="Function" value="{{ Function }}" />
-              {{ SubTotalPrice }}
-              {{ OrderDetails }}
               <div class="row">
                 {% if ReUploadPrescription == 0 and PaymentRequired == 1 %}
                   <div class="col-sm-3"></div>
@@ -323,7 +310,6 @@
                   <div class="col-sm-3"></div>
                 {% endif %}
               </div>
-              {{ notification }}
               {% if notification == "PaymentSuccessful" %}
                 <div style="background:green;color:white;padding:10px;border-radius:10px;font-size:15px;">Payment is successful.</div>
               {% endif %}
