@@ -54,7 +54,7 @@ class ViewOrderDetails(blobstore_handlers.BlobstoreUploadHandler):
                     CartCount = getCartCount(self,userEmail)
                     OrderData = OrdersDB.query(OrdersDB.OrderID == OrderID).fetch()
                     if(OrderData == []):
-                        self.redirect("/VendorOrders?vendorEmail="+vendorEmail)
+                        self.redirect("/?userEmail="+userEmail)
                     else:
                         OrderDetails = OrderData[0]
                         DC = DC + OrderData[0].DeliveryCharge
