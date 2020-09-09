@@ -8,7 +8,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDvLc7SvzpX6KP6HCfn033xNKaM8UH3e2w&callback=initMap&libraries=&v=weekly" defer></script>
   </head>
   <style>
     .container
@@ -177,7 +176,9 @@
         PayForm.submit();
         resolve({transactionState: 'SUCCESS'});
       })
-      .catch(function() {
+      .catch(function(err) {
+        console.error("This is error 1.");
+        console.error(err);
         resolve({
           transactionState: 'ERROR',
           error: {
@@ -206,6 +207,7 @@
         })
         .catch(function(err) {
           // show error in developer console for debugging
+          console.error("This is error 2.");
           console.error(err);
         });
   }
