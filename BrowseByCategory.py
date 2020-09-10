@@ -19,6 +19,7 @@ class BrowseByCategory(webapp2.RequestHandler):
         UserDetails = None
         ProductDetails = []
         Category = []
+        CartCount = 0
 
         if(userEmail != ""):
             UserDetails = ndb.Key('UsersDB',userEmail).get()

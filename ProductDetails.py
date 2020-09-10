@@ -31,6 +31,7 @@ class ProductDetails(webapp2.RequestHandler):
         ProductID = self.request.get('ProductID')
         UserDetails = None
         Category = []
+        CartCount = 0
 
         if(userEmail != ""):
             UserDetails = ndb.Key("UsersDB",userEmail).get()
